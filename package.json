@@ -1,0 +1,26 @@
+{
+  "name": "login-user",
+  "version": "1.0.0",
+  "description": "Login,Register",
+  "source": "src/index.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build"
+  },
+  "repository": "https://github.com/carlos-sweb/login-user-front.git",
+  "author": "carlos-sweb <c4rl0sill3sc4@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@parcel/transformer-sass": "2.13.3",
+    "parcel": "^2.13.3",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17"
+  },
+  "dependencies": {
+    "@fontsource/ubuntu": "^5.1.0",
+    "bulma": "^1.0.2",
+    "lucide": "^0.469.0",
+    "mithril": "^2.2.11",
+    "normalize.css": "^8.0.1"
+  }
+}
