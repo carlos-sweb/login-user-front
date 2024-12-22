@@ -3,77 +3,77 @@ import "npm:@fontsource/ubuntu";
 import "npm:bulma"
 import "./style.css";
 import m from "mithril";
-import { email , password } from "./model/loginInput.js";
-
+import stateLogin from "./model/stateLogin.js";
 import { createIcons, icons } from 'lucide';
-
 var root = document.getElementById("root");
+const stateLogininit = new stateLogin();
 
-var count = 0 // added a variable
-var disabled = true;
-
-var isDisabled = ()=>{
-	return  disabled ? {"disabled":true}:{};
+function formInputView(attr,value,setValue){	
+	return m("div",{class:"field"},[
+		m("label.label",attr.label),
+		m("div.control has-icons-left",[
+			m("input.input",{
+				"class":"is-success",
+			    "type":attr.type,
+			    "value":value,
+			    oninput:(ev)=>{setValue(ev.target.value)}
+			}),
+			m("span",{class:"icon is-small is-left"},m("i",{"data-lucide":attr.icon,width:"20px"}))
+		])
+	])
 }
 
-// shadow shadow-slate-400
+var formButtonSubmit = (buttonText,state)=>{
+	return m("div.field",
+		m("div.control",
+			m("button.button is-primary is-fullwidth",{
+				disabled:!state.valid
+	},"Enviar")))
+}
 
-var loginView = function(formView){
-	return m("section",{class:"section"},
-			m("div",{class:"container"},
-				m("div",{class:"columns is-centered"},
-					m("div",{class:"column is-4"},
-						m("div",{class:"box"},[
-							m("h1",{class:"title has-text-centered"},"Acceso"),
-							formView
+var formView = function(state){	
+	return m("form",{
+		onsubmit:function(event){
+			event.preventDefault();
+		}
+		},[
+			formInputView({
+				"label":"Correo Electrónico","type":"text","icon":"mail"
+			},state.email,state.setEmail),			
+			formInputView({
+				"label":"Contraseña","type":"password","icon":"lock"
+			},state.password,state.setPassword),
+			formButtonSubmit("Enviar",state),
+		])
+};
+
+var loginView = function(state){
+	return m("section.section",
+			m("div.container",
+				m("div.columns is-centered",
+					m("div.column is-4",
+						m("div.box",[
+							m("h1.title has-text-centered","Acceso"),
+							formView(state)
 						])
 					)
 				))
 		   );
 }
 
-var formInputView = (labelText,inputType,inputIcon)=>{
-	return m("div",{class:"field"},[
-		m("label",{class:"label"},labelText),
-		m("div",{class:"control has-icons-left"},[
-			m("input",{
-				class:"input",
-			    type:inputType,			    
-			    onkeyup:function(el){			    	
-			    	console.log("cambiando....",el.target.value);
-			    	disabled=false
-			    }
-			}),
-			m("span",{class:"icon is-small is-left"},m("i",{"data-lucide":inputIcon,width:"20px"}))
-		])
-	])
-}
 
-var formButtonSubmit = (buttonText)=>{
-	return m("div",{class:"field"},m("div",{class:"control"},m("button",{class:"button is-primary is-fullwidth",disabled:isDisabled()},buttonText)))
-}
-
-var formView = m("form",{},[
-	formInputView("Correo Electronico","text","mail"),
-	formInputView("Contraseña","password","lock"),
-	formButtonSubmit("Enviar"),	
-]);
-
-var Hello = {
-    view:()=>{
-		return loginView( formView )
-	}
-}
-
-
+    
 m.route(root,"/",{
-	"/":Hello,
-	"/register":{
+	'/':{
+		view:()=>{
+			return loginView( stateLogininit )
+		}
+	},
+	'/register':{
 		view:()=>{
 			return m("i",{"data-lucide":"badge-check"})
 		}
 	}
 });
-
 
 createIcons({ icons });

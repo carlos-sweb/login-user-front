@@ -603,86 +603,71 @@ var _npmBulma = require("npm:bulma");
 var _styleCss = require("./style.css");
 var _mithril = require("mithril");
 var _mithrilDefault = parcelHelpers.interopDefault(_mithril);
-var _loginInputJs = require("./model/loginInput.js");
+var _stateLoginJs = require("./model/stateLogin.js");
+var _stateLoginJsDefault = parcelHelpers.interopDefault(_stateLoginJs);
 var _lucide = require("lucide");
 var root = document.getElementById("root");
-var count = 0 // added a variable
-;
-var disabled = true;
-var isDisabled = ()=>{
-    return disabled ? {
-        "disabled": true
-    } : {};
-};
-// shadow shadow-slate-400
-var loginView = function(formView) {
-    return (0, _mithrilDefault.default)("section", {
-        class: "section"
-    }, (0, _mithrilDefault.default)("div", {
-        class: "container"
-    }, (0, _mithrilDefault.default)("div", {
-        class: "columns is-centered"
-    }, (0, _mithrilDefault.default)("div", {
-        class: "column is-4"
-    }, (0, _mithrilDefault.default)("div", {
-        class: "box"
-    }, [
-        (0, _mithrilDefault.default)("h1", {
-            class: "title has-text-centered"
-        }, "Acceso"),
-        formView
-    ])))));
-};
-var formInputView = (labelText, inputType, inputIcon)=>{
+const stateLogininit = new (0, _stateLoginJsDefault.default)();
+function formInputView(attr, value, setValue) {
     return (0, _mithrilDefault.default)("div", {
         class: "field"
     }, [
-        (0, _mithrilDefault.default)("label", {
-            class: "label"
-        }, labelText),
-        (0, _mithrilDefault.default)("div", {
-            class: "control has-icons-left"
-        }, [
-            (0, _mithrilDefault.default)("input", {
-                class: "input",
-                type: inputType,
-                onkeyup: function(el) {
-                    console.log("cambiando....", el.target.value);
-                    disabled = false;
+        (0, _mithrilDefault.default)("label.label", attr.label),
+        (0, _mithrilDefault.default)("div.control has-icons-left", [
+            (0, _mithrilDefault.default)("input.input", {
+                "class": "is-success",
+                "type": attr.type,
+                "value": value,
+                oninput: (ev)=>{
+                    setValue(ev.target.value);
                 }
             }),
             (0, _mithrilDefault.default)("span", {
                 class: "icon is-small is-left"
             }, (0, _mithrilDefault.default)("i", {
-                "data-lucide": inputIcon,
+                "data-lucide": attr.icon,
                 width: "20px"
             }))
         ])
     ]);
+}
+var formButtonSubmit = (buttonText, state)=>{
+    return (0, _mithrilDefault.default)("div.field", (0, _mithrilDefault.default)("div.control", (0, _mithrilDefault.default)("button.button is-primary is-fullwidth", {
+        disabled: !state.valid
+    }, "Enviar")));
 };
-var formButtonSubmit = (buttonText)=>{
-    return (0, _mithrilDefault.default)("div", {
-        class: "field"
-    }, (0, _mithrilDefault.default)("div", {
-        class: "control"
-    }, (0, _mithrilDefault.default)("button", {
-        class: "button is-primary is-fullwidth",
-        disabled: isDisabled()
-    }, buttonText)));
+var formView = function(state) {
+    return (0, _mithrilDefault.default)("form", {
+        onsubmit: function(event) {
+            event.preventDefault();
+        }
+    }, [
+        formInputView({
+            "label": "Correo Electr\xf3nico",
+            "type": "text",
+            "icon": "mail"
+        }, state.email, state.setEmail),
+        formInputView({
+            "label": "Contrase\xf1a",
+            "type": "password",
+            "icon": "lock"
+        }, state.password, state.setPassword),
+        formButtonSubmit("Enviar", state)
+    ]);
 };
-var formView = (0, _mithrilDefault.default)("form", {}, [
-    formInputView("Correo Electronico", "text", "mail"),
-    formInputView("Contrase\xf1a", "password", "lock"),
-    formButtonSubmit("Enviar")
-]);
-var Hello = {
-    view: ()=>{
-        return loginView(formView);
-    }
+var loginView = function(state) {
+    return (0, _mithrilDefault.default)("section.section", (0, _mithrilDefault.default)("div.container", (0, _mithrilDefault.default)("div.columns is-centered", (0, _mithrilDefault.default)("div.column is-4", (0, _mithrilDefault.default)("div.box", [
+        (0, _mithrilDefault.default)("h1.title has-text-centered", "Acceso"),
+        formView(state)
+    ])))));
 };
 (0, _mithrilDefault.default).route(root, "/", {
-    "/": Hello,
-    "/register": {
+    '/': {
+        view: ()=>{
+            return loginView(stateLogininit);
+        }
+    },
+    '/register': {
         view: ()=>{
             return (0, _mithrilDefault.default)("i", {
                 "data-lucide": "badge-check"
@@ -694,7 +679,7 @@ var Hello = {
     icons: (0, _lucide.icons)
 });
 
-},{"mithril":"1zcoP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","npm:normalize.css":"eLmrl","npm:@fontsource/ubuntu":"402y5","./style.css":"bhJkM","npm:bulma":"gEv81","./model/loginInput.js":"fvF07","lucide":"iIzyy"}],"1zcoP":[function(require,module,exports,__globalThis) {
+},{"mithril":"1zcoP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","npm:normalize.css":"eLmrl","npm:@fontsource/ubuntu":"402y5","./style.css":"bhJkM","npm:bulma":"gEv81","lucide":"iIzyy","./model/stateLogin.js":"iDdWd"}],"1zcoP":[function(require,module,exports,__globalThis) {
 "use strict";
 var hyperscript = require("93549bebb559a185");
 var request = require("ffc931a12fb92780");
@@ -2467,15 +2452,7 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"eLmrl":[function() {},{}],"402y5":[function() {},{}],"bhJkM":[function() {},{}],"gEv81":[function() {},{}],"fvF07":[function(require,module,exports,__globalThis) {
-var LoginInput = {
-    email: "",
-    password: "",
-    remenber: ""
-};
-module.exports = LoginInput;
-
-},{}],"iIzyy":[function(require,module,exports,__globalThis) {
+},{}],"eLmrl":[function() {},{}],"402y5":[function() {},{}],"bhJkM":[function() {},{}],"gEv81":[function() {},{}],"iIzyy":[function(require,module,exports,__globalThis) {
 /**
  * @license lucide v0.469.0 - ISC
  *
@@ -79626,6 +79603,27 @@ const ZoomOut = [
     ]
 ];
 
-},{"../defaultAttributes.js":"7NOpc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["9w8YQ","bNKaB"], "bNKaB", "parcelRequire94c2")
+},{"../defaultAttributes.js":"7NOpc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"iDdWd":[function(require,module,exports,__globalThis) {
+function stateForm() {
+    if (!(this instanceof stateForm)) return new stateForm;
+    this.email = "";
+    this.password = "";
+    this.valid = false;
+    this.setPassword = (vl)=>{
+        this.password = vl;
+        this.checkValid();
+    };
+    this.setEmail = (vl)=>{
+        this.email = vl;
+        this.checkValid();
+    };
+    this.checkValid = function() {
+        const valid = this.email != "" && this.password != "";
+        if (this.valid != valid) this.valid = valid;
+    };
+}
+module.exports = stateForm;
+
+},{}]},["9w8YQ","bNKaB"], "bNKaB", "parcelRequire94c2")
 
 //# sourceMappingURL=index.0641b553.js.map
