@@ -11,11 +11,13 @@ import App from "./components/App.vue"
 import Recuperar from "./components/Recuperar.vue"
 import ErrorLogin from "./components/ErrorLogin.vue"
 import CrearCuenta from "./components/CrearCuenta.vue"
+import AccesoError from "./components/AccesoError.vue"
 
 const routes = [
   { path: '/', component: Login }, 
   { path: '/recuperar', component: Recuperar } ,
-  { path: '/crear-cuenta' , component : CrearCuenta } 
+  { path: '/crear-cuenta' , component : CrearCuenta },
+  { path: '/acceso-error' , component : AccesoError }, 
 ]
 
 const router = createRouter({
@@ -23,11 +25,6 @@ const router = createRouter({
   routes,
 })
 
-
 const app = createApp(App);
 app.use(router)
 app.mount("#app");
-
-
-
-

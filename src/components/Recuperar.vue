@@ -9,7 +9,7 @@
                    <div class="field">
                      <label for="email" class="label tracking-wide">Correo Electronico</label>  
                      <div class="control has-icons-left">
-                        <input id="email" name="email" class="input" type="text" autocomplete="off" autocapitalize="off" v-model="email" >
+                         <input :disabled="f.sending" id="email" name="email" class="input" type="text" autocomplete="off" autocapitalize="off" v-model="f.email" >
                         <span class="icon is-small is-left">
                           <Mail :size="20" />
                         </span>
@@ -17,21 +17,44 @@
                    </div>                   
                    <div class="field">                     
                      <div class="control">
-                        <button type="submit" class="button is-primary is-fullwidth tracking-wide" >Enviar</button>
+                        <button :disabled="!isValid().success || f.sending" type="submit" class="button is-primary is-fullwidth tracking-wide" >Enviar</button>
                      </div>
                    </div>                   
                  </form>
                </div>               
-               <div class="column has-text-centered">
-                	<a class="button is-ghost" href="/#/" >Tengo una cuenta</a>
+                <div class="column has-text-centered">                  
+                  <a @click="link" class="button is-ghost" href="/#/crear-cuenta" >Crear cuenta</a>
                </div>
            </div>           
          </div>
       </div>      
     </section>
 </template>
-<script setup>
-	 import { Mail } from 'lucide-vue-next';
-   import { ref } from 'vue'
-   const email = ref('');
+<script setup >
+ import { z } from "zod" 
+ import axios from "axios" 
+ import { ref , reactive} from "vue"
+ import { Mail } from 'lucide-vue-next';
+
+ const link = (event)=>{ f.sending  &&  event.preventDefault() }
+
+ const f = reactive({
+  email:"admin@gmail.com",  
+  sending:false
+ });
+
+ var user = z.object({
+    email:z.string().email().min(5)    
+ });
+
+ const isValid = ()=> user.safeParse({ "email":f.email })
+ 
+
+ const onSubmit = ()=>{    
+    f.sending = true;
+    setTimeout(()=>{
+      f.sending = false;
+    },3000);      
+    //axios({ "method":"post", "url":"https://csweb.sistematizate.cl/login" }).then(( response)=>{ console.log( response ); });
+ }
 </script>
