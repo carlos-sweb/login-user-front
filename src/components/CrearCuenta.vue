@@ -24,8 +24,8 @@
                      <div class="is-flex is-flex-column">
                       <label for="password" class="label tracking-wide is-flex-grow-1">Contraseña
                       </label>
-                      <Eye v-if="showPass" @click="showPass=!showPass" :size="24"/>  
-                      <EyeOff v-if="!showPass" @click="showPass=!showPass" :size="24"/>  
+                      <EyeOff v-if="showPass" @click="showPass=!showPass" :size="24"/>  
+                      <Eye v-if="!showPass" @click="showPass=!showPass" :size="24"/>  
                      </div> 
                      
                      <div class="control has-icons-left">
