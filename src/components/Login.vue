@@ -6,18 +6,9 @@
                <div class="box">
                  <h1 class="title tracking-wide text-blue-700">Acceso</h1>                 
                  <form  @submit.prevent="onSubmit" >      
-                  <pp-email :sending="f.sending" label="Correo Electrónico" v-model="f.email" />                   
-                   <div class="field">
-                     <label for="password" class="label tracking-wide">Contraseña</label>  
-                     <div class="control has-icons-left">
-                        <input :disabled="f.sending" id="password" name="password" class="input" type="password" autocomplete="off" autocapitalize="off" v-model="f.password" >
-                        <span class="icon is-small is-left">
-                          <Lock :size="20" />
-                        </span>
-                     </div>
-                   </div>
-                   
-                    <pp-button :sending="f.sending" :valid="isValid().success" text="Enviar" />
+                  <pp-email :sending="f.sending" label="Correo Electrónico" v-model="f.email" />
+                  <pp-password :sending="f.sending" label="Contraseña" v-model="f.password" />                   
+                   <pp-button :sending="f.sending" :valid="isValid().success" text="Enviar" />
 
                    <div class="field">
                      <div class="control has-text-centered">
@@ -39,35 +30,24 @@
  import { z } from "zod" 
  import axios from "axios" 
  import { ref , reactive} from "vue"
- import { Mail , Lock } from 'lucide-vue-next';
-
- const emit = defineEmits({
-    send:100
- });
-
- const test = ()=>{
-  console.log("Test..............");
-  return "   mmmm===>"
- }
+ import { Mail , Asterisk } from 'lucide-vue-next';
 
  const link = (event)=>{ f.sending  &&  event.preventDefault() }
 
  const f = reactive({
   email:"",
-  password:"12345554",
+  password:"",
   sending:false
  });
 
  var user = z.object({
-    email:z.string().email().min(5),
-    password:z.string().min(4).max(10)
+    email:z.string().email().min(4).max(20),
+    password:z.string().min(4).max(20)
  });
 
  const isValid = ()=> user.safeParse({ "email":f.email, "password":f.password })
  
-
- const onSubmit = ()=>{
-    emit('send');
+ const onSubmit = ()=>{    
     f.sending = true;
     setTimeout(()=>{
       f.sending = false;

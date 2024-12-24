@@ -1,8 +1,8 @@
 <template>
     <div class="field">	
-	<label for="email2" class="label tracking-wide" v-text="label"></label>  
+	<label for="email" class="label tracking-wide" v-text="label"></label>  
 		<div class="control has-icons-left has-icons-right">
-			<input :disabled="sending" @focus="focus=true;" @blur="dirty=true;runValid(email)" v-model="email" id="email2" name="email2" class="input" :class="{'is-danger':noValid,'is-success':valid}" type="text" autocomplete="off" autocapitalize="off"  >
+			<input :disabled="sending" @focus="focus=true;" @blur="dirty=true;runValid(email)" v-model="email" id="email" name="email" class="input" :class="{'is-danger':noValid,'is-success':valid}" type="text" autocomplete="off" autocapitalize="off"  >
             <span class="icon is-small is-left"><Mail :class="{'text-green-600':valid && !sending,'text-red-700':noValid}" :size="20" /></span>
             <span class="icon is-small is-right">
             	<Check v-if="valid" :class="{'text-green-600':!sending}" :size="20" />
@@ -41,7 +41,7 @@ const isValid = ( vl )=>{
 const props = defineProps({
 	"value":{
 		"type":String,
-		"default":"adminm@gmail.com"
+		"default":""
 	},
 	"label":{
 		"type":String,
@@ -67,6 +67,4 @@ if( email.value !== "" ){
 	dirty.value = true;
 	runValid( email.value )
 }
-
-
 </script>

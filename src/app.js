@@ -16,6 +16,7 @@ import AccesoError from "./components/AccesoError.vue"
 
 import button from "./components/button.vue";
 import inputEmail from "./components/inputEmail.vue";
+import inputPassword from "./components/inputPassword.vue";
 
 const routes = [
   { path: '/', component: Login }, 
@@ -31,5 +32,6 @@ const router = createRouter({
 const app = createApp(App);
 app.component("pp-button",button);
 app.component("pp-email", inputEmail)
+app.component("pp-password",inputPassword)
 app.use(router)
 app.mount("#app");
