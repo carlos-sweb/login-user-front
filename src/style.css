@@ -1,9 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+[v-cloak] {
+  display: none;
+}
 html,body{ 
 	font-family:"Ubuntu";	
 	width:100% !important;
-	height:100% !important;	
+	height:100% !important;
 }

@@ -6,16 +6,8 @@
                <div class="box">
                  <h1 class="title tracking-wide text-blue-700">Recuperar</h1>                 
                  <form  @submit.prevent="onSubmit" >
-                   <div class="field">
-                     <label for="email" class="label tracking-wide">Correo Electronico</label>  
-                     <div class="control has-icons-left">
-                         <input :disabled="f.sending" id="email" name="email" class="input" type="text" autocomplete="off" autocapitalize="off" v-model="f.email" >
-                        <span class="icon is-small is-left">
-                          <Mail :size="20" />
-                        </span>
-                     </div>
-                   </div>                   
-                    
+                                   
+                    <pp-email label="Correo Electrónico" v-model="f.email" />  
                     <pp-button :sending="f.sending" :valid="isValid().success" text="Enviar" />
 
                  </form>

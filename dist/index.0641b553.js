@@ -619,6 +619,8 @@ var _accesoErrorVueDefault = parcelHelpers.interopDefault(_accesoErrorVue);
 // Singles components
 var _buttonVue = require("./components/button.vue");
 var _buttonVueDefault = parcelHelpers.interopDefault(_buttonVue);
+var _inputEmailVue = require("./components/inputEmail.vue");
+var _inputEmailVueDefault = parcelHelpers.interopDefault(_inputEmailVue);
 const routes = [
     {
         path: '/',
@@ -643,3165 +645,63 @@ const router = (0, _vueRouter.createRouter)({
 });
 const app = (0, _vueEsmBundler.createApp)((0, _appVueDefault.default));
 app.component("pp-button", (0, _buttonVueDefault.default));
+app.component("pp-email", (0, _inputEmailVueDefault.default));
 app.use(router);
 app.mount("#app");
 
-},{"npm:normalize.css":"eLmrl","npm:@fontsource/ubuntu":"402y5","npm:bulma":"gEv81","./style.css":"bhJkM","vue-router":"c18b3","./components/Login.vue":"5fd2o","./components/App.vue":"9IQgA","./components/Recuperar.vue":"g4IV6","./components/ErrorLogin.vue":"g9U7G","./components/CrearCuenta.vue":"bw2J9","./components/AccesoError.vue":"8r306","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","vue/dist/vue.esm-bundler":"gs3Mk","./components/button.vue":"7Vm5H"}],"eLmrl":[function() {},{}],"402y5":[function() {},{}],"gEv81":[function() {},{}],"bhJkM":[function() {},{}],"c18b3":[function(require,module,exports,__globalThis) {
-/*!
-  * vue-router v4.5.0
-  * (c) 2024 Eduardo San Martin Morote
-  * @license MIT
-  */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "NavigationFailureType", ()=>NavigationFailureType);
-parcelHelpers.export(exports, "RouterLink", ()=>RouterLink);
-parcelHelpers.export(exports, "RouterView", ()=>RouterView);
-parcelHelpers.export(exports, "START_LOCATION", ()=>START_LOCATION_NORMALIZED);
-parcelHelpers.export(exports, "createMemoryHistory", ()=>createMemoryHistory);
-parcelHelpers.export(exports, "createRouter", ()=>createRouter);
-parcelHelpers.export(exports, "createRouterMatcher", ()=>createRouterMatcher);
-parcelHelpers.export(exports, "createWebHashHistory", ()=>createWebHashHistory);
-parcelHelpers.export(exports, "createWebHistory", ()=>createWebHistory);
-parcelHelpers.export(exports, "isNavigationFailure", ()=>isNavigationFailure);
-parcelHelpers.export(exports, "loadRouteLocation", ()=>loadRouteLocation);
-parcelHelpers.export(exports, "matchedRouteKey", ()=>matchedRouteKey);
-parcelHelpers.export(exports, "onBeforeRouteLeave", ()=>onBeforeRouteLeave);
-parcelHelpers.export(exports, "onBeforeRouteUpdate", ()=>onBeforeRouteUpdate);
-parcelHelpers.export(exports, "parseQuery", ()=>parseQuery);
-parcelHelpers.export(exports, "routeLocationKey", ()=>routeLocationKey);
-parcelHelpers.export(exports, "routerKey", ()=>routerKey);
-parcelHelpers.export(exports, "routerViewLocationKey", ()=>routerViewLocationKey);
-parcelHelpers.export(exports, "stringifyQuery", ()=>stringifyQuery);
-parcelHelpers.export(exports, "useLink", ()=>useLink);
-parcelHelpers.export(exports, "useRoute", ()=>useRoute);
-parcelHelpers.export(exports, "useRouter", ()=>useRouter);
-parcelHelpers.export(exports, "viewDepthKey", ()=>viewDepthKey);
-var _vue = require("vue");
-var _devtoolsApi = require("@vue/devtools-api");
-const isBrowser = typeof document !== 'undefined';
-/**
- * Allows differentiating lazy components from functional components and vue-class-component
- * @internal
- *
- * @param component
- */ function isRouteComponent(component) {
-    return typeof component === 'object' || 'displayName' in component || 'props' in component || '__vccOpts' in component;
-}
-function isESModule(obj) {
-    return obj.__esModule || obj[Symbol.toStringTag] === 'Module' || // support CF with dynamic imports that do not
-    // add the Module string tag
-    obj.default && isRouteComponent(obj.default);
-}
-const assign = Object.assign;
-function applyToParams(fn, params) {
-    const newParams = {};
-    for(const key in params){
-        const value = params[key];
-        newParams[key] = isArray(value) ? value.map(fn) : fn(value);
-    }
-    return newParams;
-}
-const noop = ()=>{};
-/**
- * Typesafe alternative to Array.isArray
- * https://github.com/microsoft/TypeScript/pull/48228
- */ const isArray = Array.isArray;
-function warn(msg) {
-    // avoid using ...args as it breaks in older Edge builds
-    const args = Array.from(arguments).slice(1);
-    console.warn.apply(console, [
-        '[Vue Router warn]: ' + msg
-    ].concat(args));
-}
-/**
- * Encoding Rules (␣ = Space)
- * - Path: ␣ " < > # ? { }
- * - Query: ␣ " < > # & =
- * - Hash: ␣ " < > `
- *
- * On top of that, the RFC3986 (https://tools.ietf.org/html/rfc3986#section-2.2)
- * defines some extra characters to be encoded. Most browsers do not encode them
- * in encodeURI https://github.com/whatwg/url/issues/369, so it may be safer to
- * also encode `!'()*`. Leaving un-encoded only ASCII alphanumeric(`a-zA-Z0-9`)
- * plus `-._~`. This extra safety should be applied to query by patching the
- * string returned by encodeURIComponent encodeURI also encodes `[\]^`. `\`
- * should be encoded to avoid ambiguity. Browsers (IE, FF, C) transform a `\`
- * into a `/` if directly typed in. The _backtick_ (`````) should also be
- * encoded everywhere because some browsers like FF encode it when directly
- * written while others don't. Safari and IE don't encode ``"<>{}``` in hash.
- */ // const EXTRA_RESERVED_RE = /[!'()*]/g
-// const encodeReservedReplacer = (c: string) => '%' + c.charCodeAt(0).toString(16)
-const HASH_RE = /#/g; // %23
-const AMPERSAND_RE = /&/g; // %26
-const SLASH_RE = /\//g; // %2F
-const EQUAL_RE = /=/g; // %3D
-const IM_RE = /\?/g; // %3F
-const PLUS_RE = /\+/g; // %2B
-/**
- * NOTE: It's not clear to me if we should encode the + symbol in queries, it
- * seems to be less flexible than not doing so and I can't find out the legacy
- * systems requiring this for regular requests like text/html. In the standard,
- * the encoding of the plus character is only mentioned for
- * application/x-www-form-urlencoded
- * (https://url.spec.whatwg.org/#urlencoded-parsing) and most browsers seems lo
- * leave the plus character as is in queries. To be more flexible, we allow the
- * plus character on the query, but it can also be manually encoded by the user.
- *
- * Resources:
- * - https://url.spec.whatwg.org/#urlencoded-parsing
- * - https://stackoverflow.com/questions/1634271/url-encoding-the-space-character-or-20
- */ const ENC_BRACKET_OPEN_RE = /%5B/g; // [
-const ENC_BRACKET_CLOSE_RE = /%5D/g; // ]
-const ENC_CARET_RE = /%5E/g; // ^
-const ENC_BACKTICK_RE = /%60/g; // `
-const ENC_CURLY_OPEN_RE = /%7B/g; // {
-const ENC_PIPE_RE = /%7C/g; // |
-const ENC_CURLY_CLOSE_RE = /%7D/g; // }
-const ENC_SPACE_RE = /%20/g; // }
-/**
- * Encode characters that need to be encoded on the path, search and hash
- * sections of the URL.
- *
- * @internal
- * @param text - string to encode
- * @returns encoded string
- */ function commonEncode(text) {
-    return encodeURI('' + text).replace(ENC_PIPE_RE, '|').replace(ENC_BRACKET_OPEN_RE, '[').replace(ENC_BRACKET_CLOSE_RE, ']');
-}
-/**
- * Encode characters that need to be encoded on the hash section of the URL.
- *
- * @param text - string to encode
- * @returns encoded string
- */ function encodeHash(text) {
-    return commonEncode(text).replace(ENC_CURLY_OPEN_RE, '{').replace(ENC_CURLY_CLOSE_RE, '}').replace(ENC_CARET_RE, '^');
-}
-/**
- * Encode characters that need to be encoded query values on the query
- * section of the URL.
- *
- * @param text - string to encode
- * @returns encoded string
- */ function encodeQueryValue(text) {
-    return commonEncode(text)// Encode the space as +, encode the + to differentiate it from the space
-    .replace(PLUS_RE, '%2B').replace(ENC_SPACE_RE, '+').replace(HASH_RE, '%23').replace(AMPERSAND_RE, '%26').replace(ENC_BACKTICK_RE, '`').replace(ENC_CURLY_OPEN_RE, '{').replace(ENC_CURLY_CLOSE_RE, '}').replace(ENC_CARET_RE, '^');
-}
-/**
- * Like `encodeQueryValue` but also encodes the `=` character.
- *
- * @param text - string to encode
- */ function encodeQueryKey(text) {
-    return encodeQueryValue(text).replace(EQUAL_RE, '%3D');
-}
-/**
- * Encode characters that need to be encoded on the path section of the URL.
- *
- * @param text - string to encode
- * @returns encoded string
- */ function encodePath(text) {
-    return commonEncode(text).replace(HASH_RE, '%23').replace(IM_RE, '%3F');
-}
-/**
- * Encode characters that need to be encoded on the path section of the URL as a
- * param. This function encodes everything {@link encodePath} does plus the
- * slash (`/`) character. If `text` is `null` or `undefined`, returns an empty
- * string instead.
- *
- * @param text - string to encode
- * @returns encoded string
- */ function encodeParam(text) {
-    return text == null ? '' : encodePath(text).replace(SLASH_RE, '%2F');
-}
-/**
- * Decode text using `decodeURIComponent`. Returns the original text if it
- * fails.
- *
- * @param text - string to decode
- * @returns decoded string
- */ function decode(text) {
-    try {
-        return decodeURIComponent('' + text);
-    } catch (err) {
-        warn(`Error decoding "${text}". Using original value`);
-    }
-    return '' + text;
-}
-const TRAILING_SLASH_RE = /\/$/;
-const removeTrailingSlash = (path)=>path.replace(TRAILING_SLASH_RE, '');
-/**
- * Transforms a URI into a normalized history location
- *
- * @param parseQuery
- * @param location - URI to normalize
- * @param currentLocation - current absolute location. Allows resolving relative
- * paths. Must start with `/`. Defaults to `/`
- * @returns a normalized history location
- */ function parseURL(parseQuery, location1, currentLocation = '/') {
-    let path, query = {}, searchString = '', hash = '';
-    // Could use URL and URLSearchParams but IE 11 doesn't support it
-    // TODO: move to new URL()
-    const hashPos = location1.indexOf('#');
-    let searchPos = location1.indexOf('?');
-    // the hash appears before the search, so it's not part of the search string
-    if (hashPos < searchPos && hashPos >= 0) searchPos = -1;
-    if (searchPos > -1) {
-        path = location1.slice(0, searchPos);
-        searchString = location1.slice(searchPos + 1, hashPos > -1 ? hashPos : location1.length);
-        query = parseQuery(searchString);
-    }
-    if (hashPos > -1) {
-        path = path || location1.slice(0, hashPos);
-        // keep the # character
-        hash = location1.slice(hashPos, location1.length);
-    }
-    // no search and no query
-    path = resolveRelativePath(path != null ? path : location1, currentLocation);
-    // empty path means a relative query or hash `?foo=f`, `#thing`
-    return {
-        fullPath: path + (searchString && '?') + searchString + hash,
-        path,
-        query,
-        hash: decode(hash)
-    };
-}
-/**
- * Stringifies a URL object
- *
- * @param stringifyQuery
- * @param location
- */ function stringifyURL(stringifyQuery, location1) {
-    const query = location1.query ? stringifyQuery(location1.query) : '';
-    return location1.path + (query && '?') + query + (location1.hash || '');
-}
-/**
- * Strips off the base from the beginning of a location.pathname in a non-case-sensitive way.
- *
- * @param pathname - location.pathname
- * @param base - base to strip off
- */ function stripBase(pathname, base) {
-    // no base or base is not found at the beginning
-    if (!base || !pathname.toLowerCase().startsWith(base.toLowerCase())) return pathname;
-    return pathname.slice(base.length) || '/';
-}
-/**
- * Checks if two RouteLocation are equal. This means that both locations are
- * pointing towards the same {@link RouteRecord} and that all `params`, `query`
- * parameters and `hash` are the same
- *
- * @param stringifyQuery - A function that takes a query object of type LocationQueryRaw and returns a string representation of it.
- * @param a - first {@link RouteLocation}
- * @param b - second {@link RouteLocation}
- */ function isSameRouteLocation(stringifyQuery, a, b) {
-    const aLastIndex = a.matched.length - 1;
-    const bLastIndex = b.matched.length - 1;
-    return aLastIndex > -1 && aLastIndex === bLastIndex && isSameRouteRecord(a.matched[aLastIndex], b.matched[bLastIndex]) && isSameRouteLocationParams(a.params, b.params) && stringifyQuery(a.query) === stringifyQuery(b.query) && a.hash === b.hash;
-}
-/**
- * Check if two `RouteRecords` are equal. Takes into account aliases: they are
- * considered equal to the `RouteRecord` they are aliasing.
- *
- * @param a - first {@link RouteRecord}
- * @param b - second {@link RouteRecord}
- */ function isSameRouteRecord(a, b) {
-    // since the original record has an undefined value for aliasOf
-    // but all aliases point to the original record, this will always compare
-    // the original record
-    return (a.aliasOf || a) === (b.aliasOf || b);
-}
-function isSameRouteLocationParams(a, b) {
-    if (Object.keys(a).length !== Object.keys(b).length) return false;
-    for(const key in a){
-        if (!isSameRouteLocationParamsValue(a[key], b[key])) return false;
-    }
-    return true;
-}
-function isSameRouteLocationParamsValue(a, b) {
-    return isArray(a) ? isEquivalentArray(a, b) : isArray(b) ? isEquivalentArray(b, a) : a === b;
-}
-/**
- * Check if two arrays are the same or if an array with one single entry is the
- * same as another primitive value. Used to check query and parameters
- *
- * @param a - array of values
- * @param b - array of values or a single value
- */ function isEquivalentArray(a, b) {
-    return isArray(b) ? a.length === b.length && a.every((value, i)=>value === b[i]) : a.length === 1 && a[0] === b;
-}
-/**
- * Resolves a relative path that starts with `.`.
- *
- * @param to - path location we are resolving
- * @param from - currentLocation.path, should start with `/`
- */ function resolveRelativePath(to, from) {
-    if (to.startsWith('/')) return to;
-    if (!from.startsWith('/')) {
-        warn(`Cannot resolve a relative location without an absolute path. Trying to resolve "${to}" from "${from}". It should look like "/${from}".`);
-        return to;
-    }
-    if (!to) return from;
-    const fromSegments = from.split('/');
-    const toSegments = to.split('/');
-    const lastToSegment = toSegments[toSegments.length - 1];
-    // make . and ./ the same (../ === .., ../../ === ../..)
-    // this is the same behavior as new URL()
-    if (lastToSegment === '..' || lastToSegment === '.') toSegments.push('');
-    let position = fromSegments.length - 1;
-    let toPosition;
-    let segment;
-    for(toPosition = 0; toPosition < toSegments.length; toPosition++){
-        segment = toSegments[toPosition];
-        // we stay on the same position
-        if (segment === '.') continue;
-        // go up in the from array
-        if (segment === '..') // we can't go below zero, but we still need to increment toPosition
-        {
-            if (position > 1) position--;
-        } else break;
-    }
-    return fromSegments.slice(0, position).join('/') + '/' + toSegments.slice(toPosition).join('/');
-}
-/**
- * Initial route location where the router is. Can be used in navigation guards
- * to differentiate the initial navigation.
- *
- * @example
- * ```js
- * import { START_LOCATION } from 'vue-router'
- *
- * router.beforeEach((to, from) => {
- *   if (from === START_LOCATION) {
- *     // initial navigation
- *   }
- * })
- * ```
- */ const START_LOCATION_NORMALIZED = {
-    path: '/',
-    // TODO: could we use a symbol in the future?
-    name: undefined,
-    params: {},
-    query: {},
-    hash: '',
-    fullPath: '/',
-    matched: [],
-    meta: {},
-    redirectedFrom: undefined
-};
-var NavigationType;
-(function(NavigationType) {
-    NavigationType["pop"] = "pop";
-    NavigationType["push"] = "push";
-})(NavigationType || (NavigationType = {}));
-var NavigationDirection;
-(function(NavigationDirection) {
-    NavigationDirection["back"] = "back";
-    NavigationDirection["forward"] = "forward";
-    NavigationDirection["unknown"] = "";
-})(NavigationDirection || (NavigationDirection = {}));
-/**
- * Starting location for Histories
- */ const START = '';
-// Generic utils
-/**
- * Normalizes a base by removing any trailing slash and reading the base tag if
- * present.
- *
- * @param base - base to normalize
- */ function normalizeBase(base) {
-    if (!base) {
-        if (isBrowser) {
-            // respect <base> tag
-            const baseEl = document.querySelector('base');
-            base = baseEl && baseEl.getAttribute('href') || '/';
-            // strip full URL origin
-            base = base.replace(/^\w+:\/\/[^\/]+/, '');
-        } else base = '/';
-    }
-    // ensure leading slash when it was removed by the regex above avoid leading
-    // slash with hash because the file could be read from the disk like file://
-    // and the leading slash would cause problems
-    if (base[0] !== '/' && base[0] !== '#') base = '/' + base;
-    // remove the trailing slash so all other method can just do `base + fullPath`
-    // to build an href
-    return removeTrailingSlash(base);
-}
-// remove any character before the hash
-const BEFORE_HASH_RE = /^[^#]+#/;
-function createHref(base, location1) {
-    return base.replace(BEFORE_HASH_RE, '#') + location1;
-}
-function getElementPosition(el, offset) {
-    const docRect = document.documentElement.getBoundingClientRect();
-    const elRect = el.getBoundingClientRect();
-    return {
-        behavior: offset.behavior,
-        left: elRect.left - docRect.left - (offset.left || 0),
-        top: elRect.top - docRect.top - (offset.top || 0)
-    };
-}
-const computeScrollPosition = ()=>({
-        left: window.scrollX,
-        top: window.scrollY
-    });
-function scrollToPosition(position) {
-    let scrollToOptions;
-    if ('el' in position) {
-        const positionEl = position.el;
-        const isIdSelector = typeof positionEl === 'string' && positionEl.startsWith('#');
-        /**
-         * `id`s can accept pretty much any characters, including CSS combinators
-         * like `>` or `~`. It's still possible to retrieve elements using
-         * `document.getElementById('~')` but it needs to be escaped when using
-         * `document.querySelector('#\\~')` for it to be valid. The only
-         * requirements for `id`s are them to be unique on the page and to not be
-         * empty (`id=""`). Because of that, when passing an id selector, it should
-         * be properly escaped for it to work with `querySelector`. We could check
-         * for the id selector to be simple (no CSS combinators `+ >~`) but that
-         * would make things inconsistent since they are valid characters for an
-         * `id` but would need to be escaped when using `querySelector`, breaking
-         * their usage and ending up in no selector returned. Selectors need to be
-         * escaped:
-         *
-         * - `#1-thing` becomes `#\31 -thing`
-         * - `#with~symbols` becomes `#with\\~symbols`
-         *
-         * - More information about  the topic can be found at
-         *   https://mathiasbynens.be/notes/html5-id-class.
-         * - Practical example: https://mathiasbynens.be/demo/html5-id
-         */ if (typeof position.el === 'string') {
-            if (!isIdSelector || !document.getElementById(position.el.slice(1))) try {
-                const foundEl = document.querySelector(position.el);
-                if (isIdSelector && foundEl) {
-                    warn(`The selector "${position.el}" should be passed as "el: document.querySelector('${position.el}')" because it starts with "#".`);
-                    // return to avoid other warnings
-                    return;
-                }
-            } catch (err) {
-                warn(`The selector "${position.el}" is invalid. If you are using an id selector, make sure to escape it. You can find more information about escaping characters in selectors at https://mathiasbynens.be/notes/css-escapes or use CSS.escape (https://developer.mozilla.org/en-US/docs/Web/API/CSS/escape).`);
-                // return to avoid other warnings
-                return;
-            }
-        }
-        const el = typeof positionEl === 'string' ? isIdSelector ? document.getElementById(positionEl.slice(1)) : document.querySelector(positionEl) : positionEl;
-        if (!el) {
-            warn(`Couldn't find element using selector "${position.el}" returned by scrollBehavior.`);
-            return;
-        }
-        scrollToOptions = getElementPosition(el, position);
-    } else scrollToOptions = position;
-    if ('scrollBehavior' in document.documentElement.style) window.scrollTo(scrollToOptions);
-    else window.scrollTo(scrollToOptions.left != null ? scrollToOptions.left : window.scrollX, scrollToOptions.top != null ? scrollToOptions.top : window.scrollY);
-}
-function getScrollKey(path, delta) {
-    const position = history.state ? history.state.position - delta : -1;
-    return position + path;
-}
-const scrollPositions = new Map();
-function saveScrollPosition(key, scrollPosition) {
-    scrollPositions.set(key, scrollPosition);
-}
-function getSavedScrollPosition(key) {
-    const scroll = scrollPositions.get(key);
-    // consume it so it's not used again
-    scrollPositions.delete(key);
-    return scroll;
-}
-// TODO: RFC about how to save scroll position
-/**
- * ScrollBehavior instance used by the router to compute and restore the scroll
- * position when navigating.
- */ // export interface ScrollHandler<ScrollPositionEntry extends HistoryStateValue, ScrollPosition extends ScrollPositionEntry> {
-//   // returns a scroll position that can be saved in history
-//   compute(): ScrollPositionEntry
-//   // can take an extended ScrollPositionEntry
-//   scroll(position: ScrollPosition): void
-// }
-// export const scrollHandler: ScrollHandler<ScrollPosition> = {
-//   compute: computeScroll,
-//   scroll: scrollToPosition,
-// }
-let createBaseLocation = ()=>location.protocol + '//' + location.host;
-/**
- * Creates a normalized history location from a window.location object
- * @param base - The base path
- * @param location - The window.location object
- */ function createCurrentLocation(base, location1) {
-    const { pathname, search, hash } = location1;
-    // allows hash bases like #, /#, #/, #!, #!/, /#!/, or even /folder#end
-    const hashPos = base.indexOf('#');
-    if (hashPos > -1) {
-        let slicePos = hash.includes(base.slice(hashPos)) ? base.slice(hashPos).length : 1;
-        let pathFromHash = hash.slice(slicePos);
-        // prepend the starting slash to hash so the url starts with /#
-        if (pathFromHash[0] !== '/') pathFromHash = '/' + pathFromHash;
-        return stripBase(pathFromHash, '');
-    }
-    const path = stripBase(pathname, base);
-    return path + search + hash;
-}
-function useHistoryListeners(base, historyState, currentLocation, replace) {
-    let listeners = [];
-    let teardowns = [];
-    // TODO: should it be a stack? a Dict. Check if the popstate listener
-    // can trigger twice
-    let pauseState = null;
-    const popStateHandler = ({ state })=>{
-        const to = createCurrentLocation(base, location);
-        const from = currentLocation.value;
-        const fromState = historyState.value;
-        let delta = 0;
-        if (state) {
-            currentLocation.value = to;
-            historyState.value = state;
-            // ignore the popstate and reset the pauseState
-            if (pauseState && pauseState === from) {
-                pauseState = null;
-                return;
-            }
-            delta = fromState ? state.position - fromState.position : 0;
-        } else replace(to);
-        // Here we could also revert the navigation by calling history.go(-delta)
-        // this listener will have to be adapted to not trigger again and to wait for the url
-        // to be updated before triggering the listeners. Some kind of validation function would also
-        // need to be passed to the listeners so the navigation can be accepted
-        // call all listeners
-        listeners.forEach((listener)=>{
-            listener(currentLocation.value, from, {
-                delta,
-                type: NavigationType.pop,
-                direction: delta ? delta > 0 ? NavigationDirection.forward : NavigationDirection.back : NavigationDirection.unknown
-            });
-        });
-    };
-    function pauseListeners() {
-        pauseState = currentLocation.value;
-    }
-    function listen(callback) {
-        // set up the listener and prepare teardown callbacks
-        listeners.push(callback);
-        const teardown = ()=>{
-            const index = listeners.indexOf(callback);
-            if (index > -1) listeners.splice(index, 1);
-        };
-        teardowns.push(teardown);
-        return teardown;
-    }
-    function beforeUnloadListener() {
-        const { history: history1 } = window;
-        if (!history1.state) return;
-        history1.replaceState(assign({}, history1.state, {
-            scroll: computeScrollPosition()
-        }), '');
-    }
-    function destroy() {
-        for (const teardown of teardowns)teardown();
-        teardowns = [];
-        window.removeEventListener('popstate', popStateHandler);
-        window.removeEventListener('beforeunload', beforeUnloadListener);
-    }
-    // set up the listeners and prepare teardown callbacks
-    window.addEventListener('popstate', popStateHandler);
-    // TODO: could we use 'pagehide' or 'visibilitychange' instead?
-    // https://developer.chrome.com/blog/page-lifecycle-api/
-    window.addEventListener('beforeunload', beforeUnloadListener, {
-        passive: true
-    });
-    return {
-        pauseListeners,
-        listen,
-        destroy
-    };
-}
-/**
- * Creates a state object
- */ function buildState(back, current, forward, replaced = false, computeScroll = false) {
-    return {
-        back,
-        current,
-        forward,
-        replaced,
-        position: window.history.length,
-        scroll: computeScroll ? computeScrollPosition() : null
-    };
-}
-function useHistoryStateNavigation(base) {
-    const { history: history1, location: location1 } = window;
-    // private variables
-    const currentLocation = {
-        value: createCurrentLocation(base, location1)
-    };
-    const historyState = {
-        value: history1.state
-    };
-    // build current history entry as this is a fresh navigation
-    if (!historyState.value) changeLocation(currentLocation.value, {
-        back: null,
-        current: currentLocation.value,
-        forward: null,
-        // the length is off by one, we need to decrease it
-        position: history1.length - 1,
-        replaced: true,
-        // don't add a scroll as the user may have an anchor, and we want
-        // scrollBehavior to be triggered without a saved position
-        scroll: null
-    }, true);
-    function changeLocation(to, state, replace) {
-        /**
-         * if a base tag is provided, and we are on a normal domain, we have to
-         * respect the provided `base` attribute because pushState() will use it and
-         * potentially erase anything before the `#` like at
-         * https://github.com/vuejs/router/issues/685 where a base of
-         * `/folder/#` but a base of `/` would erase the `/folder/` section. If
-         * there is no host, the `<base>` tag makes no sense and if there isn't a
-         * base tag we can just use everything after the `#`.
-         */ const hashIndex = base.indexOf('#');
-        const url = hashIndex > -1 ? (location1.host && document.querySelector('base') ? base : base.slice(hashIndex)) + to : createBaseLocation() + base + to;
-        try {
-            // BROWSER QUIRK
-            // NOTE: Safari throws a SecurityError when calling this function 100 times in 30 seconds
-            history1[replace ? 'replaceState' : 'pushState'](state, '', url);
-            historyState.value = state;
-        } catch (err) {
-            warn('Error with push/replace State', err);
-            // Force the navigation, this also resets the call count
-            location1[replace ? 'replace' : 'assign'](url);
-        }
-    }
-    function replace(to, data) {
-        const state = assign({}, history1.state, buildState(historyState.value.back, // keep back and forward entries but override current position
-        to, historyState.value.forward, true), data, {
-            position: historyState.value.position
-        });
-        changeLocation(to, state, true);
-        currentLocation.value = to;
-    }
-    function push(to, data) {
-        // Add to current entry the information of where we are going
-        // as well as saving the current position
-        const currentState = assign({}, // use current history state to gracefully handle a wrong call to
-        // history.replaceState
-        // https://github.com/vuejs/router/issues/366
-        historyState.value, history1.state, {
-            forward: to,
-            scroll: computeScrollPosition()
-        });
-        if (!history1.state) warn(`history.state seems to have been manually replaced without preserving the necessary values. Make sure to preserve existing history state if you are manually calling history.replaceState:\n\n` + `history.replaceState(history.state, '', url)\n\n` + `You can find more information at https://router.vuejs.org/guide/migration/#Usage-of-history-state`);
-        changeLocation(currentState.current, currentState, true);
-        const state = assign({}, buildState(currentLocation.value, to, null), {
-            position: currentState.position + 1
-        }, data);
-        changeLocation(to, state, false);
-        currentLocation.value = to;
-    }
-    return {
-        location: currentLocation,
-        state: historyState,
-        push,
-        replace
-    };
-}
-/**
- * Creates an HTML5 history. Most common history for single page applications.
- *
- * @param base -
- */ function createWebHistory(base) {
-    base = normalizeBase(base);
-    const historyNavigation = useHistoryStateNavigation(base);
-    const historyListeners = useHistoryListeners(base, historyNavigation.state, historyNavigation.location, historyNavigation.replace);
-    function go(delta, triggerListeners = true) {
-        if (!triggerListeners) historyListeners.pauseListeners();
-        history.go(delta);
-    }
-    const routerHistory = assign({
-        // it's overridden right after
-        location: '',
-        base,
-        go,
-        createHref: createHref.bind(null, base)
-    }, historyNavigation, historyListeners);
-    Object.defineProperty(routerHistory, 'location', {
-        enumerable: true,
-        get: ()=>historyNavigation.location.value
-    });
-    Object.defineProperty(routerHistory, 'state', {
-        enumerable: true,
-        get: ()=>historyNavigation.state.value
-    });
-    return routerHistory;
-}
-/**
- * Creates an in-memory based history. The main purpose of this history is to handle SSR. It starts in a special location that is nowhere.
- * It's up to the user to replace that location with the starter location by either calling `router.push` or `router.replace`.
- *
- * @param base - Base applied to all urls, defaults to '/'
- * @returns a history object that can be passed to the router constructor
- */ function createMemoryHistory(base = '') {
-    let listeners = [];
-    let queue = [
-        START
-    ];
-    let position = 0;
-    base = normalizeBase(base);
-    function setLocation(location1) {
-        position++;
-        if (position !== queue.length) // we are in the middle, we remove everything from here in the queue
-        queue.splice(position);
-        queue.push(location1);
-    }
-    function triggerListeners(to, from, { direction, delta }) {
-        const info = {
-            direction,
-            delta,
-            type: NavigationType.pop
-        };
-        for (const callback of listeners)callback(to, from, info);
-    }
-    const routerHistory = {
-        // rewritten by Object.defineProperty
-        location: START,
-        // TODO: should be kept in queue
-        state: {},
-        base,
-        createHref: createHref.bind(null, base),
-        replace (to) {
-            // remove current entry and decrement position
-            queue.splice(position--, 1);
-            setLocation(to);
-        },
-        push (to, data) {
-            setLocation(to);
-        },
-        listen (callback) {
-            listeners.push(callback);
-            return ()=>{
-                const index = listeners.indexOf(callback);
-                if (index > -1) listeners.splice(index, 1);
-            };
-        },
-        destroy () {
-            listeners = [];
-            queue = [
-                START
-            ];
-            position = 0;
-        },
-        go (delta, shouldTrigger = true) {
-            const from = this.location;
-            const direction = // we are considering delta === 0 going forward, but in abstract mode
-            // using 0 for the delta doesn't make sense like it does in html5 where
-            // it reloads the page
-            delta < 0 ? NavigationDirection.back : NavigationDirection.forward;
-            position = Math.max(0, Math.min(position + delta, queue.length - 1));
-            if (shouldTrigger) triggerListeners(this.location, from, {
-                direction,
-                delta
-            });
-        }
-    };
-    Object.defineProperty(routerHistory, 'location', {
-        enumerable: true,
-        get: ()=>queue[position]
-    });
-    return routerHistory;
-}
-/**
- * Creates a hash history. Useful for web applications with no host (e.g. `file://`) or when configuring a server to
- * handle any URL is not possible.
- *
- * @param base - optional base to provide. Defaults to `location.pathname + location.search` If there is a `<base>` tag
- * in the `head`, its value will be ignored in favor of this parameter **but note it affects all the history.pushState()
- * calls**, meaning that if you use a `<base>` tag, it's `href` value **has to match this parameter** (ignoring anything
- * after the `#`).
- *
- * @example
- * ```js
- * // at https://example.com/folder
- * createWebHashHistory() // gives a url of `https://example.com/folder#`
- * createWebHashHistory('/folder/') // gives a url of `https://example.com/folder/#`
- * // if the `#` is provided in the base, it won't be added by `createWebHashHistory`
- * createWebHashHistory('/folder/#/app/') // gives a url of `https://example.com/folder/#/app/`
- * // you should avoid doing this because it changes the original url and breaks copying urls
- * createWebHashHistory('/other-folder/') // gives a url of `https://example.com/other-folder/#`
- *
- * // at file:///usr/etc/folder/index.html
- * // for locations with no `host`, the base is ignored
- * createWebHashHistory('/iAmIgnored') // gives a url of `file:///usr/etc/folder/index.html#`
- * ```
- */ function createWebHashHistory(base) {
-    // Make sure this implementation is fine in terms of encoding, specially for IE11
-    // for `file://`, directly use the pathname and ignore the base
-    // location.pathname contains an initial `/` even at the root: `https://example.com`
-    base = location.host ? base || location.pathname + location.search : '';
-    // allow the user to provide a `#` in the middle: `/base/#/app`
-    if (!base.includes('#')) base += '#';
-    if (!base.endsWith('#/') && !base.endsWith('#')) warn(`A hash base must end with a "#":\n"${base}" should be "${base.replace(/#.*$/, '#')}".`);
-    return createWebHistory(base);
-}
-function isRouteLocation(route) {
-    return typeof route === 'string' || route && typeof route === 'object';
-}
-function isRouteName(name) {
-    return typeof name === 'string' || typeof name === 'symbol';
-}
-const NavigationFailureSymbol = Symbol('navigation failure');
-/**
- * Enumeration with all possible types for navigation failures. Can be passed to
- * {@link isNavigationFailure} to check for specific failures.
- */ var NavigationFailureType;
-(function(NavigationFailureType) {
-    /**
-     * An aborted navigation is a navigation that failed because a navigation
-     * guard returned `false` or called `next(false)`
-     */ NavigationFailureType[NavigationFailureType["aborted"] = 4] = "aborted";
-    /**
-     * A cancelled navigation is a navigation that failed because a more recent
-     * navigation finished started (not necessarily finished).
-     */ NavigationFailureType[NavigationFailureType["cancelled"] = 8] = "cancelled";
-    /**
-     * A duplicated navigation is a navigation that failed because it was
-     * initiated while already being at the exact same location.
-     */ NavigationFailureType[NavigationFailureType["duplicated"] = 16] = "duplicated";
-})(NavigationFailureType || (NavigationFailureType = {}));
-// DEV only debug messages
-const ErrorTypeMessages = {
-    [1 /* ErrorTypes.MATCHER_NOT_FOUND */ ] ({ location: location1, currentLocation }) {
-        return `No match for\n ${JSON.stringify(location1)}${currentLocation ? '\nwhile being at\n' + JSON.stringify(currentLocation) : ''}`;
-    },
-    [2 /* ErrorTypes.NAVIGATION_GUARD_REDIRECT */ ] ({ from, to }) {
-        return `Redirected from "${from.fullPath}" to "${stringifyRoute(to)}" via a navigation guard.`;
-    },
-    [4 /* ErrorTypes.NAVIGATION_ABORTED */ ] ({ from, to }) {
-        return `Navigation aborted from "${from.fullPath}" to "${to.fullPath}" via a navigation guard.`;
-    },
-    [8 /* ErrorTypes.NAVIGATION_CANCELLED */ ] ({ from, to }) {
-        return `Navigation cancelled from "${from.fullPath}" to "${to.fullPath}" with a new navigation.`;
-    },
-    [16 /* ErrorTypes.NAVIGATION_DUPLICATED */ ] ({ from, to }) {
-        return `Avoided redundant navigation to current location: "${from.fullPath}".`;
-    }
-};
-/**
- * Creates a typed NavigationFailure object.
- * @internal
- * @param type - NavigationFailureType
- * @param params - { from, to }
- */ function createRouterError(type, params) {
-    return assign(new Error(ErrorTypeMessages[type](params)), {
-        type,
-        [NavigationFailureSymbol]: true
-    }, params);
-}
-function isNavigationFailure(error, type) {
-    return error instanceof Error && NavigationFailureSymbol in error && (type == null || !!(error.type & type));
-}
-const propertiesToLog = [
-    'params',
-    'query',
-    'hash'
-];
-function stringifyRoute(to) {
-    if (typeof to === 'string') return to;
-    if (to.path != null) return to.path;
-    const location1 = {};
-    for (const key of propertiesToLog)if (key in to) location1[key] = to[key];
-    return JSON.stringify(location1, null, 2);
-}
-// default pattern for a param: non-greedy everything but /
-const BASE_PARAM_PATTERN = '[^/]+?';
-const BASE_PATH_PARSER_OPTIONS = {
-    sensitive: false,
-    strict: false,
-    start: true,
-    end: true
-};
-// Special Regex characters that must be escaped in static tokens
-const REGEX_CHARS_RE = /[.+*?^${}()[\]/\\]/g;
-/**
- * Creates a path parser from an array of Segments (a segment is an array of Tokens)
- *
- * @param segments - array of segments returned by tokenizePath
- * @param extraOptions - optional options for the regexp
- * @returns a PathParser
- */ function tokensToParser(segments, extraOptions) {
-    const options = assign({}, BASE_PATH_PARSER_OPTIONS, extraOptions);
-    // the amount of scores is the same as the length of segments except for the root segment "/"
-    const score = [];
-    // the regexp as a string
-    let pattern = options.start ? '^' : '';
-    // extracted keys
-    const keys = [];
-    for (const segment of segments){
-        // the root segment needs special treatment
-        const segmentScores = segment.length ? [] : [
-            90 /* PathScore.Root */ 
-        ];
-        // allow trailing slash
-        if (options.strict && !segment.length) pattern += '/';
-        for(let tokenIndex = 0; tokenIndex < segment.length; tokenIndex++){
-            const token = segment[tokenIndex];
-            // resets the score if we are inside a sub-segment /:a-other-:b
-            let subSegmentScore = 40 /* PathScore.Segment */  + (options.sensitive ? 0.25 /* PathScore.BonusCaseSensitive */  : 0);
-            if (token.type === 0 /* TokenType.Static */ ) {
-                // prepend the slash if we are starting a new segment
-                if (!tokenIndex) pattern += '/';
-                pattern += token.value.replace(REGEX_CHARS_RE, '\\$&');
-                subSegmentScore += 40 /* PathScore.Static */ ;
-            } else if (token.type === 1 /* TokenType.Param */ ) {
-                const { value, repeatable, optional, regexp } = token;
-                keys.push({
-                    name: value,
-                    repeatable,
-                    optional
-                });
-                const re = regexp ? regexp : BASE_PARAM_PATTERN;
-                // the user provided a custom regexp /:id(\\d+)
-                if (re !== BASE_PARAM_PATTERN) {
-                    subSegmentScore += 10 /* PathScore.BonusCustomRegExp */ ;
-                    // make sure the regexp is valid before using it
-                    try {
-                        new RegExp(`(${re})`);
-                    } catch (err) {
-                        throw new Error(`Invalid custom RegExp for param "${value}" (${re}): ` + err.message);
-                    }
-                }
-                // when we repeat we must take care of the repeating leading slash
-                let subPattern = repeatable ? `((?:${re})(?:/(?:${re}))*)` : `(${re})`;
-                // prepend the slash if we are starting a new segment
-                if (!tokenIndex) subPattern = // avoid an optional / if there are more segments e.g. /:p?-static
-                // or /:p?-:p2
-                optional && segment.length < 2 ? `(?:/${subPattern})` : '/' + subPattern;
-                if (optional) subPattern += '?';
-                pattern += subPattern;
-                subSegmentScore += 20 /* PathScore.Dynamic */ ;
-                if (optional) subSegmentScore += -8 /* PathScore.BonusOptional */ ;
-                if (repeatable) subSegmentScore += -20 /* PathScore.BonusRepeatable */ ;
-                if (re === '.*') subSegmentScore += -50 /* PathScore.BonusWildcard */ ;
-            }
-            segmentScores.push(subSegmentScore);
-        }
-        // an empty array like /home/ -> [[{home}], []]
-        // if (!segment.length) pattern += '/'
-        score.push(segmentScores);
-    }
-    // only apply the strict bonus to the last score
-    if (options.strict && options.end) {
-        const i = score.length - 1;
-        score[i][score[i].length - 1] += 0.7000000000000001 /* PathScore.BonusStrict */ ;
-    }
-    // TODO: dev only warn double trailing slash
-    if (!options.strict) pattern += '/?';
-    if (options.end) pattern += '$';
-    else if (options.strict && !pattern.endsWith('/')) pattern += '(?:/|$)';
-    const re = new RegExp(pattern, options.sensitive ? '' : 'i');
-    function parse(path) {
-        const match = path.match(re);
-        const params = {};
-        if (!match) return null;
-        for(let i = 1; i < match.length; i++){
-            const value = match[i] || '';
-            const key = keys[i - 1];
-            params[key.name] = value && key.repeatable ? value.split('/') : value;
-        }
-        return params;
-    }
-    function stringify(params) {
-        let path = '';
-        // for optional parameters to allow to be empty
-        let avoidDuplicatedSlash = false;
-        for (const segment of segments){
-            if (!avoidDuplicatedSlash || !path.endsWith('/')) path += '/';
-            avoidDuplicatedSlash = false;
-            for (const token of segment){
-                if (token.type === 0 /* TokenType.Static */ ) path += token.value;
-                else if (token.type === 1 /* TokenType.Param */ ) {
-                    const { value, repeatable, optional } = token;
-                    const param = value in params ? params[value] : '';
-                    if (isArray(param) && !repeatable) throw new Error(`Provided param "${value}" is an array but it is not repeatable (* or + modifiers)`);
-                    const text = isArray(param) ? param.join('/') : param;
-                    if (!text) {
-                        if (optional) // if we have more than one optional param like /:a?-static we don't need to care about the optional param
-                        {
-                            if (segment.length < 2) {
-                                // remove the last slash as we could be at the end
-                                if (path.endsWith('/')) path = path.slice(0, -1);
-                                else avoidDuplicatedSlash = true;
-                            }
-                        } else throw new Error(`Missing required param "${value}"`);
-                    }
-                    path += text;
-                }
-            }
-        }
-        // avoid empty path when we have multiple optional params
-        return path || '/';
-    }
-    return {
-        re,
-        score,
-        keys,
-        parse,
-        stringify
-    };
-}
-/**
- * Compares an array of numbers as used in PathParser.score and returns a
- * number. This function can be used to `sort` an array
- *
- * @param a - first array of numbers
- * @param b - second array of numbers
- * @returns 0 if both are equal, < 0 if a should be sorted first, > 0 if b
- * should be sorted first
- */ function compareScoreArray(a, b) {
-    let i = 0;
-    while(i < a.length && i < b.length){
-        const diff = b[i] - a[i];
-        // only keep going if diff === 0
-        if (diff) return diff;
-        i++;
-    }
-    // if the last subsegment was Static, the shorter segments should be sorted first
-    // otherwise sort the longest segment first
-    if (a.length < b.length) return a.length === 1 && a[0] === 80 /* PathScore.Segment */  ? -1 : 1;
-    else if (a.length > b.length) return b.length === 1 && b[0] === 80 /* PathScore.Segment */  ? 1 : -1;
-    return 0;
-}
-/**
- * Compare function that can be used with `sort` to sort an array of PathParser
- *
- * @param a - first PathParser
- * @param b - second PathParser
- * @returns 0 if both are equal, < 0 if a should be sorted first, > 0 if b
- */ function comparePathParserScore(a, b) {
-    let i = 0;
-    const aScore = a.score;
-    const bScore = b.score;
-    while(i < aScore.length && i < bScore.length){
-        const comp = compareScoreArray(aScore[i], bScore[i]);
-        // do not return if both are equal
-        if (comp) return comp;
-        i++;
-    }
-    if (Math.abs(bScore.length - aScore.length) === 1) {
-        if (isLastScoreNegative(aScore)) return 1;
-        if (isLastScoreNegative(bScore)) return -1;
-    }
-    // if a and b share the same score entries but b has more, sort b first
-    return bScore.length - aScore.length;
-// this is the ternary version
-// return aScore.length < bScore.length
-//   ? 1
-//   : aScore.length > bScore.length
-//   ? -1
-//   : 0
-}
-/**
- * This allows detecting splats at the end of a path: /home/:id(.*)*
- *
- * @param score - score to check
- * @returns true if the last entry is negative
- */ function isLastScoreNegative(score) {
-    const last = score[score.length - 1];
-    return score.length > 0 && last[last.length - 1] < 0;
-}
-const ROOT_TOKEN = {
-    type: 0 /* TokenType.Static */ ,
-    value: ''
-};
-const VALID_PARAM_RE = /[a-zA-Z0-9_]/;
-// After some profiling, the cache seems to be unnecessary because tokenizePath
-// (the slowest part of adding a route) is very fast
-// const tokenCache = new Map<string, Token[][]>()
-function tokenizePath(path) {
-    if (!path) return [
-        []
-    ];
-    if (path === '/') return [
-        [
-            ROOT_TOKEN
-        ]
-    ];
-    if (!path.startsWith('/')) throw new Error(`Route paths should start with a "/": "${path}" should be "/${path}".`);
-    // if (tokenCache.has(path)) return tokenCache.get(path)!
-    function crash(message) {
-        throw new Error(`ERR (${state})/"${buffer}": ${message}`);
-    }
-    let state = 0 /* TokenizerState.Static */ ;
-    let previousState = state;
-    const tokens = [];
-    // the segment will always be valid because we get into the initial state
-    // with the leading /
-    let segment;
-    function finalizeSegment() {
-        if (segment) tokens.push(segment);
-        segment = [];
-    }
-    // index on the path
-    let i = 0;
-    // char at index
-    let char;
-    // buffer of the value read
-    let buffer = '';
-    // custom regexp for a param
-    let customRe = '';
-    function consumeBuffer() {
-        if (!buffer) return;
-        if (state === 0 /* TokenizerState.Static */ ) segment.push({
-            type: 0 /* TokenType.Static */ ,
-            value: buffer
-        });
-        else if (state === 1 /* TokenizerState.Param */  || state === 2 /* TokenizerState.ParamRegExp */  || state === 3 /* TokenizerState.ParamRegExpEnd */ ) {
-            if (segment.length > 1 && (char === '*' || char === '+')) crash(`A repeatable param (${buffer}) must be alone in its segment. eg: '/:ids+.`);
-            segment.push({
-                type: 1 /* TokenType.Param */ ,
-                value: buffer,
-                regexp: customRe,
-                repeatable: char === '*' || char === '+',
-                optional: char === '*' || char === '?'
-            });
-        } else crash('Invalid state to consume buffer');
-        buffer = '';
-    }
-    function addCharToBuffer() {
-        buffer += char;
-    }
-    while(i < path.length){
-        char = path[i++];
-        if (char === '\\' && state !== 2 /* TokenizerState.ParamRegExp */ ) {
-            previousState = state;
-            state = 4 /* TokenizerState.EscapeNext */ ;
-            continue;
-        }
-        switch(state){
-            case 0 /* TokenizerState.Static */ :
-                if (char === '/') {
-                    if (buffer) consumeBuffer();
-                    finalizeSegment();
-                } else if (char === ':') {
-                    consumeBuffer();
-                    state = 1 /* TokenizerState.Param */ ;
-                } else addCharToBuffer();
-                break;
-            case 4 /* TokenizerState.EscapeNext */ :
-                addCharToBuffer();
-                state = previousState;
-                break;
-            case 1 /* TokenizerState.Param */ :
-                if (char === '(') state = 2 /* TokenizerState.ParamRegExp */ ;
-                else if (VALID_PARAM_RE.test(char)) addCharToBuffer();
-                else {
-                    consumeBuffer();
-                    state = 0 /* TokenizerState.Static */ ;
-                    // go back one character if we were not modifying
-                    if (char !== '*' && char !== '?' && char !== '+') i--;
-                }
-                break;
-            case 2 /* TokenizerState.ParamRegExp */ :
-                // TODO: is it worth handling nested regexp? like :p(?:prefix_([^/]+)_suffix)
-                // it already works by escaping the closing )
-                // https://paths.esm.dev/?p=AAMeJbiAwQEcDKbAoAAkP60PG2R6QAvgNaA6AFACM2ABuQBB#
-                // is this really something people need since you can also write
-                // /prefix_:p()_suffix
-                if (char === ')') {
-                    // handle the escaped )
-                    if (customRe[customRe.length - 1] == '\\') customRe = customRe.slice(0, -1) + char;
-                    else state = 3 /* TokenizerState.ParamRegExpEnd */ ;
-                } else customRe += char;
-                break;
-            case 3 /* TokenizerState.ParamRegExpEnd */ :
-                // same as finalizing a param
-                consumeBuffer();
-                state = 0 /* TokenizerState.Static */ ;
-                // go back one character if we were not modifying
-                if (char !== '*' && char !== '?' && char !== '+') i--;
-                customRe = '';
-                break;
-            default:
-                crash('Unknown state');
-                break;
-        }
-    }
-    if (state === 2 /* TokenizerState.ParamRegExp */ ) crash(`Unfinished custom RegExp for param "${buffer}"`);
-    consumeBuffer();
-    finalizeSegment();
-    // tokenCache.set(path, tokens)
-    return tokens;
-}
-function createRouteRecordMatcher(record, parent, options) {
-    const parser = tokensToParser(tokenizePath(record.path), options);
-    {
-        const existingKeys = new Set();
-        for (const key of parser.keys){
-            if (existingKeys.has(key.name)) warn(`Found duplicated params with name "${key.name}" for path "${record.path}". Only the last one will be available on "$route.params".`);
-            existingKeys.add(key.name);
-        }
-    }
-    const matcher = assign(parser, {
-        record,
-        parent,
-        // these needs to be populated by the parent
-        children: [],
-        alias: []
-    });
-    if (parent) // both are aliases or both are not aliases
-    // we don't want to mix them because the order is used when
-    // passing originalRecord in Matcher.addRoute
-    {
-        if (!matcher.record.aliasOf === !parent.record.aliasOf) parent.children.push(matcher);
-    }
-    return matcher;
-}
-/**
- * Creates a Router Matcher.
- *
- * @internal
- * @param routes - array of initial routes
- * @param globalOptions - global route options
- */ function createRouterMatcher(routes, globalOptions) {
-    // normalized ordered array of matchers
-    const matchers = [];
-    const matcherMap = new Map();
-    globalOptions = mergeOptions({
-        strict: false,
-        end: true,
-        sensitive: false
-    }, globalOptions);
-    function getRecordMatcher(name) {
-        return matcherMap.get(name);
-    }
-    function addRoute(record, parent, originalRecord) {
-        // used later on to remove by name
-        const isRootAdd = !originalRecord;
-        const mainNormalizedRecord = normalizeRouteRecord(record);
-        checkChildMissingNameWithEmptyPath(mainNormalizedRecord, parent);
-        // we might be the child of an alias
-        mainNormalizedRecord.aliasOf = originalRecord && originalRecord.record;
-        const options = mergeOptions(globalOptions, record);
-        // generate an array of records to correctly handle aliases
-        const normalizedRecords = [
-            mainNormalizedRecord
-        ];
-        if ('alias' in record) {
-            const aliases = typeof record.alias === 'string' ? [
-                record.alias
-            ] : record.alias;
-            for (const alias of aliases)normalizedRecords.push(// we need to normalize again to ensure the `mods` property
-            // being non enumerable
-            normalizeRouteRecord(assign({}, mainNormalizedRecord, {
-                // this allows us to hold a copy of the `components` option
-                // so that async components cache is hold on the original record
-                components: originalRecord ? originalRecord.record.components : mainNormalizedRecord.components,
-                path: alias,
-                // we might be the child of an alias
-                aliasOf: originalRecord ? originalRecord.record : mainNormalizedRecord
-            })));
-        }
-        let matcher;
-        let originalMatcher;
-        for (const normalizedRecord of normalizedRecords){
-            const { path } = normalizedRecord;
-            // Build up the path for nested routes if the child isn't an absolute
-            // route. Only add the / delimiter if the child path isn't empty and if the
-            // parent path doesn't have a trailing slash
-            if (parent && path[0] !== '/') {
-                const parentPath = parent.record.path;
-                const connectingSlash = parentPath[parentPath.length - 1] === '/' ? '' : '/';
-                normalizedRecord.path = parent.record.path + (path && connectingSlash + path);
-            }
-            if (normalizedRecord.path === '*') throw new Error('Catch all routes ("*") must now be defined using a param with a custom regexp.\nSee more at https://router.vuejs.org/guide/migration/#Removed-star-or-catch-all-routes.');
-            // create the object beforehand, so it can be passed to children
-            matcher = createRouteRecordMatcher(normalizedRecord, parent, options);
-            if (parent && path[0] === '/') checkMissingParamsInAbsolutePath(matcher, parent);
-            // if we are an alias we must tell the original record that we exist,
-            // so we can be removed
-            if (originalRecord) {
-                originalRecord.alias.push(matcher);
-                checkSameParams(originalRecord, matcher);
-            } else {
-                // otherwise, the first record is the original and others are aliases
-                originalMatcher = originalMatcher || matcher;
-                if (originalMatcher !== matcher) originalMatcher.alias.push(matcher);
-                // remove the route if named and only for the top record (avoid in nested calls)
-                // this works because the original record is the first one
-                if (isRootAdd && record.name && !isAliasRecord(matcher)) {
-                    checkSameNameAsAncestor(record, parent);
-                    removeRoute(record.name);
-                }
-            }
-            // Avoid adding a record that doesn't display anything. This allows passing through records without a component to
-            // not be reached and pass through the catch all route
-            if (isMatchable(matcher)) insertMatcher(matcher);
-            if (mainNormalizedRecord.children) {
-                const children = mainNormalizedRecord.children;
-                for(let i = 0; i < children.length; i++)addRoute(children[i], matcher, originalRecord && originalRecord.children[i]);
-            }
-            // if there was no original record, then the first one was not an alias and all
-            // other aliases (if any) need to reference this record when adding children
-            originalRecord = originalRecord || matcher;
-        // TODO: add normalized records for more flexibility
-        // if (parent && isAliasRecord(originalRecord)) {
-        //   parent.children.push(originalRecord)
-        // }
-        }
-        return originalMatcher ? ()=>{
-            // since other matchers are aliases, they should be removed by the original matcher
-            removeRoute(originalMatcher);
-        } : noop;
-    }
-    function removeRoute(matcherRef) {
-        if (isRouteName(matcherRef)) {
-            const matcher = matcherMap.get(matcherRef);
-            if (matcher) {
-                matcherMap.delete(matcherRef);
-                matchers.splice(matchers.indexOf(matcher), 1);
-                matcher.children.forEach(removeRoute);
-                matcher.alias.forEach(removeRoute);
-            }
-        } else {
-            const index = matchers.indexOf(matcherRef);
-            if (index > -1) {
-                matchers.splice(index, 1);
-                if (matcherRef.record.name) matcherMap.delete(matcherRef.record.name);
-                matcherRef.children.forEach(removeRoute);
-                matcherRef.alias.forEach(removeRoute);
-            }
-        }
-    }
-    function getRoutes() {
-        return matchers;
-    }
-    function insertMatcher(matcher) {
-        const index = findInsertionIndex(matcher, matchers);
-        matchers.splice(index, 0, matcher);
-        // only add the original record to the name map
-        if (matcher.record.name && !isAliasRecord(matcher)) matcherMap.set(matcher.record.name, matcher);
-    }
-    function resolve(location1, currentLocation) {
-        let matcher;
-        let params = {};
-        let path;
-        let name;
-        if ('name' in location1 && location1.name) {
-            matcher = matcherMap.get(location1.name);
-            if (!matcher) throw createRouterError(1 /* ErrorTypes.MATCHER_NOT_FOUND */ , {
-                location: location1
-            });
-            {
-                const invalidParams = Object.keys(location1.params || {}).filter((paramName)=>!matcher.keys.find((k)=>k.name === paramName));
-                if (invalidParams.length) warn(`Discarded invalid param(s) "${invalidParams.join('", "')}" when navigating. See https://github.com/vuejs/router/blob/main/packages/router/CHANGELOG.md#414-2022-08-22 for more details.`);
-            }
-            name = matcher.record.name;
-            params = assign(// paramsFromLocation is a new object
-            paramsFromLocation(currentLocation.params, // only keep params that exist in the resolved location
-            // only keep optional params coming from a parent record
-            matcher.keys.filter((k)=>!k.optional).concat(matcher.parent ? matcher.parent.keys.filter((k)=>k.optional) : []).map((k)=>k.name)), // discard any existing params in the current location that do not exist here
-            // #1497 this ensures better active/exact matching
-            location1.params && paramsFromLocation(location1.params, matcher.keys.map((k)=>k.name)));
-            // throws if cannot be stringified
-            path = matcher.stringify(params);
-        } else if (location1.path != null) {
-            // no need to resolve the path with the matcher as it was provided
-            // this also allows the user to control the encoding
-            path = location1.path;
-            if (!path.startsWith('/')) warn(`The Matcher cannot resolve relative paths but received "${path}". Unless you directly called \`matcher.resolve("${path}")\`, this is probably a bug in vue-router. Please open an issue at https://github.com/vuejs/router/issues/new/choose.`);
-            matcher = matchers.find((m)=>m.re.test(path));
-            // matcher should have a value after the loop
-            if (matcher) {
-                // we know the matcher works because we tested the regexp
-                params = matcher.parse(path);
-                name = matcher.record.name;
-            }
-        // location is a relative path
-        } else {
-            // match by name or path of current route
-            matcher = currentLocation.name ? matcherMap.get(currentLocation.name) : matchers.find((m)=>m.re.test(currentLocation.path));
-            if (!matcher) throw createRouterError(1 /* ErrorTypes.MATCHER_NOT_FOUND */ , {
-                location: location1,
-                currentLocation
-            });
-            name = matcher.record.name;
-            // since we are navigating to the same location, we don't need to pick the
-            // params like when `name` is provided
-            params = assign({}, currentLocation.params, location1.params);
-            path = matcher.stringify(params);
-        }
-        const matched = [];
-        let parentMatcher = matcher;
-        while(parentMatcher){
-            // reversed order so parents are at the beginning
-            matched.unshift(parentMatcher.record);
-            parentMatcher = parentMatcher.parent;
-        }
-        return {
-            name,
-            path,
-            params,
-            matched,
-            meta: mergeMetaFields(matched)
-        };
-    }
-    // add initial routes
-    routes.forEach((route)=>addRoute(route));
-    function clearRoutes() {
-        matchers.length = 0;
-        matcherMap.clear();
-    }
-    return {
-        addRoute,
-        resolve,
-        removeRoute,
-        clearRoutes,
-        getRoutes,
-        getRecordMatcher
-    };
-}
-function paramsFromLocation(params, keys) {
-    const newParams = {};
-    for (const key of keys)if (key in params) newParams[key] = params[key];
-    return newParams;
-}
-/**
- * Normalizes a RouteRecordRaw. Creates a copy
- *
- * @param record
- * @returns the normalized version
- */ function normalizeRouteRecord(record) {
-    const normalized = {
-        path: record.path,
-        redirect: record.redirect,
-        name: record.name,
-        meta: record.meta || {},
-        aliasOf: record.aliasOf,
-        beforeEnter: record.beforeEnter,
-        props: normalizeRecordProps(record),
-        children: record.children || [],
-        instances: {},
-        leaveGuards: new Set(),
-        updateGuards: new Set(),
-        enterCallbacks: {},
-        // must be declared afterwards
-        // mods: {},
-        components: 'components' in record ? record.components || null : record.component && {
-            default: record.component
-        }
-    };
-    // mods contain modules and shouldn't be copied,
-    // logged or anything. It's just used for internal
-    // advanced use cases like data loaders
-    Object.defineProperty(normalized, 'mods', {
-        value: {}
-    });
-    return normalized;
-}
-/**
- * Normalize the optional `props` in a record to always be an object similar to
- * components. Also accept a boolean for components.
- * @param record
- */ function normalizeRecordProps(record) {
-    const propsObject = {};
-    // props does not exist on redirect records, but we can set false directly
-    const props = record.props || false;
-    if ('component' in record) propsObject.default = props;
-    else // NOTE: we could also allow a function to be applied to every component.
-    // Would need user feedback for use cases
-    for(const name in record.components)propsObject[name] = typeof props === 'object' ? props[name] : props;
-    return propsObject;
-}
-/**
- * Checks if a record or any of its parent is an alias
- * @param record
- */ function isAliasRecord(record) {
-    while(record){
-        if (record.record.aliasOf) return true;
-        record = record.parent;
-    }
-    return false;
-}
-/**
- * Merge meta fields of an array of records
- *
- * @param matched - array of matched records
- */ function mergeMetaFields(matched) {
-    return matched.reduce((meta, record)=>assign(meta, record.meta), {});
-}
-function mergeOptions(defaults, partialOptions) {
-    const options = {};
-    for(const key in defaults)options[key] = key in partialOptions ? partialOptions[key] : defaults[key];
-    return options;
-}
-function isSameParam(a, b) {
-    return a.name === b.name && a.optional === b.optional && a.repeatable === b.repeatable;
-}
-/**
- * Check if a path and its alias have the same required params
- *
- * @param a - original record
- * @param b - alias record
- */ function checkSameParams(a, b) {
-    for (const key of a.keys){
-        if (!key.optional && !b.keys.find(isSameParam.bind(null, key))) return warn(`Alias "${b.record.path}" and the original record: "${a.record.path}" must have the exact same param named "${key.name}"`);
-    }
-    for (const key of b.keys){
-        if (!key.optional && !a.keys.find(isSameParam.bind(null, key))) return warn(`Alias "${b.record.path}" and the original record: "${a.record.path}" must have the exact same param named "${key.name}"`);
-    }
-}
-/**
- * A route with a name and a child with an empty path without a name should warn when adding the route
- *
- * @param mainNormalizedRecord - RouteRecordNormalized
- * @param parent - RouteRecordMatcher
- */ function checkChildMissingNameWithEmptyPath(mainNormalizedRecord, parent) {
-    if (parent && parent.record.name && !mainNormalizedRecord.name && !mainNormalizedRecord.path) warn(`The route named "${String(parent.record.name)}" has a child without a name and an empty path. Using that name won't render the empty path child so you probably want to move the name to the child instead. If this is intentional, add a name to the child route to remove the warning.`);
-}
-function checkSameNameAsAncestor(record, parent) {
-    for(let ancestor = parent; ancestor; ancestor = ancestor.parent){
-        if (ancestor.record.name === record.name) throw new Error(`A route named "${String(record.name)}" has been added as a ${parent === ancestor ? 'child' : 'descendant'} of a route with the same name. Route names must be unique and a nested route cannot use the same name as an ancestor.`);
-    }
-}
-function checkMissingParamsInAbsolutePath(record, parent) {
-    for (const key of parent.keys){
-        if (!record.keys.find(isSameParam.bind(null, key))) return warn(`Absolute path "${record.record.path}" must have the exact same param named "${key.name}" as its parent "${parent.record.path}".`);
-    }
-}
-/**
- * Performs a binary search to find the correct insertion index for a new matcher.
- *
- * Matchers are primarily sorted by their score. If scores are tied then we also consider parent/child relationships,
- * with descendants coming before ancestors. If there's still a tie, new routes are inserted after existing routes.
- *
- * @param matcher - new matcher to be inserted
- * @param matchers - existing matchers
- */ function findInsertionIndex(matcher, matchers) {
-    // First phase: binary search based on score
-    let lower = 0;
-    let upper = matchers.length;
-    while(lower !== upper){
-        const mid = lower + upper >> 1;
-        const sortOrder = comparePathParserScore(matcher, matchers[mid]);
-        if (sortOrder < 0) upper = mid;
-        else lower = mid + 1;
-    }
-    // Second phase: check for an ancestor with the same score
-    const insertionAncestor = getInsertionAncestor(matcher);
-    if (insertionAncestor) {
-        upper = matchers.lastIndexOf(insertionAncestor, upper - 1);
-        if (upper < 0) // This should never happen
-        warn(`Finding ancestor route "${insertionAncestor.record.path}" failed for "${matcher.record.path}"`);
-    }
-    return upper;
-}
-function getInsertionAncestor(matcher) {
-    let ancestor = matcher;
-    while(ancestor = ancestor.parent){
-        if (isMatchable(ancestor) && comparePathParserScore(matcher, ancestor) === 0) return ancestor;
-    }
-    return;
-}
-/**
- * Checks if a matcher can be reachable. This means if it's possible to reach it as a route. For example, routes without
- * a component, or name, or redirect, are just used to group other routes.
- * @param matcher
- * @param matcher.record record of the matcher
- * @returns
- */ function isMatchable({ record }) {
-    return !!(record.name || record.components && Object.keys(record.components).length || record.redirect);
-}
-/**
- * Transforms a queryString into a {@link LocationQuery} object. Accept both, a
- * version with the leading `?` and without Should work as URLSearchParams
-
- * @internal
- *
- * @param search - search string to parse
- * @returns a query object
- */ function parseQuery(search) {
-    const query = {};
-    // avoid creating an object with an empty key and empty value
-    // because of split('&')
-    if (search === '' || search === '?') return query;
-    const hasLeadingIM = search[0] === '?';
-    const searchParams = (hasLeadingIM ? search.slice(1) : search).split('&');
-    for(let i = 0; i < searchParams.length; ++i){
-        // pre decode the + into space
-        const searchParam = searchParams[i].replace(PLUS_RE, ' ');
-        // allow the = character
-        const eqPos = searchParam.indexOf('=');
-        const key = decode(eqPos < 0 ? searchParam : searchParam.slice(0, eqPos));
-        const value = eqPos < 0 ? null : decode(searchParam.slice(eqPos + 1));
-        if (key in query) {
-            // an extra variable for ts types
-            let currentValue = query[key];
-            if (!isArray(currentValue)) currentValue = query[key] = [
-                currentValue
-            ];
-            currentValue.push(value);
-        } else query[key] = value;
-    }
-    return query;
-}
-/**
- * Stringifies a {@link LocationQueryRaw} object. Like `URLSearchParams`, it
- * doesn't prepend a `?`
- *
- * @internal
- *
- * @param query - query object to stringify
- * @returns string version of the query without the leading `?`
- */ function stringifyQuery(query) {
-    let search = '';
-    for(let key in query){
-        const value = query[key];
-        key = encodeQueryKey(key);
-        if (value == null) {
-            // only null adds the value
-            if (value !== undefined) search += (search.length ? '&' : '') + key;
-            continue;
-        }
-        // keep null values
-        const values = isArray(value) ? value.map((v)=>v && encodeQueryValue(v)) : [
-            value && encodeQueryValue(value)
-        ];
-        values.forEach((value)=>{
-            // skip undefined values in arrays as if they were not present
-            // smaller code than using filter
-            if (value !== undefined) {
-                // only append & with non-empty search
-                search += (search.length ? '&' : '') + key;
-                if (value != null) search += '=' + value;
-            }
-        });
-    }
-    return search;
-}
-/**
- * Transforms a {@link LocationQueryRaw} into a {@link LocationQuery} by casting
- * numbers into strings, removing keys with an undefined value and replacing
- * undefined with null in arrays
- *
- * @param query - query object to normalize
- * @returns a normalized query object
- */ function normalizeQuery(query) {
-    const normalizedQuery = {};
-    for(const key in query){
-        const value = query[key];
-        if (value !== undefined) normalizedQuery[key] = isArray(value) ? value.map((v)=>v == null ? null : '' + v) : value == null ? value : '' + value;
-    }
-    return normalizedQuery;
-}
-/**
- * RouteRecord being rendered by the closest ancestor Router View. Used for
- * `onBeforeRouteUpdate` and `onBeforeRouteLeave`. rvlm stands for Router View
- * Location Matched
- *
- * @internal
- */ const matchedRouteKey = Symbol('router view location matched');
-/**
- * Allows overriding the router view depth to control which component in
- * `matched` is rendered. rvd stands for Router View Depth
- *
- * @internal
- */ const viewDepthKey = Symbol('router view depth');
-/**
- * Allows overriding the router instance returned by `useRouter` in tests. r
- * stands for router
- *
- * @internal
- */ const routerKey = Symbol('router');
-/**
- * Allows overriding the current route returned by `useRoute` in tests. rl
- * stands for route location
- *
- * @internal
- */ const routeLocationKey = Symbol('route location');
-/**
- * Allows overriding the current route used by router-view. Internally this is
- * used when the `route` prop is passed.
- *
- * @internal
- */ const routerViewLocationKey = Symbol('router view location');
-/**
- * Create a list of callbacks that can be reset. Used to create before and after navigation guards list
- */ function useCallbacks() {
-    let handlers = [];
-    function add(handler) {
-        handlers.push(handler);
-        return ()=>{
-            const i = handlers.indexOf(handler);
-            if (i > -1) handlers.splice(i, 1);
-        };
-    }
-    function reset() {
-        handlers = [];
-    }
-    return {
-        add,
-        list: ()=>handlers.slice(),
-        reset
-    };
-}
-function registerGuard(record, name, guard) {
-    const removeFromList = ()=>{
-        record[name].delete(guard);
-    };
-    (0, _vue.onUnmounted)(removeFromList);
-    (0, _vue.onDeactivated)(removeFromList);
-    (0, _vue.onActivated)(()=>{
-        record[name].add(guard);
-    });
-    record[name].add(guard);
-}
-/**
- * Add a navigation guard that triggers whenever the component for the current
- * location is about to be left. Similar to {@link beforeRouteLeave} but can be
- * used in any component. The guard is removed when the component is unmounted.
- *
- * @param leaveGuard - {@link NavigationGuard}
- */ function onBeforeRouteLeave(leaveGuard) {
-    if (!(0, _vue.getCurrentInstance)()) {
-        warn('getCurrentInstance() returned null. onBeforeRouteLeave() must be called at the top of a setup function');
-        return;
-    }
-    const activeRecord = (0, _vue.inject)(matchedRouteKey, // to avoid warning
-    {}).value;
-    if (!activeRecord) {
-        warn('No active route record was found when calling `onBeforeRouteLeave()`. Make sure you call this function inside a component child of <router-view>. Maybe you called it inside of App.vue?');
-        return;
-    }
-    registerGuard(activeRecord, 'leaveGuards', leaveGuard);
-}
-/**
- * Add a navigation guard that triggers whenever the current location is about
- * to be updated. Similar to {@link beforeRouteUpdate} but can be used in any
- * component. The guard is removed when the component is unmounted.
- *
- * @param updateGuard - {@link NavigationGuard}
- */ function onBeforeRouteUpdate(updateGuard) {
-    if (!(0, _vue.getCurrentInstance)()) {
-        warn('getCurrentInstance() returned null. onBeforeRouteUpdate() must be called at the top of a setup function');
-        return;
-    }
-    const activeRecord = (0, _vue.inject)(matchedRouteKey, // to avoid warning
-    {}).value;
-    if (!activeRecord) {
-        warn('No active route record was found when calling `onBeforeRouteUpdate()`. Make sure you call this function inside a component child of <router-view>. Maybe you called it inside of App.vue?');
-        return;
-    }
-    registerGuard(activeRecord, 'updateGuards', updateGuard);
-}
-function guardToPromiseFn(guard, to, from, record, name, runWithContext = (fn)=>fn()) {
-    // keep a reference to the enterCallbackArray to prevent pushing callbacks if a new navigation took place
-    const enterCallbackArray = record && // name is defined if record is because of the function overload
-    (record.enterCallbacks[name] = record.enterCallbacks[name] || []);
-    return ()=>new Promise((resolve, reject)=>{
-            const next = (valid)=>{
-                if (valid === false) reject(createRouterError(4 /* ErrorTypes.NAVIGATION_ABORTED */ , {
-                    from,
-                    to
-                }));
-                else if (valid instanceof Error) reject(valid);
-                else if (isRouteLocation(valid)) reject(createRouterError(2 /* ErrorTypes.NAVIGATION_GUARD_REDIRECT */ , {
-                    from: to,
-                    to: valid
-                }));
-                else {
-                    if (enterCallbackArray && // since enterCallbackArray is truthy, both record and name also are
-                    record.enterCallbacks[name] === enterCallbackArray && typeof valid === 'function') enterCallbackArray.push(valid);
-                    resolve();
-                }
-            };
-            // wrapping with Promise.resolve allows it to work with both async and sync guards
-            const guardReturn = runWithContext(()=>guard.call(record && record.instances[name], to, from, canOnlyBeCalledOnce(next, to, from)));
-            let guardCall = Promise.resolve(guardReturn);
-            if (guard.length < 3) guardCall = guardCall.then(next);
-            if (guard.length > 2) {
-                const message = `The "next" callback was never called inside of ${guard.name ? '"' + guard.name + '"' : ''}:\n${guard.toString()}\n. If you are returning a value instead of calling "next", make sure to remove the "next" parameter from your function.`;
-                if (typeof guardReturn === 'object' && 'then' in guardReturn) guardCall = guardCall.then((resolvedValue)=>{
-                    // @ts-expect-error: _called is added at canOnlyBeCalledOnce
-                    if (!next._called) {
-                        warn(message);
-                        return Promise.reject(new Error('Invalid navigation guard'));
-                    }
-                    return resolvedValue;
-                });
-                else if (guardReturn !== undefined) // @ts-expect-error: _called is added at canOnlyBeCalledOnce
-                {
-                    if (!next._called) {
-                        warn(message);
-                        reject(new Error('Invalid navigation guard'));
-                        return;
-                    }
-                }
-            }
-            guardCall.catch((err)=>reject(err));
-        });
-}
-function canOnlyBeCalledOnce(next, to, from) {
-    let called = 0;
-    return function() {
-        if (called++ === 1) warn(`The "next" callback was called more than once in one navigation guard when going from "${from.fullPath}" to "${to.fullPath}". It should be called exactly one time in each navigation guard. This will fail in production.`);
-        // @ts-expect-error: we put it in the original one because it's easier to check
-        next._called = true;
-        if (called === 1) next.apply(null, arguments);
-    };
-}
-function extractComponentsGuards(matched, guardType, to, from, runWithContext = (fn)=>fn()) {
-    const guards = [];
-    for (const record of matched){
-        if (!record.components && !record.children.length) warn(`Record with path "${record.path}" is either missing a "component(s)"` + ` or "children" property.`);
-        for(const name in record.components){
-            let rawComponent = record.components[name];
-            if (!rawComponent || typeof rawComponent !== 'object' && typeof rawComponent !== 'function') {
-                warn(`Component "${name}" in record with path "${record.path}" is not` + ` a valid component. Received "${String(rawComponent)}".`);
-                // throw to ensure we stop here but warn to ensure the message isn't
-                // missed by the user
-                throw new Error('Invalid route component');
-            } else if ('then' in rawComponent) {
-                // warn if user wrote import('/component.vue') instead of () =>
-                // import('./component.vue')
-                warn(`Component "${name}" in record with path "${record.path}" is a ` + `Promise instead of a function that returns a Promise. Did you ` + `write "import('./MyPage.vue')" instead of ` + `"() => import('./MyPage.vue')" ? This will break in ` + `production if not fixed.`);
-                const promise = rawComponent;
-                rawComponent = ()=>promise;
-            } else if (rawComponent.__asyncLoader && // warn only once per component
-            !rawComponent.__warnedDefineAsync) {
-                rawComponent.__warnedDefineAsync = true;
-                warn(`Component "${name}" in record with path "${record.path}" is defined ` + `using "defineAsyncComponent()". ` + `Write "() => import('./MyPage.vue')" instead of ` + `"defineAsyncComponent(() => import('./MyPage.vue'))".`);
-            }
-            // skip update and leave guards if the route component is not mounted
-            if (guardType !== 'beforeRouteEnter' && !record.instances[name]) continue;
-            if (isRouteComponent(rawComponent)) {
-                // __vccOpts is added by vue-class-component and contain the regular options
-                const options = rawComponent.__vccOpts || rawComponent;
-                const guard = options[guardType];
-                guard && guards.push(guardToPromiseFn(guard, to, from, record, name, runWithContext));
-            } else {
-                // start requesting the chunk already
-                let componentPromise = rawComponent();
-                if (!('catch' in componentPromise)) {
-                    warn(`Component "${name}" in record with path "${record.path}" is a function that does not return a Promise. If you were passing a functional component, make sure to add a "displayName" to the component. This will break in production if not fixed.`);
-                    componentPromise = Promise.resolve(componentPromise);
-                }
-                guards.push(()=>componentPromise.then((resolved)=>{
-                        if (!resolved) throw new Error(`Couldn't resolve component "${name}" at "${record.path}"`);
-                        const resolvedComponent = isESModule(resolved) ? resolved.default : resolved;
-                        // keep the resolved module for plugins like data loaders
-                        record.mods[name] = resolved;
-                        // replace the function with the resolved component
-                        // cannot be null or undefined because we went into the for loop
-                        record.components[name] = resolvedComponent;
-                        // __vccOpts is added by vue-class-component and contain the regular options
-                        const options = resolvedComponent.__vccOpts || resolvedComponent;
-                        const guard = options[guardType];
-                        return guard && guardToPromiseFn(guard, to, from, record, name, runWithContext)();
-                    }));
-            }
-        }
-    }
-    return guards;
-}
-/**
- * Ensures a route is loaded, so it can be passed as o prop to `<RouterView>`.
- *
- * @param route - resolved route to load
- */ function loadRouteLocation(route) {
-    return route.matched.every((record)=>record.redirect) ? Promise.reject(new Error('Cannot load a route that redirects.')) : Promise.all(route.matched.map((record)=>record.components && Promise.all(Object.keys(record.components).reduce((promises, name)=>{
-            const rawComponent = record.components[name];
-            if (typeof rawComponent === 'function' && !('displayName' in rawComponent)) promises.push(rawComponent().then((resolved)=>{
-                if (!resolved) return Promise.reject(new Error(`Couldn't resolve component "${name}" at "${record.path}". Ensure you passed a function that returns a promise.`));
-                const resolvedComponent = isESModule(resolved) ? resolved.default : resolved;
-                // keep the resolved module for plugins like data loaders
-                record.mods[name] = resolved;
-                // replace the function with the resolved component
-                // cannot be null or undefined because we went into the for loop
-                record.components[name] = resolvedComponent;
-                return;
-            }));
-            return promises;
-        }, [])))).then(()=>route);
-}
-// TODO: we could allow currentRoute as a prop to expose `isActive` and
-// `isExactActive` behavior should go through an RFC
-/**
- * Returns the internal behavior of a {@link RouterLink} without the rendering part.
- *
- * @param props - a `to` location and an optional `replace` flag
- */ function useLink(props) {
-    const router = (0, _vue.inject)(routerKey);
-    const currentRoute = (0, _vue.inject)(routeLocationKey);
-    let hasPrevious = false;
-    let previousTo = null;
-    const route = (0, _vue.computed)(()=>{
-        const to = (0, _vue.unref)(props.to);
-        if (!hasPrevious || to !== previousTo) {
-            if (!isRouteLocation(to)) {
-                if (hasPrevious) warn(`Invalid value for prop "to" in useLink()\n- to:`, to, `\n- previous to:`, previousTo, `\n- props:`, props);
-                else warn(`Invalid value for prop "to" in useLink()\n- to:`, to, `\n- props:`, props);
-            }
-            previousTo = to;
-            hasPrevious = true;
-        }
-        return router.resolve(to);
-    });
-    const activeRecordIndex = (0, _vue.computed)(()=>{
-        const { matched } = route.value;
-        const { length } = matched;
-        const routeMatched = matched[length - 1];
-        const currentMatched = currentRoute.matched;
-        if (!routeMatched || !currentMatched.length) return -1;
-        const index = currentMatched.findIndex(isSameRouteRecord.bind(null, routeMatched));
-        if (index > -1) return index;
-        // possible parent record
-        const parentRecordPath = getOriginalPath(matched[length - 2]);
-        return(// we are dealing with nested routes
-        length > 1 && // if the parent and matched route have the same path, this link is
-        // referring to the empty child. Or we currently are on a different
-        // child of the same parent
-        getOriginalPath(routeMatched) === parentRecordPath && // avoid comparing the child with its parent
-        currentMatched[currentMatched.length - 1].path !== parentRecordPath ? currentMatched.findIndex(isSameRouteRecord.bind(null, matched[length - 2])) : index);
-    });
-    const isActive = (0, _vue.computed)(()=>activeRecordIndex.value > -1 && includesParams(currentRoute.params, route.value.params));
-    const isExactActive = (0, _vue.computed)(()=>activeRecordIndex.value > -1 && activeRecordIndex.value === currentRoute.matched.length - 1 && isSameRouteLocationParams(currentRoute.params, route.value.params));
-    function navigate(e = {}) {
-        if (guardEvent(e)) {
-            const p = router[(0, _vue.unref)(props.replace) ? 'replace' : 'push']((0, _vue.unref)(props.to)).catch(noop);
-            if (props.viewTransition && typeof document !== 'undefined' && 'startViewTransition' in document) document.startViewTransition(()=>p);
-            return p;
-        }
-        return Promise.resolve();
-    }
-    // devtools only
-    if (isBrowser) {
-        const instance = (0, _vue.getCurrentInstance)();
-        if (instance) {
-            const linkContextDevtools = {
-                route: route.value,
-                isActive: isActive.value,
-                isExactActive: isExactActive.value,
-                error: null
-            };
-            // @ts-expect-error: this is internal
-            instance.__vrl_devtools = instance.__vrl_devtools || [];
-            // @ts-expect-error: this is internal
-            instance.__vrl_devtools.push(linkContextDevtools);
-            (0, _vue.watchEffect)(()=>{
-                linkContextDevtools.route = route.value;
-                linkContextDevtools.isActive = isActive.value;
-                linkContextDevtools.isExactActive = isExactActive.value;
-                linkContextDevtools.error = isRouteLocation((0, _vue.unref)(props.to)) ? null : 'Invalid "to" value';
-            }, {
-                flush: 'post'
-            });
-        }
-    }
-    /**
-     * NOTE: update {@link _RouterLinkI}'s `$slots` type when updating this
-     */ return {
-        route,
-        href: (0, _vue.computed)(()=>route.value.href),
-        isActive,
-        isExactActive,
-        navigate
-    };
-}
-function preferSingleVNode(vnodes) {
-    return vnodes.length === 1 ? vnodes[0] : vnodes;
-}
-const RouterLinkImpl = /*#__PURE__*/ (0, _vue.defineComponent)({
-    name: 'RouterLink',
-    compatConfig: {
-        MODE: 3
-    },
-    props: {
-        to: {
-            type: [
-                String,
-                Object
-            ],
-            required: true
-        },
-        replace: Boolean,
-        activeClass: String,
-        // inactiveClass: String,
-        exactActiveClass: String,
-        custom: Boolean,
-        ariaCurrentValue: {
-            type: String,
-            default: 'page'
-        }
-    },
-    useLink,
-    setup (props, { slots }) {
-        const link = (0, _vue.reactive)(useLink(props));
-        const { options } = (0, _vue.inject)(routerKey);
-        const elClass = (0, _vue.computed)(()=>({
-                [getLinkClass(props.activeClass, options.linkActiveClass, 'router-link-active')]: link.isActive,
-                // [getLinkClass(
-                //   props.inactiveClass,
-                //   options.linkInactiveClass,
-                //   'router-link-inactive'
-                // )]: !link.isExactActive,
-                [getLinkClass(props.exactActiveClass, options.linkExactActiveClass, 'router-link-exact-active')]: link.isExactActive
-            }));
-        return ()=>{
-            const children = slots.default && preferSingleVNode(slots.default(link));
-            return props.custom ? children : (0, _vue.h)('a', {
-                'aria-current': link.isExactActive ? props.ariaCurrentValue : null,
-                href: link.href,
-                // this would override user added attrs but Vue will still add
-                // the listener, so we end up triggering both
-                onClick: link.navigate,
-                class: elClass.value
-            }, children);
-        };
-    }
-});
-// export the public type for h/tsx inference
-// also to avoid inline import() in generated d.ts files
-/**
- * Component to render a link that triggers a navigation on click.
- */ const RouterLink = RouterLinkImpl;
-function guardEvent(e) {
-    // don't redirect with control keys
-    if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) return;
-    // don't redirect when preventDefault called
-    if (e.defaultPrevented) return;
-    // don't redirect on right click
-    if (e.button !== undefined && e.button !== 0) return;
-    // don't redirect if `target="_blank"`
-    // @ts-expect-error getAttribute does exist
-    if (e.currentTarget && e.currentTarget.getAttribute) {
-        // @ts-expect-error getAttribute exists
-        const target = e.currentTarget.getAttribute('target');
-        if (/\b_blank\b/i.test(target)) return;
-    }
-    // this may be a Weex event which doesn't have this method
-    if (e.preventDefault) e.preventDefault();
-    return true;
-}
-function includesParams(outer, inner) {
-    for(const key in inner){
-        const innerValue = inner[key];
-        const outerValue = outer[key];
-        if (typeof innerValue === 'string') {
-            if (innerValue !== outerValue) return false;
-        } else {
-            if (!isArray(outerValue) || outerValue.length !== innerValue.length || innerValue.some((value, i)=>value !== outerValue[i])) return false;
-        }
-    }
-    return true;
-}
-/**
- * Get the original path value of a record by following its aliasOf
- * @param record
- */ function getOriginalPath(record) {
-    return record ? record.aliasOf ? record.aliasOf.path : record.path : '';
-}
-/**
- * Utility class to get the active class based on defaults.
- * @param propClass
- * @param globalClass
- * @param defaultClass
- */ const getLinkClass = (propClass, globalClass, defaultClass)=>propClass != null ? propClass : globalClass != null ? globalClass : defaultClass;
-const RouterViewImpl = /*#__PURE__*/ (0, _vue.defineComponent)({
-    name: 'RouterView',
-    // #674 we manually inherit them
-    inheritAttrs: false,
-    props: {
-        name: {
-            type: String,
-            default: 'default'
-        },
-        route: Object
-    },
-    // Better compat for @vue/compat users
-    // https://github.com/vuejs/router/issues/1315
-    compatConfig: {
-        MODE: 3
-    },
-    setup (props, { attrs, slots }) {
-        warnDeprecatedUsage();
-        const injectedRoute = (0, _vue.inject)(routerViewLocationKey);
-        const routeToDisplay = (0, _vue.computed)(()=>props.route || injectedRoute.value);
-        const injectedDepth = (0, _vue.inject)(viewDepthKey, 0);
-        // The depth changes based on empty components option, which allows passthrough routes e.g. routes with children
-        // that are used to reuse the `path` property
-        const depth = (0, _vue.computed)(()=>{
-            let initialDepth = (0, _vue.unref)(injectedDepth);
-            const { matched } = routeToDisplay.value;
-            let matchedRoute;
-            while((matchedRoute = matched[initialDepth]) && !matchedRoute.components)initialDepth++;
-            return initialDepth;
-        });
-        const matchedRouteRef = (0, _vue.computed)(()=>routeToDisplay.value.matched[depth.value]);
-        (0, _vue.provide)(viewDepthKey, (0, _vue.computed)(()=>depth.value + 1));
-        (0, _vue.provide)(matchedRouteKey, matchedRouteRef);
-        (0, _vue.provide)(routerViewLocationKey, routeToDisplay);
-        const viewRef = (0, _vue.ref)();
-        // watch at the same time the component instance, the route record we are
-        // rendering, and the name
-        (0, _vue.watch)(()=>[
-                viewRef.value,
-                matchedRouteRef.value,
-                props.name
-            ], ([instance, to, name], [oldInstance, from, oldName])=>{
-            // copy reused instances
-            if (to) {
-                // this will update the instance for new instances as well as reused
-                // instances when navigating to a new route
-                to.instances[name] = instance;
-                // the component instance is reused for a different route or name, so
-                // we copy any saved update or leave guards. With async setup, the
-                // mounting component will mount before the matchedRoute changes,
-                // making instance === oldInstance, so we check if guards have been
-                // added before. This works because we remove guards when
-                // unmounting/deactivating components
-                if (from && from !== to && instance && instance === oldInstance) {
-                    if (!to.leaveGuards.size) to.leaveGuards = from.leaveGuards;
-                    if (!to.updateGuards.size) to.updateGuards = from.updateGuards;
-                }
-            }
-            // trigger beforeRouteEnter next callbacks
-            if (instance && to && // if there is no instance but to and from are the same this might be
-            // the first visit
-            (!from || !isSameRouteRecord(to, from) || !oldInstance)) (to.enterCallbacks[name] || []).forEach((callback)=>callback(instance));
-        }, {
-            flush: 'post'
-        });
-        return ()=>{
-            const route = routeToDisplay.value;
-            // we need the value at the time we render because when we unmount, we
-            // navigated to a different location so the value is different
-            const currentName = props.name;
-            const matchedRoute = matchedRouteRef.value;
-            const ViewComponent = matchedRoute && matchedRoute.components[currentName];
-            if (!ViewComponent) return normalizeSlot(slots.default, {
-                Component: ViewComponent,
-                route
-            });
-            // props from route configuration
-            const routePropsOption = matchedRoute.props[currentName];
-            const routeProps = routePropsOption ? routePropsOption === true ? route.params : typeof routePropsOption === 'function' ? routePropsOption(route) : routePropsOption : null;
-            const onVnodeUnmounted = (vnode)=>{
-                // remove the instance reference to prevent leak
-                if (vnode.component.isUnmounted) matchedRoute.instances[currentName] = null;
-            };
-            const component = (0, _vue.h)(ViewComponent, assign({}, routeProps, attrs, {
-                onVnodeUnmounted,
-                ref: viewRef
-            }));
-            if (isBrowser && component.ref) {
-                // TODO: can display if it's an alias, its props
-                const info = {
-                    depth: depth.value,
-                    name: matchedRoute.name,
-                    path: matchedRoute.path,
-                    meta: matchedRoute.meta
-                };
-                const internalInstances = isArray(component.ref) ? component.ref.map((r)=>r.i) : [
-                    component.ref.i
-                ];
-                internalInstances.forEach((instance)=>{
-                    // @ts-expect-error
-                    instance.__vrv_devtools = info;
-                });
-            }
-            return(// pass the vnode to the slot as a prop.
-            // h and <component :is="..."> both accept vnodes
-            normalizeSlot(slots.default, {
-                Component: component,
-                route
-            }) || component);
-        };
-    }
-});
-function normalizeSlot(slot, data) {
-    if (!slot) return null;
-    const slotContent = slot(data);
-    return slotContent.length === 1 ? slotContent[0] : slotContent;
-}
-// export the public type for h/tsx inference
-// also to avoid inline import() in generated d.ts files
-/**
- * Component to display the current route the user is at.
- */ const RouterView = RouterViewImpl;
-// warn against deprecated usage with <transition> & <keep-alive>
-// due to functional component being no longer eager in Vue 3
-function warnDeprecatedUsage() {
-    const instance = (0, _vue.getCurrentInstance)();
-    const parentName = instance.parent && instance.parent.type.name;
-    const parentSubTreeType = instance.parent && instance.parent.subTree && instance.parent.subTree.type;
-    if (parentName && (parentName === 'KeepAlive' || parentName.includes('Transition')) && typeof parentSubTreeType === 'object' && parentSubTreeType.name === 'RouterView') {
-        const comp = parentName === 'KeepAlive' ? 'keep-alive' : 'transition';
-        warn(`<router-view> can no longer be used directly inside <transition> or <keep-alive>.\n` + `Use slot props instead:\n\n` + `<router-view v-slot="{ Component }">\n` + `  <${comp}>\n` + `    <component :is="Component" />\n` + `  </${comp}>\n` + `</router-view>`);
-    }
-}
-/**
- * Copies a route location and removes any problematic properties that cannot be shown in devtools (e.g. Vue instances).
- *
- * @param routeLocation - routeLocation to format
- * @param tooltip - optional tooltip
- * @returns a copy of the routeLocation
- */ function formatRouteLocation(routeLocation, tooltip) {
-    const copy = assign({}, routeLocation, {
-        // remove variables that can contain vue instances
-        matched: routeLocation.matched.map((matched)=>omit(matched, [
-                'instances',
-                'children',
-                'aliasOf'
-            ]))
-    });
-    return {
-        _custom: {
-            type: null,
-            readOnly: true,
-            display: routeLocation.fullPath,
-            tooltip,
-            value: copy
-        }
-    };
-}
-function formatDisplay(display) {
-    return {
-        _custom: {
-            display
-        }
-    };
-}
-// to support multiple router instances
-let routerId = 0;
-function addDevtools(app, router, matcher) {
-    // Take over router.beforeEach and afterEach
-    // make sure we are not registering the devtool twice
-    if (router.__hasDevtools) return;
-    router.__hasDevtools = true;
-    // increment to support multiple router instances
-    const id = routerId++;
-    (0, _devtoolsApi.setupDevtoolsPlugin)({
-        id: 'org.vuejs.router' + (id ? '.' + id : ''),
-        label: 'Vue Router',
-        packageName: 'vue-router',
-        homepage: 'https://router.vuejs.org',
-        logo: 'https://router.vuejs.org/logo.png',
-        componentStateTypes: [
-            'Routing'
-        ],
-        app
-    }, (api)=>{
-        if (typeof api.now !== 'function') console.warn('[Vue Router]: You seem to be using an outdated version of Vue Devtools. Are you still using the Beta release instead of the stable one? You can find the links at https://devtools.vuejs.org/guide/installation.html.');
-        // display state added by the router
-        api.on.inspectComponent((payload, ctx)=>{
-            if (payload.instanceData) payload.instanceData.state.push({
-                type: 'Routing',
-                key: '$route',
-                editable: false,
-                value: formatRouteLocation(router.currentRoute.value, 'Current Route')
-            });
-        });
-        // mark router-link as active and display tags on router views
-        api.on.visitComponentTree(({ treeNode: node, componentInstance })=>{
-            if (componentInstance.__vrv_devtools) {
-                const info = componentInstance.__vrv_devtools;
-                node.tags.push({
-                    label: (info.name ? `${info.name.toString()}: ` : '') + info.path,
-                    textColor: 0,
-                    tooltip: 'This component is rendered by &lt;router-view&gt;',
-                    backgroundColor: PINK_500
-                });
-            }
-            // if multiple useLink are used
-            if (isArray(componentInstance.__vrl_devtools)) {
-                componentInstance.__devtoolsApi = api;
-                componentInstance.__vrl_devtools.forEach((devtoolsData)=>{
-                    let label = devtoolsData.route.path;
-                    let backgroundColor = ORANGE_400;
-                    let tooltip = '';
-                    let textColor = 0;
-                    if (devtoolsData.error) {
-                        label = devtoolsData.error;
-                        backgroundColor = RED_100;
-                        textColor = RED_700;
-                    } else if (devtoolsData.isExactActive) {
-                        backgroundColor = LIME_500;
-                        tooltip = 'This is exactly active';
-                    } else if (devtoolsData.isActive) {
-                        backgroundColor = BLUE_600;
-                        tooltip = 'This link is active';
-                    }
-                    node.tags.push({
-                        label,
-                        textColor,
-                        tooltip,
-                        backgroundColor
-                    });
-                });
-            }
-        });
-        (0, _vue.watch)(router.currentRoute, ()=>{
-            // refresh active state
-            refreshRoutesView();
-            api.notifyComponentUpdate();
-            api.sendInspectorTree(routerInspectorId);
-            api.sendInspectorState(routerInspectorId);
-        });
-        const navigationsLayerId = 'router:navigations:' + id;
-        api.addTimelineLayer({
-            id: navigationsLayerId,
-            label: `Router${id ? ' ' + id : ''} Navigations`,
-            color: 0x40a8c4
-        });
-        // const errorsLayerId = 'router:errors'
-        // api.addTimelineLayer({
-        //   id: errorsLayerId,
-        //   label: 'Router Errors',
-        //   color: 0xea5455,
-        // })
-        router.onError((error, to)=>{
-            api.addTimelineEvent({
-                layerId: navigationsLayerId,
-                event: {
-                    title: 'Error during Navigation',
-                    subtitle: to.fullPath,
-                    logType: 'error',
-                    time: api.now(),
-                    data: {
-                        error
-                    },
-                    groupId: to.meta.__navigationId
-                }
-            });
-        });
-        // attached to `meta` and used to group events
-        let navigationId = 0;
-        router.beforeEach((to, from)=>{
-            const data = {
-                guard: formatDisplay('beforeEach'),
-                from: formatRouteLocation(from, 'Current Location during this navigation'),
-                to: formatRouteLocation(to, 'Target location')
-            };
-            // Used to group navigations together, hide from devtools
-            Object.defineProperty(to.meta, '__navigationId', {
-                value: navigationId++
-            });
-            api.addTimelineEvent({
-                layerId: navigationsLayerId,
-                event: {
-                    time: api.now(),
-                    title: 'Start of navigation',
-                    subtitle: to.fullPath,
-                    data,
-                    groupId: to.meta.__navigationId
-                }
-            });
-        });
-        router.afterEach((to, from, failure)=>{
-            const data = {
-                guard: formatDisplay('afterEach')
-            };
-            if (failure) {
-                data.failure = {
-                    _custom: {
-                        type: Error,
-                        readOnly: true,
-                        display: failure ? failure.message : '',
-                        tooltip: 'Navigation Failure',
-                        value: failure
-                    }
-                };
-                data.status = formatDisplay("\u274C");
-            } else data.status = formatDisplay("\u2705");
-            // we set here to have the right order
-            data.from = formatRouteLocation(from, 'Current Location during this navigation');
-            data.to = formatRouteLocation(to, 'Target location');
-            api.addTimelineEvent({
-                layerId: navigationsLayerId,
-                event: {
-                    title: 'End of navigation',
-                    subtitle: to.fullPath,
-                    time: api.now(),
-                    data,
-                    logType: failure ? 'warning' : 'default',
-                    groupId: to.meta.__navigationId
-                }
-            });
-        });
-        /**
-         * Inspector of Existing routes
-         */ const routerInspectorId = 'router-inspector:' + id;
-        api.addInspector({
-            id: routerInspectorId,
-            label: 'Routes' + (id ? ' ' + id : ''),
-            icon: 'book',
-            treeFilterPlaceholder: 'Search routes'
-        });
-        function refreshRoutesView() {
-            // the routes view isn't active
-            if (!activeRoutesPayload) return;
-            const payload = activeRoutesPayload;
-            // children routes will appear as nested
-            let routes = matcher.getRoutes().filter((route)=>!route.parent || // these routes have a parent with no component which will not appear in the view
-                // therefore we still need to include them
-                !route.parent.record.components);
-            // reset match state to false
-            routes.forEach(resetMatchStateOnRouteRecord);
-            // apply a match state if there is a payload
-            if (payload.filter) routes = routes.filter((route)=>// save matches state based on the payload
-                isRouteMatching(route, payload.filter.toLowerCase()));
-            // mark active routes
-            routes.forEach((route)=>markRouteRecordActive(route, router.currentRoute.value));
-            payload.rootNodes = routes.map(formatRouteRecordForInspector);
-        }
-        let activeRoutesPayload;
-        api.on.getInspectorTree((payload)=>{
-            activeRoutesPayload = payload;
-            if (payload.app === app && payload.inspectorId === routerInspectorId) refreshRoutesView();
-        });
-        /**
-         * Display information about the currently selected route record
-         */ api.on.getInspectorState((payload)=>{
-            if (payload.app === app && payload.inspectorId === routerInspectorId) {
-                const routes = matcher.getRoutes();
-                const route = routes.find((route)=>route.record.__vd_id === payload.nodeId);
-                if (route) payload.state = {
-                    options: formatRouteRecordMatcherForStateInspector(route)
-                };
-            }
-        });
-        api.sendInspectorTree(routerInspectorId);
-        api.sendInspectorState(routerInspectorId);
-    });
-}
-function modifierForKey(key) {
-    if (key.optional) return key.repeatable ? '*' : '?';
-    else return key.repeatable ? '+' : '';
-}
-function formatRouteRecordMatcherForStateInspector(route) {
-    const { record } = route;
-    const fields = [
-        {
-            editable: false,
-            key: 'path',
-            value: record.path
-        }
-    ];
-    if (record.name != null) fields.push({
-        editable: false,
-        key: 'name',
-        value: record.name
-    });
-    fields.push({
-        editable: false,
-        key: 'regexp',
-        value: route.re
-    });
-    if (route.keys.length) fields.push({
-        editable: false,
-        key: 'keys',
-        value: {
-            _custom: {
-                type: null,
-                readOnly: true,
-                display: route.keys.map((key)=>`${key.name}${modifierForKey(key)}`).join(' '),
-                tooltip: 'Param keys',
-                value: route.keys
-            }
-        }
-    });
-    if (record.redirect != null) fields.push({
-        editable: false,
-        key: 'redirect',
-        value: record.redirect
-    });
-    if (route.alias.length) fields.push({
-        editable: false,
-        key: 'aliases',
-        value: route.alias.map((alias)=>alias.record.path)
-    });
-    if (Object.keys(route.record.meta).length) fields.push({
-        editable: false,
-        key: 'meta',
-        value: route.record.meta
-    });
-    fields.push({
-        key: 'score',
-        editable: false,
-        value: {
-            _custom: {
-                type: null,
-                readOnly: true,
-                display: route.score.map((score)=>score.join(', ')).join(' | '),
-                tooltip: 'Score used to sort routes',
-                value: route.score
-            }
-        }
-    });
-    return fields;
-}
-/**
- * Extracted from tailwind palette
- */ const PINK_500 = 0xec4899;
-const BLUE_600 = 0x2563eb;
-const LIME_500 = 0x84cc16;
-const CYAN_400 = 0x22d3ee;
-const ORANGE_400 = 0xfb923c;
-// const GRAY_100 = 0xf4f4f5
-const DARK = 0x666666;
-const RED_100 = 0xfee2e2;
-const RED_700 = 0xb91c1c;
-function formatRouteRecordForInspector(route) {
-    const tags = [];
-    const { record } = route;
-    if (record.name != null) tags.push({
-        label: String(record.name),
-        textColor: 0,
-        backgroundColor: CYAN_400
-    });
-    if (record.aliasOf) tags.push({
-        label: 'alias',
-        textColor: 0,
-        backgroundColor: ORANGE_400
-    });
-    if (route.__vd_match) tags.push({
-        label: 'matches',
-        textColor: 0,
-        backgroundColor: PINK_500
-    });
-    if (route.__vd_exactActive) tags.push({
-        label: 'exact',
-        textColor: 0,
-        backgroundColor: LIME_500
-    });
-    if (route.__vd_active) tags.push({
-        label: 'active',
-        textColor: 0,
-        backgroundColor: BLUE_600
-    });
-    if (record.redirect) tags.push({
-        label: typeof record.redirect === 'string' ? `redirect: ${record.redirect}` : 'redirects',
-        textColor: 0xffffff,
-        backgroundColor: DARK
-    });
-    // add an id to be able to select it. Using the `path` is not possible because
-    // empty path children would collide with their parents
-    let id = record.__vd_id;
-    if (id == null) {
-        id = String(routeRecordId++);
-        record.__vd_id = id;
-    }
-    return {
-        id,
-        label: record.path,
-        tags,
-        children: route.children.map(formatRouteRecordForInspector)
-    };
-}
-//  incremental id for route records and inspector state
-let routeRecordId = 0;
-const EXTRACT_REGEXP_RE = /^\/(.*)\/([a-z]*)$/;
-function markRouteRecordActive(route, currentRoute) {
-    // no route will be active if matched is empty
-    // reset the matching state
-    const isExactActive = currentRoute.matched.length && isSameRouteRecord(currentRoute.matched[currentRoute.matched.length - 1], route.record);
-    route.__vd_exactActive = route.__vd_active = isExactActive;
-    if (!isExactActive) route.__vd_active = currentRoute.matched.some((match)=>isSameRouteRecord(match, route.record));
-    route.children.forEach((childRoute)=>markRouteRecordActive(childRoute, currentRoute));
-}
-function resetMatchStateOnRouteRecord(route) {
-    route.__vd_match = false;
-    route.children.forEach(resetMatchStateOnRouteRecord);
-}
-function isRouteMatching(route, filter) {
-    const found = String(route.re).match(EXTRACT_REGEXP_RE);
-    route.__vd_match = false;
-    if (!found || found.length < 3) return false;
-    // use a regexp without $ at the end to match nested routes better
-    const nonEndingRE = new RegExp(found[1].replace(/\$$/, ''), found[2]);
-    if (nonEndingRE.test(filter)) {
-        // mark children as matches
-        route.children.forEach((child)=>isRouteMatching(child, filter));
-        // exception case: `/`
-        if (route.record.path !== '/' || filter === '/') {
-            route.__vd_match = route.re.test(filter);
-            return true;
-        }
-        // hide the / route
-        return false;
-    }
-    const path = route.record.path.toLowerCase();
-    const decodedPath = decode(path);
-    // also allow partial matching on the path
-    if (!filter.startsWith('/') && (decodedPath.includes(filter) || path.includes(filter))) return true;
-    if (decodedPath.startsWith(filter) || path.startsWith(filter)) return true;
-    if (route.record.name && String(route.record.name).includes(filter)) return true;
-    return route.children.some((child)=>isRouteMatching(child, filter));
-}
-function omit(obj, keys) {
-    const ret = {};
-    for(const key in obj)if (!keys.includes(key)) // @ts-expect-error
-    ret[key] = obj[key];
-    return ret;
-}
-/**
- * Creates a Router instance that can be used by a Vue app.
- *
- * @param options - {@link RouterOptions}
- */ function createRouter(options) {
-    const matcher = createRouterMatcher(options.routes, options);
-    const parseQuery$1 = options.parseQuery || parseQuery;
-    const stringifyQuery$1 = options.stringifyQuery || stringifyQuery;
-    const routerHistory = options.history;
-    if (!routerHistory) throw new Error('Provide the "history" option when calling "createRouter()": https://router.vuejs.org/api/interfaces/RouterOptions.html#history');
-    const beforeGuards = useCallbacks();
-    const beforeResolveGuards = useCallbacks();
-    const afterGuards = useCallbacks();
-    const currentRoute = (0, _vue.shallowRef)(START_LOCATION_NORMALIZED);
-    let pendingLocation = START_LOCATION_NORMALIZED;
-    // leave the scrollRestoration if no scrollBehavior is provided
-    if (isBrowser && options.scrollBehavior && 'scrollRestoration' in history) history.scrollRestoration = 'manual';
-    const normalizeParams = applyToParams.bind(null, (paramValue)=>'' + paramValue);
-    const encodeParams = applyToParams.bind(null, encodeParam);
-    const decodeParams = // @ts-expect-error: intentionally avoid the type check
-    applyToParams.bind(null, decode);
-    function addRoute(parentOrRoute, route) {
-        let parent;
-        let record;
-        if (isRouteName(parentOrRoute)) {
-            parent = matcher.getRecordMatcher(parentOrRoute);
-            if (!parent) warn(`Parent route "${String(parentOrRoute)}" not found when adding child route`, route);
-            record = route;
-        } else record = parentOrRoute;
-        return matcher.addRoute(record, parent);
-    }
-    function removeRoute(name) {
-        const recordMatcher = matcher.getRecordMatcher(name);
-        if (recordMatcher) matcher.removeRoute(recordMatcher);
-        else warn(`Cannot remove non-existent route "${String(name)}"`);
-    }
-    function getRoutes() {
-        return matcher.getRoutes().map((routeMatcher)=>routeMatcher.record);
-    }
-    function hasRoute(name) {
-        return !!matcher.getRecordMatcher(name);
-    }
-    function resolve(rawLocation, currentLocation) {
-        // const resolve: Router['resolve'] = (rawLocation: RouteLocationRaw, currentLocation) => {
-        // const objectLocation = routerLocationAsObject(rawLocation)
-        // we create a copy to modify it later
-        currentLocation = assign({}, currentLocation || currentRoute.value);
-        if (typeof rawLocation === 'string') {
-            const locationNormalized = parseURL(parseQuery$1, rawLocation, currentLocation.path);
-            const matchedRoute = matcher.resolve({
-                path: locationNormalized.path
-            }, currentLocation);
-            const href = routerHistory.createHref(locationNormalized.fullPath);
-            if (href.startsWith('//')) warn(`Location "${rawLocation}" resolved to "${href}". A resolved location cannot start with multiple slashes.`);
-            else if (!matchedRoute.matched.length) warn(`No match found for location with path "${rawLocation}"`);
-            // locationNormalized is always a new object
-            return assign(locationNormalized, matchedRoute, {
-                params: decodeParams(matchedRoute.params),
-                hash: decode(locationNormalized.hash),
-                redirectedFrom: undefined,
-                href
-            });
-        }
-        if (!isRouteLocation(rawLocation)) {
-            warn(`router.resolve() was passed an invalid location. This will fail in production.\n- Location:`, rawLocation);
-            return resolve({});
-        }
-        let matcherLocation;
-        // path could be relative in object as well
-        if (rawLocation.path != null) {
-            if ('params' in rawLocation && !('name' in rawLocation) && // @ts-expect-error: the type is never
-            Object.keys(rawLocation.params).length) warn(`Path "${rawLocation.path}" was passed with params but they will be ignored. Use a named route alongside params instead.`);
-            matcherLocation = assign({}, rawLocation, {
-                path: parseURL(parseQuery$1, rawLocation.path, currentLocation.path).path
-            });
-        } else {
-            // remove any nullish param
-            const targetParams = assign({}, rawLocation.params);
-            for(const key in targetParams)if (targetParams[key] == null) delete targetParams[key];
-            // pass encoded values to the matcher, so it can produce encoded path and fullPath
-            matcherLocation = assign({}, rawLocation, {
-                params: encodeParams(targetParams)
-            });
-            // current location params are decoded, we need to encode them in case the
-            // matcher merges the params
-            currentLocation.params = encodeParams(currentLocation.params);
-        }
-        const matchedRoute = matcher.resolve(matcherLocation, currentLocation);
-        const hash = rawLocation.hash || '';
-        if (hash && !hash.startsWith('#')) warn(`A \`hash\` should always start with the character "#". Replace "${hash}" with "#${hash}".`);
-        // the matcher might have merged current location params, so
-        // we need to run the decoding again
-        matchedRoute.params = normalizeParams(decodeParams(matchedRoute.params));
-        const fullPath = stringifyURL(stringifyQuery$1, assign({}, rawLocation, {
-            hash: encodeHash(hash),
-            path: matchedRoute.path
-        }));
-        const href = routerHistory.createHref(fullPath);
-        if (href.startsWith('//')) warn(`Location "${rawLocation}" resolved to "${href}". A resolved location cannot start with multiple slashes.`);
-        else if (!matchedRoute.matched.length) warn(`No match found for location with path "${rawLocation.path != null ? rawLocation.path : rawLocation}"`);
-        return assign({
-            fullPath,
-            // keep the hash encoded so fullPath is effectively path + encodedQuery +
-            // hash
-            hash,
-            query: // if the user is using a custom query lib like qs, we might have
-            // nested objects, so we keep the query as is, meaning it can contain
-            // numbers at `$route.query`, but at the point, the user will have to
-            // use their own type anyway.
-            // https://github.com/vuejs/router/issues/328#issuecomment-649481567
-            stringifyQuery$1 === stringifyQuery ? normalizeQuery(rawLocation.query) : rawLocation.query || {}
-        }, matchedRoute, {
-            redirectedFrom: undefined,
-            href
-        });
-    }
-    function locationAsObject(to) {
-        return typeof to === 'string' ? parseURL(parseQuery$1, to, currentRoute.value.path) : assign({}, to);
-    }
-    function checkCanceledNavigation(to, from) {
-        if (pendingLocation !== to) return createRouterError(8 /* ErrorTypes.NAVIGATION_CANCELLED */ , {
-            from,
-            to
-        });
-    }
-    function push(to) {
-        return pushWithRedirect(to);
-    }
-    function replace(to) {
-        return push(assign(locationAsObject(to), {
-            replace: true
-        }));
-    }
-    function handleRedirectRecord(to) {
-        const lastMatched = to.matched[to.matched.length - 1];
-        if (lastMatched && lastMatched.redirect) {
-            const { redirect } = lastMatched;
-            let newTargetLocation = typeof redirect === 'function' ? redirect(to) : redirect;
-            if (typeof newTargetLocation === 'string') {
-                newTargetLocation = newTargetLocation.includes('?') || newTargetLocation.includes('#') ? newTargetLocation = locationAsObject(newTargetLocation) : {
-                    path: newTargetLocation
-                };
-                // @ts-expect-error: force empty params when a string is passed to let
-                // the router parse them again
-                newTargetLocation.params = {};
-            }
-            if (newTargetLocation.path == null && !('name' in newTargetLocation)) {
-                warn(`Invalid redirect found:\n${JSON.stringify(newTargetLocation, null, 2)}\n when navigating to "${to.fullPath}". A redirect must contain a name or path. This will break in production.`);
-                throw new Error('Invalid redirect');
-            }
-            return assign({
-                query: to.query,
-                hash: to.hash,
-                // avoid transferring params if the redirect has a path
-                params: newTargetLocation.path != null ? {} : to.params
-            }, newTargetLocation);
-        }
-    }
-    function pushWithRedirect(to, redirectedFrom) {
-        const targetLocation = pendingLocation = resolve(to);
-        const from = currentRoute.value;
-        const data = to.state;
-        const force = to.force;
-        // to could be a string where `replace` is a function
-        const replace = to.replace === true;
-        const shouldRedirect = handleRedirectRecord(targetLocation);
-        if (shouldRedirect) return pushWithRedirect(assign(locationAsObject(shouldRedirect), {
-            state: typeof shouldRedirect === 'object' ? assign({}, data, shouldRedirect.state) : data,
-            force,
-            replace
-        }), // keep original redirectedFrom if it exists
-        redirectedFrom || targetLocation);
-        // if it was a redirect we already called `pushWithRedirect` above
-        const toLocation = targetLocation;
-        toLocation.redirectedFrom = redirectedFrom;
-        let failure;
-        if (!force && isSameRouteLocation(stringifyQuery$1, from, targetLocation)) {
-            failure = createRouterError(16 /* ErrorTypes.NAVIGATION_DUPLICATED */ , {
-                to: toLocation,
-                from
-            });
-            // trigger scroll to allow scrolling to the same anchor
-            handleScroll(from, from, // this is a push, the only way for it to be triggered from a
-            // history.listen is with a redirect, which makes it become a push
-            true, // This cannot be the first navigation because the initial location
-            // cannot be manually navigated to
-            false);
-        }
-        return (failure ? Promise.resolve(failure) : navigate(toLocation, from)).catch((error)=>isNavigationFailure(error) ? isNavigationFailure(error, 2 /* ErrorTypes.NAVIGATION_GUARD_REDIRECT */ ) ? error : markAsReady(error) // also returns the error
-             : triggerError(error, toLocation, from)).then((failure)=>{
-            if (failure) {
-                if (isNavigationFailure(failure, 2 /* ErrorTypes.NAVIGATION_GUARD_REDIRECT */ )) {
-                    if (// we are redirecting to the same location we were already at
-                    isSameRouteLocation(stringifyQuery$1, resolve(failure.to), toLocation) && // and we have done it a couple of times
-                    redirectedFrom && // @ts-expect-error: added only in dev
-                    (redirectedFrom._count = redirectedFrom._count ? redirectedFrom._count + 1 : 1) > 30) {
-                        warn(`Detected a possibly infinite redirection in a navigation guard when going from "${from.fullPath}" to "${toLocation.fullPath}". Aborting to avoid a Stack Overflow.\n Are you always returning a new location within a navigation guard? That would lead to this error. Only return when redirecting or aborting, that should fix this. This might break in production if not fixed.`);
-                        return Promise.reject(new Error('Infinite redirect in navigation guard'));
-                    }
-                    return pushWithRedirect(// keep options
-                    assign({
-                        // preserve an existing replacement but allow the redirect to override it
-                        replace
-                    }, locationAsObject(failure.to), {
-                        state: typeof failure.to === 'object' ? assign({}, data, failure.to.state) : data,
-                        force
-                    }), // preserve the original redirectedFrom if any
-                    redirectedFrom || toLocation);
-                }
-            } else // if we fail we don't finalize the navigation
-            failure = finalizeNavigation(toLocation, from, true, replace, data);
-            triggerAfterEach(toLocation, from, failure);
-            return failure;
-        });
-    }
-    /**
-     * Helper to reject and skip all navigation guards if a new navigation happened
-     * @param to
-     * @param from
-     */ function checkCanceledNavigationAndReject(to, from) {
-        const error = checkCanceledNavigation(to, from);
-        return error ? Promise.reject(error) : Promise.resolve();
-    }
-    function runWithContext(fn) {
-        const app = installedApps.values().next().value;
-        // support Vue < 3.3
-        return app && typeof app.runWithContext === 'function' ? app.runWithContext(fn) : fn();
-    }
-    // TODO: refactor the whole before guards by internally using router.beforeEach
-    function navigate(to, from) {
-        let guards;
-        const [leavingRecords, updatingRecords, enteringRecords] = extractChangingRecords(to, from);
-        // all components here have been resolved once because we are leaving
-        guards = extractComponentsGuards(leavingRecords.reverse(), 'beforeRouteLeave', to, from);
-        // leavingRecords is already reversed
-        for (const record of leavingRecords)record.leaveGuards.forEach((guard)=>{
-            guards.push(guardToPromiseFn(guard, to, from));
-        });
-        const canceledNavigationCheck = checkCanceledNavigationAndReject.bind(null, to, from);
-        guards.push(canceledNavigationCheck);
-        // run the queue of per route beforeRouteLeave guards
-        return runGuardQueue(guards).then(()=>{
-            // check global guards beforeEach
-            guards = [];
-            for (const guard of beforeGuards.list())guards.push(guardToPromiseFn(guard, to, from));
-            guards.push(canceledNavigationCheck);
-            return runGuardQueue(guards);
-        }).then(()=>{
-            // check in components beforeRouteUpdate
-            guards = extractComponentsGuards(updatingRecords, 'beforeRouteUpdate', to, from);
-            for (const record of updatingRecords)record.updateGuards.forEach((guard)=>{
-                guards.push(guardToPromiseFn(guard, to, from));
-            });
-            guards.push(canceledNavigationCheck);
-            // run the queue of per route beforeEnter guards
-            return runGuardQueue(guards);
-        }).then(()=>{
-            // check the route beforeEnter
-            guards = [];
-            for (const record of enteringRecords)// do not trigger beforeEnter on reused views
-            if (record.beforeEnter) {
-                if (isArray(record.beforeEnter)) for (const beforeEnter of record.beforeEnter)guards.push(guardToPromiseFn(beforeEnter, to, from));
-                else guards.push(guardToPromiseFn(record.beforeEnter, to, from));
-            }
-            guards.push(canceledNavigationCheck);
-            // run the queue of per route beforeEnter guards
-            return runGuardQueue(guards);
-        }).then(()=>{
-            // NOTE: at this point to.matched is normalized and does not contain any () => Promise<Component>
-            // clear existing enterCallbacks, these are added by extractComponentsGuards
-            to.matched.forEach((record)=>record.enterCallbacks = {});
-            // check in-component beforeRouteEnter
-            guards = extractComponentsGuards(enteringRecords, 'beforeRouteEnter', to, from, runWithContext);
-            guards.push(canceledNavigationCheck);
-            // run the queue of per route beforeEnter guards
-            return runGuardQueue(guards);
-        }).then(()=>{
-            // check global guards beforeResolve
-            guards = [];
-            for (const guard of beforeResolveGuards.list())guards.push(guardToPromiseFn(guard, to, from));
-            guards.push(canceledNavigationCheck);
-            return runGuardQueue(guards);
-        })// catch any navigation canceled
-        .catch((err)=>isNavigationFailure(err, 8 /* ErrorTypes.NAVIGATION_CANCELLED */ ) ? err : Promise.reject(err));
-    }
-    function triggerAfterEach(to, from, failure) {
-        // navigation is confirmed, call afterGuards
-        // TODO: wrap with error handlers
-        afterGuards.list().forEach((guard)=>runWithContext(()=>guard(to, from, failure)));
-    }
-    /**
-     * - Cleans up any navigation guards
-     * - Changes the url if necessary
-     * - Calls the scrollBehavior
-     */ function finalizeNavigation(toLocation, from, isPush, replace, data) {
-        // a more recent navigation took place
-        const error = checkCanceledNavigation(toLocation, from);
-        if (error) return error;
-        // only consider as push if it's not the first navigation
-        const isFirstNavigation = from === START_LOCATION_NORMALIZED;
-        const state = !isBrowser ? {} : history.state;
-        // change URL only if the user did a push/replace and if it's not the initial navigation because
-        // it's just reflecting the url
-        if (isPush) {
-            // on the initial navigation, we want to reuse the scroll position from
-            // history state if it exists
-            if (replace || isFirstNavigation) routerHistory.replace(toLocation.fullPath, assign({
-                scroll: isFirstNavigation && state && state.scroll
-            }, data));
-            else routerHistory.push(toLocation.fullPath, data);
-        }
-        // accept current navigation
-        currentRoute.value = toLocation;
-        handleScroll(toLocation, from, isPush, isFirstNavigation);
-        markAsReady();
-    }
-    let removeHistoryListener;
-    // attach listener to history to trigger navigations
-    function setupListeners() {
-        // avoid setting up listeners twice due to an invalid first navigation
-        if (removeHistoryListener) return;
-        removeHistoryListener = routerHistory.listen((to, _from, info)=>{
-            if (!router.listening) return;
-            // cannot be a redirect route because it was in history
-            const toLocation = resolve(to);
-            // due to dynamic routing, and to hash history with manual navigation
-            // (manually changing the url or calling history.hash = '#/somewhere'),
-            // there could be a redirect record in history
-            const shouldRedirect = handleRedirectRecord(toLocation);
-            if (shouldRedirect) {
-                pushWithRedirect(assign(shouldRedirect, {
-                    replace: true,
-                    force: true
-                }), toLocation).catch(noop);
-                return;
-            }
-            pendingLocation = toLocation;
-            const from = currentRoute.value;
-            // TODO: should be moved to web history?
-            if (isBrowser) saveScrollPosition(getScrollKey(from.fullPath, info.delta), computeScrollPosition());
-            navigate(toLocation, from).catch((error)=>{
-                if (isNavigationFailure(error, 12 /* ErrorTypes.NAVIGATION_CANCELLED */ )) return error;
-                if (isNavigationFailure(error, 2 /* ErrorTypes.NAVIGATION_GUARD_REDIRECT */ )) {
-                    // Here we could call if (info.delta) routerHistory.go(-info.delta,
-                    // false) but this is bug prone as we have no way to wait the
-                    // navigation to be finished before calling pushWithRedirect. Using
-                    // a setTimeout of 16ms seems to work but there is no guarantee for
-                    // it to work on every browser. So instead we do not restore the
-                    // history entry and trigger a new navigation as requested by the
-                    // navigation guard.
-                    // the error is already handled by router.push we just want to avoid
-                    // logging the error
-                    pushWithRedirect(assign(locationAsObject(error.to), {
-                        force: true
-                    }), toLocation).then((failure)=>{
-                        // manual change in hash history #916 ending up in the URL not
-                        // changing, but it was changed by the manual url change, so we
-                        // need to manually change it ourselves
-                        if (isNavigationFailure(failure, 20 /* ErrorTypes.NAVIGATION_DUPLICATED */ ) && !info.delta && info.type === NavigationType.pop) routerHistory.go(-1, false);
-                    }).catch(noop);
-                    // avoid the then branch
-                    return Promise.reject();
-                }
-                // do not restore history on unknown direction
-                if (info.delta) routerHistory.go(-info.delta, false);
-                // unrecognized error, transfer to the global handler
-                return triggerError(error, toLocation, from);
-            }).then((failure)=>{
-                failure = failure || finalizeNavigation(// after navigation, all matched components are resolved
-                toLocation, from, false);
-                // revert the navigation
-                if (failure) {
-                    if (info.delta && // a new navigation has been triggered, so we do not want to revert, that will change the current history
-                    // entry while a different route is displayed
-                    !isNavigationFailure(failure, 8 /* ErrorTypes.NAVIGATION_CANCELLED */ )) routerHistory.go(-info.delta, false);
-                    else if (info.type === NavigationType.pop && isNavigationFailure(failure, 20 /* ErrorTypes.NAVIGATION_DUPLICATED */ )) // manual change in hash history #916
-                    // it's like a push but lacks the information of the direction
-                    routerHistory.go(-1, false);
-                }
-                triggerAfterEach(toLocation, from, failure);
-            })// avoid warnings in the console about uncaught rejections, they are logged by triggerErrors
-            .catch(noop);
-        });
-    }
-    // Initialization and Errors
-    let readyHandlers = useCallbacks();
-    let errorListeners = useCallbacks();
-    let ready;
-    /**
-     * Trigger errorListeners added via onError and throws the error as well
-     *
-     * @param error - error to throw
-     * @param to - location we were navigating to when the error happened
-     * @param from - location we were navigating from when the error happened
-     * @returns the error as a rejected promise
-     */ function triggerError(error, to, from) {
-        markAsReady(error);
-        const list = errorListeners.list();
-        if (list.length) list.forEach((handler)=>handler(error, to, from));
-        else {
-            warn('uncaught error during route navigation:');
-            console.error(error);
-        }
-        // reject the error no matter there were error listeners or not
-        return Promise.reject(error);
-    }
-    function isReady() {
-        if (ready && currentRoute.value !== START_LOCATION_NORMALIZED) return Promise.resolve();
-        return new Promise((resolve, reject)=>{
-            readyHandlers.add([
-                resolve,
-                reject
-            ]);
-        });
-    }
-    function markAsReady(err) {
-        if (!ready) {
-            // still not ready if an error happened
-            ready = !err;
-            setupListeners();
-            readyHandlers.list().forEach(([resolve, reject])=>err ? reject(err) : resolve());
-            readyHandlers.reset();
-        }
-        return err;
-    }
-    // Scroll behavior
-    function handleScroll(to, from, isPush, isFirstNavigation) {
-        const { scrollBehavior } = options;
-        if (!isBrowser || !scrollBehavior) return Promise.resolve();
-        const scrollPosition = !isPush && getSavedScrollPosition(getScrollKey(to.fullPath, 0)) || (isFirstNavigation || !isPush) && history.state && history.state.scroll || null;
-        return (0, _vue.nextTick)().then(()=>scrollBehavior(to, from, scrollPosition)).then((position)=>position && scrollToPosition(position)).catch((err)=>triggerError(err, to, from));
-    }
-    const go = (delta)=>routerHistory.go(delta);
-    let started;
-    const installedApps = new Set();
-    const router = {
-        currentRoute,
-        listening: true,
-        addRoute,
-        removeRoute,
-        clearRoutes: matcher.clearRoutes,
-        hasRoute,
-        getRoutes,
-        resolve,
-        options,
-        push,
-        replace,
-        go,
-        back: ()=>go(-1),
-        forward: ()=>go(1),
-        beforeEach: beforeGuards.add,
-        beforeResolve: beforeResolveGuards.add,
-        afterEach: afterGuards.add,
-        onError: errorListeners.add,
-        isReady,
-        install (app) {
-            const router = this;
-            app.component('RouterLink', RouterLink);
-            app.component('RouterView', RouterView);
-            app.config.globalProperties.$router = router;
-            Object.defineProperty(app.config.globalProperties, '$route', {
-                enumerable: true,
-                get: ()=>(0, _vue.unref)(currentRoute)
-            });
-            // this initial navigation is only necessary on client, on server it doesn't
-            // make sense because it will create an extra unnecessary navigation and could
-            // lead to problems
-            if (isBrowser && // used for the initial navigation client side to avoid pushing
-            // multiple times when the router is used in multiple apps
-            !started && currentRoute.value === START_LOCATION_NORMALIZED) {
-                // see above
-                started = true;
-                push(routerHistory.location).catch((err)=>{
-                    warn('Unexpected error when starting the router:', err);
-                });
-            }
-            const reactiveRoute = {};
-            for(const key in START_LOCATION_NORMALIZED)Object.defineProperty(reactiveRoute, key, {
-                get: ()=>currentRoute.value[key],
-                enumerable: true
-            });
-            app.provide(routerKey, router);
-            app.provide(routeLocationKey, (0, _vue.shallowReactive)(reactiveRoute));
-            app.provide(routerViewLocationKey, currentRoute);
-            const unmountApp = app.unmount;
-            installedApps.add(app);
-            app.unmount = function() {
-                installedApps.delete(app);
-                // the router is not attached to an app anymore
-                if (installedApps.size < 1) {
-                    // invalidate the current navigation
-                    pendingLocation = START_LOCATION_NORMALIZED;
-                    removeHistoryListener && removeHistoryListener();
-                    removeHistoryListener = null;
-                    currentRoute.value = START_LOCATION_NORMALIZED;
-                    started = false;
-                    ready = false;
-                }
-                unmountApp();
-            };
-            // TODO: this probably needs to be updated so it can be used by vue-termui
-            if (isBrowser) addDevtools(app, router, matcher);
-        }
-    };
-    // TODO: type this as NavigationGuardReturn or similar instead of any
-    function runGuardQueue(guards) {
-        return guards.reduce((promise, guard)=>promise.then(()=>runWithContext(guard)), Promise.resolve());
-    }
-    return router;
-}
-function extractChangingRecords(to, from) {
-    const leavingRecords = [];
-    const updatingRecords = [];
-    const enteringRecords = [];
-    const len = Math.max(from.matched.length, to.matched.length);
-    for(let i = 0; i < len; i++){
-        const recordFrom = from.matched[i];
-        if (recordFrom) {
-            if (to.matched.find((record)=>isSameRouteRecord(record, recordFrom))) updatingRecords.push(recordFrom);
-            else leavingRecords.push(recordFrom);
-        }
-        const recordTo = to.matched[i];
-        if (recordTo) // the type doesn't matter because we are comparing per reference
-        {
-            if (!from.matched.find((record)=>isSameRouteRecord(record, recordTo))) enteringRecords.push(recordTo);
-        }
-    }
-    return [
-        leavingRecords,
-        updatingRecords,
-        enteringRecords
-    ];
-}
-/**
- * Returns the router instance. Equivalent to using `$router` inside
- * templates.
- */ function useRouter() {
-    return (0, _vue.inject)(routerKey);
-}
-/**
- * Returns the current route location. Equivalent to using `$route` inside
- * templates.
- */ function useRoute(_name) {
-    return (0, _vue.inject)(routeLocationKey);
-}
-
-},{"vue":"gzxs9","@vue/devtools-api":"dc7MH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gzxs9":[function(require,module,exports,__globalThis) {
+},{"npm:normalize.css":"eLmrl","npm:@fontsource/ubuntu":"402y5","npm:bulma":"gEv81","./style.css":"bhJkM","vue/dist/vue.esm-bundler":"gs3Mk","vue-router":"c18b3","./components/Login.vue":"5fd2o","./components/App.vue":"9IQgA","./components/Recuperar.vue":"g4IV6","./components/ErrorLogin.vue":"g9U7G","./components/CrearCuenta.vue":"bw2J9","./components/AccesoError.vue":"8r306","./components/button.vue":"7Vm5H","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./components/inputEmail.vue":"70xBJ"}],"eLmrl":[function() {},{}],"402y5":[function() {},{}],"gEv81":[function() {},{}],"bhJkM":[function() {},{}],"gs3Mk":[function(require,module,exports,__globalThis) {
 /**
 * vue v3.5.13
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "compile", ()=>compile);
+parcelHelpers.export(exports, "compile", ()=>compileToFunction);
 var _runtimeDom = require("@vue/runtime-dom");
 parcelHelpers.exportAll(_runtimeDom, exports);
+var _compilerDom = require("@vue/compiler-dom");
+var _shared = require("@vue/shared");
 function initDev() {
     (0, _runtimeDom.initCustomFormatter)();
 }
 initDev();
-const compile = ()=>{
-    (0, _runtimeDom.warn)(`Runtime compilation is not supported in this build of Vue.` + ` Configure your bundler to alias "vue" to "vue/dist/vue.esm-bundler.js".`);
-};
+const compileCache = /* @__PURE__ */ Object.create(null);
+function compileToFunction(template, options) {
+    if (!(0, _shared.isString)(template)) {
+        if (template.nodeType) template = template.innerHTML;
+        else {
+            (0, _runtimeDom.warn)(`invalid template option: `, template);
+            return 0, _shared.NOOP;
+        }
+    }
+    const key = (0, _shared.genCacheKey)(template, options);
+    const cached = compileCache[key];
+    if (cached) return cached;
+    if (template[0] === "#") {
+        const el = document.querySelector(template);
+        if (!el) (0, _runtimeDom.warn)(`Template element not found or is empty: ${template}`);
+        template = el ? el.innerHTML : ``;
+    }
+    const opts = (0, _shared.extend)({
+        hoistStatic: true,
+        onError: onError,
+        onWarn: (e)=>onError(e, true)
+    }, options);
+    if (!opts.isCustomElement && typeof customElements !== "undefined") opts.isCustomElement = (tag)=>!!customElements.get(tag);
+    const { code } = (0, _compilerDom.compile)(template, opts);
+    function onError(err, asWarning = false) {
+        const message = asWarning ? err.message : `Template compilation error: ${err.message}`;
+        const codeFrame = err.loc && (0, _shared.generateCodeFrame)(template, err.loc.start.offset, err.loc.end.offset);
+        (0, _runtimeDom.warn)(codeFrame ? `${message}
+${codeFrame}` : message);
+    }
+    const render = new Function("Vue", code)(_runtimeDom);
+    render._rc = true;
+    return compileCache[key] = render;
+}
+(0, _runtimeDom.registerRuntimeCompiler)(compileToFunction);
 
-},{"@vue/runtime-dom":"9wNvI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9wNvI":[function(require,module,exports,__globalThis) {
+},{"@vue/runtime-dom":"9wNvI","@vue/compiler-dom":"fRGyM","@vue/shared":"3SM3y","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9wNvI":[function(require,module,exports,__globalThis) {
 /**
 * @vue/runtime-dom v3.5.13
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
@@ -13102,7 +10002,8318 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"dc7MH":[function(require,module,exports,__globalThis) {
+},{}],"fRGyM":[function(require,module,exports,__globalThis) {
+/**
+* @vue/compiler-dom v3.5.13
+* (c) 2018-present Yuxi (Evan) You and Vue contributors
+* @license MIT
+**/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "DOMDirectiveTransforms", ()=>DOMDirectiveTransforms);
+parcelHelpers.export(exports, "DOMErrorCodes", ()=>DOMErrorCodes);
+parcelHelpers.export(exports, "DOMErrorMessages", ()=>DOMErrorMessages);
+parcelHelpers.export(exports, "DOMNodeTransforms", ()=>DOMNodeTransforms);
+parcelHelpers.export(exports, "TRANSITION", ()=>TRANSITION);
+parcelHelpers.export(exports, "TRANSITION_GROUP", ()=>TRANSITION_GROUP);
+parcelHelpers.export(exports, "V_MODEL_CHECKBOX", ()=>V_MODEL_CHECKBOX);
+parcelHelpers.export(exports, "V_MODEL_DYNAMIC", ()=>V_MODEL_DYNAMIC);
+parcelHelpers.export(exports, "V_MODEL_RADIO", ()=>V_MODEL_RADIO);
+parcelHelpers.export(exports, "V_MODEL_SELECT", ()=>V_MODEL_SELECT);
+parcelHelpers.export(exports, "V_MODEL_TEXT", ()=>V_MODEL_TEXT);
+parcelHelpers.export(exports, "V_ON_WITH_KEYS", ()=>V_ON_WITH_KEYS);
+parcelHelpers.export(exports, "V_ON_WITH_MODIFIERS", ()=>V_ON_WITH_MODIFIERS);
+parcelHelpers.export(exports, "V_SHOW", ()=>V_SHOW);
+parcelHelpers.export(exports, "compile", ()=>compile);
+parcelHelpers.export(exports, "createDOMCompilerError", ()=>createDOMCompilerError);
+parcelHelpers.export(exports, "parse", ()=>parse);
+parcelHelpers.export(exports, "parserOptions", ()=>parserOptions);
+parcelHelpers.export(exports, "transformStyle", ()=>transformStyle);
+var _compilerCore = require("@vue/compiler-core");
+parcelHelpers.exportAll(_compilerCore, exports);
+var _shared = require("@vue/shared");
+const V_MODEL_RADIO = Symbol(`vModelRadio`);
+const V_MODEL_CHECKBOX = Symbol(`vModelCheckbox`);
+const V_MODEL_TEXT = Symbol(`vModelText`);
+const V_MODEL_SELECT = Symbol(`vModelSelect`);
+const V_MODEL_DYNAMIC = Symbol(`vModelDynamic`);
+const V_ON_WITH_MODIFIERS = Symbol(`vOnModifiersGuard`);
+const V_ON_WITH_KEYS = Symbol(`vOnKeysGuard`);
+const V_SHOW = Symbol(`vShow`);
+const TRANSITION = Symbol(`Transition`);
+const TRANSITION_GROUP = Symbol(`TransitionGroup`);
+(0, _compilerCore.registerRuntimeHelpers)({
+    [V_MODEL_RADIO]: `vModelRadio`,
+    [V_MODEL_CHECKBOX]: `vModelCheckbox`,
+    [V_MODEL_TEXT]: `vModelText`,
+    [V_MODEL_SELECT]: `vModelSelect`,
+    [V_MODEL_DYNAMIC]: `vModelDynamic`,
+    [V_ON_WITH_MODIFIERS]: `withModifiers`,
+    [V_ON_WITH_KEYS]: `withKeys`,
+    [V_SHOW]: `vShow`,
+    [TRANSITION]: `Transition`,
+    [TRANSITION_GROUP]: `TransitionGroup`
+});
+let decoder;
+function decodeHtmlBrowser(raw, asAttr = false) {
+    if (!decoder) decoder = document.createElement("div");
+    if (asAttr) {
+        decoder.innerHTML = `<div foo="${raw.replace(/"/g, "&quot;")}">`;
+        return decoder.children[0].getAttribute("foo");
+    } else {
+        decoder.innerHTML = raw;
+        return decoder.textContent;
+    }
+}
+const parserOptions = {
+    parseMode: "html",
+    isVoidTag: (0, _shared.isVoidTag),
+    isNativeTag: (tag)=>(0, _shared.isHTMLTag)(tag) || (0, _shared.isSVGTag)(tag) || (0, _shared.isMathMLTag)(tag),
+    isPreTag: (tag)=>tag === "pre",
+    isIgnoreNewlineTag: (tag)=>tag === "pre" || tag === "textarea",
+    decodeEntities: decodeHtmlBrowser,
+    isBuiltInComponent: (tag)=>{
+        if (tag === "Transition" || tag === "transition") return TRANSITION;
+        else if (tag === "TransitionGroup" || tag === "transition-group") return TRANSITION_GROUP;
+    },
+    // https://html.spec.whatwg.org/multipage/parsing.html#tree-construction-dispatcher
+    getNamespace (tag, parent, rootNamespace) {
+        let ns = parent ? parent.ns : rootNamespace;
+        if (parent && ns === 2) {
+            if (parent.tag === "annotation-xml") {
+                if (tag === "svg") return 1;
+                if (parent.props.some((a)=>a.type === 6 && a.name === "encoding" && a.value != null && (a.value.content === "text/html" || a.value.content === "application/xhtml+xml"))) ns = 0;
+            } else if (/^m(?:[ions]|text)$/.test(parent.tag) && tag !== "mglyph" && tag !== "malignmark") ns = 0;
+        } else if (parent && ns === 1) {
+            if (parent.tag === "foreignObject" || parent.tag === "desc" || parent.tag === "title") ns = 0;
+        }
+        if (ns === 0) {
+            if (tag === "svg") return 1;
+            if (tag === "math") return 2;
+        }
+        return ns;
+    }
+};
+const transformStyle = (node)=>{
+    if (node.type === 1) node.props.forEach((p, i)=>{
+        if (p.type === 6 && p.name === "style" && p.value) node.props[i] = {
+            type: 7,
+            name: `bind`,
+            arg: (0, _compilerCore.createSimpleExpression)(`style`, true, p.loc),
+            exp: parseInlineCSS(p.value.content, p.loc),
+            modifiers: [],
+            loc: p.loc
+        };
+    });
+};
+const parseInlineCSS = (cssText, loc)=>{
+    const normalized = (0, _shared.parseStringStyle)(cssText);
+    return (0, _compilerCore.createSimpleExpression)(JSON.stringify(normalized), false, loc, 3);
+};
+function createDOMCompilerError(code, loc) {
+    return (0, _compilerCore.createCompilerError)(code, loc, DOMErrorMessages);
+}
+const DOMErrorCodes = {
+    "X_V_HTML_NO_EXPRESSION": 53,
+    "53": "X_V_HTML_NO_EXPRESSION",
+    "X_V_HTML_WITH_CHILDREN": 54,
+    "54": "X_V_HTML_WITH_CHILDREN",
+    "X_V_TEXT_NO_EXPRESSION": 55,
+    "55": "X_V_TEXT_NO_EXPRESSION",
+    "X_V_TEXT_WITH_CHILDREN": 56,
+    "56": "X_V_TEXT_WITH_CHILDREN",
+    "X_V_MODEL_ON_INVALID_ELEMENT": 57,
+    "57": "X_V_MODEL_ON_INVALID_ELEMENT",
+    "X_V_MODEL_ARG_ON_ELEMENT": 58,
+    "58": "X_V_MODEL_ARG_ON_ELEMENT",
+    "X_V_MODEL_ON_FILE_INPUT_ELEMENT": 59,
+    "59": "X_V_MODEL_ON_FILE_INPUT_ELEMENT",
+    "X_V_MODEL_UNNECESSARY_VALUE": 60,
+    "60": "X_V_MODEL_UNNECESSARY_VALUE",
+    "X_V_SHOW_NO_EXPRESSION": 61,
+    "61": "X_V_SHOW_NO_EXPRESSION",
+    "X_TRANSITION_INVALID_CHILDREN": 62,
+    "62": "X_TRANSITION_INVALID_CHILDREN",
+    "X_IGNORED_SIDE_EFFECT_TAG": 63,
+    "63": "X_IGNORED_SIDE_EFFECT_TAG",
+    "__EXTEND_POINT__": 64,
+    "64": "__EXTEND_POINT__"
+};
+const DOMErrorMessages = {
+    [53]: `v-html is missing expression.`,
+    [54]: `v-html will override element children.`,
+    [55]: `v-text is missing expression.`,
+    [56]: `v-text will override element children.`,
+    [57]: `v-model can only be used on <input>, <textarea> and <select> elements.`,
+    [58]: `v-model argument is not supported on plain elements.`,
+    [59]: `v-model cannot be used on file inputs since they are read-only. Use a v-on:change listener instead.`,
+    [60]: `Unnecessary value binding used alongside v-model. It will interfere with v-model's behavior.`,
+    [61]: `v-show is missing expression.`,
+    [62]: `<Transition> expects exactly one child element or component.`,
+    [63]: `Tags with side effect (<script> and <style>) are ignored in client component templates.`
+};
+const transformVHtml = (dir, node, context)=>{
+    const { exp, loc } = dir;
+    if (!exp) context.onError(createDOMCompilerError(53, loc));
+    if (node.children.length) {
+        context.onError(createDOMCompilerError(54, loc));
+        node.children.length = 0;
+    }
+    return {
+        props: [
+            (0, _compilerCore.createObjectProperty)((0, _compilerCore.createSimpleExpression)(`innerHTML`, true, loc), exp || (0, _compilerCore.createSimpleExpression)("", true))
+        ]
+    };
+};
+const transformVText = (dir, node, context)=>{
+    const { exp, loc } = dir;
+    if (!exp) context.onError(createDOMCompilerError(55, loc));
+    if (node.children.length) {
+        context.onError(createDOMCompilerError(56, loc));
+        node.children.length = 0;
+    }
+    return {
+        props: [
+            (0, _compilerCore.createObjectProperty)((0, _compilerCore.createSimpleExpression)(`textContent`, true), exp ? (0, _compilerCore.getConstantType)(exp, context) > 0 ? exp : (0, _compilerCore.createCallExpression)(context.helperString((0, _compilerCore.TO_DISPLAY_STRING)), [
+                exp
+            ], loc) : (0, _compilerCore.createSimpleExpression)("", true))
+        ]
+    };
+};
+const transformModel = (dir, node, context)=>{
+    const baseResult = (0, _compilerCore.transformModel)(dir, node, context);
+    if (!baseResult.props.length || node.tagType === 1) return baseResult;
+    if (dir.arg) context.onError(createDOMCompilerError(58, dir.arg.loc));
+    function checkDuplicatedValue() {
+        const value = (0, _compilerCore.findDir)(node, "bind");
+        if (value && (0, _compilerCore.isStaticArgOf)(value.arg, "value")) context.onError(createDOMCompilerError(60, value.loc));
+    }
+    const { tag } = node;
+    const isCustomElement = context.isCustomElement(tag);
+    if (tag === "input" || tag === "textarea" || tag === "select" || isCustomElement) {
+        let directiveToUse = V_MODEL_TEXT;
+        let isInvalidType = false;
+        if (tag === "input" || isCustomElement) {
+            const type = (0, _compilerCore.findProp)(node, `type`);
+            if (type) {
+                if (type.type === 7) directiveToUse = V_MODEL_DYNAMIC;
+                else if (type.value) switch(type.value.content){
+                    case "radio":
+                        directiveToUse = V_MODEL_RADIO;
+                        break;
+                    case "checkbox":
+                        directiveToUse = V_MODEL_CHECKBOX;
+                        break;
+                    case "file":
+                        isInvalidType = true;
+                        context.onError(createDOMCompilerError(59, dir.loc));
+                        break;
+                    default:
+                        checkDuplicatedValue();
+                        break;
+                }
+            } else if ((0, _compilerCore.hasDynamicKeyVBind)(node)) directiveToUse = V_MODEL_DYNAMIC;
+            else checkDuplicatedValue();
+        } else if (tag === "select") directiveToUse = V_MODEL_SELECT;
+        else checkDuplicatedValue();
+        if (!isInvalidType) baseResult.needRuntime = context.helper(directiveToUse);
+    } else context.onError(createDOMCompilerError(57, dir.loc));
+    baseResult.props = baseResult.props.filter((p)=>!(p.key.type === 4 && p.key.content === "modelValue"));
+    return baseResult;
+};
+const isEventOptionModifier = /* @__PURE__ */ (0, _shared.makeMap)(`passive,once,capture`);
+const isNonKeyModifier = /* @__PURE__ */ (0, _shared.makeMap)(// event propagation management
+`stop,prevent,self,ctrl,shift,alt,meta,exact,middle`);
+const maybeKeyModifier = /* @__PURE__ */ (0, _shared.makeMap)("left,right");
+const isKeyboardEvent = /* @__PURE__ */ (0, _shared.makeMap)(`onkeyup,onkeydown,onkeypress`);
+const resolveModifiers = (key, modifiers, context, loc)=>{
+    const keyModifiers = [];
+    const nonKeyModifiers = [];
+    const eventOptionModifiers = [];
+    for(let i = 0; i < modifiers.length; i++){
+        const modifier = modifiers[i].content;
+        if (modifier === "native" && (0, _compilerCore.checkCompatEnabled)("COMPILER_V_ON_NATIVE", context, loc)) eventOptionModifiers.push(modifier);
+        else if (isEventOptionModifier(modifier)) eventOptionModifiers.push(modifier);
+        else {
+            if (maybeKeyModifier(modifier)) {
+                if ((0, _compilerCore.isStaticExp)(key)) {
+                    if (isKeyboardEvent(key.content.toLowerCase())) keyModifiers.push(modifier);
+                    else nonKeyModifiers.push(modifier);
+                } else {
+                    keyModifiers.push(modifier);
+                    nonKeyModifiers.push(modifier);
+                }
+            } else if (isNonKeyModifier(modifier)) nonKeyModifiers.push(modifier);
+            else keyModifiers.push(modifier);
+        }
+    }
+    return {
+        keyModifiers,
+        nonKeyModifiers,
+        eventOptionModifiers
+    };
+};
+const transformClick = (key, event)=>{
+    const isStaticClick = (0, _compilerCore.isStaticExp)(key) && key.content.toLowerCase() === "onclick";
+    return isStaticClick ? (0, _compilerCore.createSimpleExpression)(event, true) : key.type !== 4 ? (0, _compilerCore.createCompoundExpression)([
+        `(`,
+        key,
+        `) === "onClick" ? "${event}" : (`,
+        key,
+        `)`
+    ]) : key;
+};
+const transformOn = (dir, node, context)=>{
+    return (0, _compilerCore.transformOn)(dir, node, context, (baseResult)=>{
+        const { modifiers } = dir;
+        if (!modifiers.length) return baseResult;
+        let { key, value: handlerExp } = baseResult.props[0];
+        const { keyModifiers, nonKeyModifiers, eventOptionModifiers } = resolveModifiers(key, modifiers, context, dir.loc);
+        if (nonKeyModifiers.includes("right")) key = transformClick(key, `onContextmenu`);
+        if (nonKeyModifiers.includes("middle")) key = transformClick(key, `onMouseup`);
+        if (nonKeyModifiers.length) handlerExp = (0, _compilerCore.createCallExpression)(context.helper(V_ON_WITH_MODIFIERS), [
+            handlerExp,
+            JSON.stringify(nonKeyModifiers)
+        ]);
+        if (keyModifiers.length && // if event name is dynamic, always wrap with keys guard
+        (!(0, _compilerCore.isStaticExp)(key) || isKeyboardEvent(key.content.toLowerCase()))) handlerExp = (0, _compilerCore.createCallExpression)(context.helper(V_ON_WITH_KEYS), [
+            handlerExp,
+            JSON.stringify(keyModifiers)
+        ]);
+        if (eventOptionModifiers.length) {
+            const modifierPostfix = eventOptionModifiers.map((0, _shared.capitalize)).join("");
+            key = (0, _compilerCore.isStaticExp)(key) ? (0, _compilerCore.createSimpleExpression)(`${key.content}${modifierPostfix}`, true) : (0, _compilerCore.createCompoundExpression)([
+                `(`,
+                key,
+                `) + "${modifierPostfix}"`
+            ]);
+        }
+        return {
+            props: [
+                (0, _compilerCore.createObjectProperty)(key, handlerExp)
+            ]
+        };
+    });
+};
+const transformShow = (dir, node, context)=>{
+    const { exp, loc } = dir;
+    if (!exp) context.onError(createDOMCompilerError(61, loc));
+    return {
+        props: [],
+        needRuntime: context.helper(V_SHOW)
+    };
+};
+const transformTransition = (node, context)=>{
+    if (node.type === 1 && node.tagType === 1) {
+        const component = context.isBuiltInComponent(node.tag);
+        if (component === TRANSITION) return ()=>{
+            if (!node.children.length) return;
+            if (hasMultipleChildren(node)) context.onError(createDOMCompilerError(62, {
+                start: node.children[0].loc.start,
+                end: node.children[node.children.length - 1].loc.end,
+                source: ""
+            }));
+            const child = node.children[0];
+            if (child.type === 1) {
+                for (const p of child.props)if (p.type === 7 && p.name === "show") node.props.push({
+                    type: 6,
+                    name: "persisted",
+                    nameLoc: node.loc,
+                    value: void 0,
+                    loc: node.loc
+                });
+            }
+        };
+    }
+};
+function hasMultipleChildren(node) {
+    const children = node.children = node.children.filter((c)=>c.type !== 3 && !(c.type === 2 && !c.content.trim()));
+    const child = children[0];
+    return children.length !== 1 || child.type === 11 || child.type === 9 && child.branches.some(hasMultipleChildren);
+}
+const ignoreSideEffectTags = (node, context)=>{
+    if (node.type === 1 && node.tagType === 0 && (node.tag === "script" || node.tag === "style")) {
+        context.onError(createDOMCompilerError(63, node.loc));
+        context.removeNode();
+    }
+};
+function isValidHTMLNesting(parent, child) {
+    if (parent in onlyValidChildren) return onlyValidChildren[parent].has(child);
+    if (child in onlyValidParents) return onlyValidParents[child].has(parent);
+    if (parent in knownInvalidChildren) {
+        if (knownInvalidChildren[parent].has(child)) return false;
+    }
+    if (child in knownInvalidParents) {
+        if (knownInvalidParents[child].has(parent)) return false;
+    }
+    return true;
+}
+const headings = /* @__PURE__ */ new Set([
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6"
+]);
+const emptySet = /* @__PURE__ */ new Set([]);
+const onlyValidChildren = {
+    head: /* @__PURE__ */ new Set([
+        "base",
+        "basefront",
+        "bgsound",
+        "link",
+        "meta",
+        "title",
+        "noscript",
+        "noframes",
+        "style",
+        "script",
+        "template"
+    ]),
+    optgroup: /* @__PURE__ */ new Set([
+        "option"
+    ]),
+    select: /* @__PURE__ */ new Set([
+        "optgroup",
+        "option",
+        "hr"
+    ]),
+    // table
+    table: /* @__PURE__ */ new Set([
+        "caption",
+        "colgroup",
+        "tbody",
+        "tfoot",
+        "thead"
+    ]),
+    tr: /* @__PURE__ */ new Set([
+        "td",
+        "th"
+    ]),
+    colgroup: /* @__PURE__ */ new Set([
+        "col"
+    ]),
+    tbody: /* @__PURE__ */ new Set([
+        "tr"
+    ]),
+    thead: /* @__PURE__ */ new Set([
+        "tr"
+    ]),
+    tfoot: /* @__PURE__ */ new Set([
+        "tr"
+    ]),
+    // these elements can not have any children elements
+    script: emptySet,
+    iframe: emptySet,
+    option: emptySet,
+    textarea: emptySet,
+    style: emptySet,
+    title: emptySet
+};
+const onlyValidParents = {
+    // sections
+    html: emptySet,
+    body: /* @__PURE__ */ new Set([
+        "html"
+    ]),
+    head: /* @__PURE__ */ new Set([
+        "html"
+    ]),
+    // table
+    td: /* @__PURE__ */ new Set([
+        "tr"
+    ]),
+    colgroup: /* @__PURE__ */ new Set([
+        "table"
+    ]),
+    caption: /* @__PURE__ */ new Set([
+        "table"
+    ]),
+    tbody: /* @__PURE__ */ new Set([
+        "table"
+    ]),
+    tfoot: /* @__PURE__ */ new Set([
+        "table"
+    ]),
+    col: /* @__PURE__ */ new Set([
+        "colgroup"
+    ]),
+    th: /* @__PURE__ */ new Set([
+        "tr"
+    ]),
+    thead: /* @__PURE__ */ new Set([
+        "table"
+    ]),
+    tr: /* @__PURE__ */ new Set([
+        "tbody",
+        "thead",
+        "tfoot"
+    ]),
+    // data list
+    dd: /* @__PURE__ */ new Set([
+        "dl",
+        "div"
+    ]),
+    dt: /* @__PURE__ */ new Set([
+        "dl",
+        "div"
+    ]),
+    // other
+    figcaption: /* @__PURE__ */ new Set([
+        "figure"
+    ]),
+    // li: new Set(["ul", "ol"]),
+    summary: /* @__PURE__ */ new Set([
+        "details"
+    ]),
+    area: /* @__PURE__ */ new Set([
+        "map"
+    ])
+};
+const knownInvalidChildren = {
+    p: /* @__PURE__ */ new Set([
+        "address",
+        "article",
+        "aside",
+        "blockquote",
+        "center",
+        "details",
+        "dialog",
+        "dir",
+        "div",
+        "dl",
+        "fieldset",
+        "figure",
+        "footer",
+        "form",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "header",
+        "hgroup",
+        "hr",
+        "li",
+        "main",
+        "nav",
+        "menu",
+        "ol",
+        "p",
+        "pre",
+        "section",
+        "table",
+        "ul"
+    ]),
+    svg: /* @__PURE__ */ new Set([
+        "b",
+        "blockquote",
+        "br",
+        "code",
+        "dd",
+        "div",
+        "dl",
+        "dt",
+        "em",
+        "embed",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "hr",
+        "i",
+        "img",
+        "li",
+        "menu",
+        "meta",
+        "ol",
+        "p",
+        "pre",
+        "ruby",
+        "s",
+        "small",
+        "span",
+        "strong",
+        "sub",
+        "sup",
+        "table",
+        "u",
+        "ul",
+        "var"
+    ])
+};
+const knownInvalidParents = {
+    a: /* @__PURE__ */ new Set([
+        "a"
+    ]),
+    button: /* @__PURE__ */ new Set([
+        "button"
+    ]),
+    dd: /* @__PURE__ */ new Set([
+        "dd",
+        "dt"
+    ]),
+    dt: /* @__PURE__ */ new Set([
+        "dd",
+        "dt"
+    ]),
+    form: /* @__PURE__ */ new Set([
+        "form"
+    ]),
+    li: /* @__PURE__ */ new Set([
+        "li"
+    ]),
+    h1: headings,
+    h2: headings,
+    h3: headings,
+    h4: headings,
+    h5: headings,
+    h6: headings
+};
+const validateHtmlNesting = (node, context)=>{
+    if (node.type === 1 && node.tagType === 0 && context.parent && context.parent.type === 1 && context.parent.tagType === 0 && !isValidHTMLNesting(context.parent.tag, node.tag)) {
+        const error = new SyntaxError(`<${node.tag}> cannot be child of <${context.parent.tag}>, according to HTML specifications. This can cause hydration errors or potentially disrupt future functionality.`);
+        error.loc = node.loc;
+        context.onWarn(error);
+    }
+};
+const DOMNodeTransforms = [
+    transformStyle,
+    transformTransition,
+    validateHtmlNesting
+];
+const DOMDirectiveTransforms = {
+    cloak: (0, _compilerCore.noopDirectiveTransform),
+    html: transformVHtml,
+    text: transformVText,
+    model: transformModel,
+    // override compiler-core
+    on: transformOn,
+    // override compiler-core
+    show: transformShow
+};
+function compile(src, options = {}) {
+    return (0, _compilerCore.baseCompile)(src, (0, _shared.extend)({}, parserOptions, options, {
+        nodeTransforms: [
+            // ignore <script> and <tag>
+            // this is not put inside DOMNodeTransforms because that list is used
+            // by compiler-ssr to generate vnode fallback branches
+            ignoreSideEffectTags,
+            ...DOMNodeTransforms,
+            ...options.nodeTransforms || []
+        ],
+        directiveTransforms: (0, _shared.extend)({}, DOMDirectiveTransforms, options.directiveTransforms || {}),
+        transformHoist: null
+    }));
+}
+function parse(template, options = {}) {
+    return (0, _compilerCore.baseParse)(template, (0, _shared.extend)({}, parserOptions, options));
+}
+
+},{"@vue/compiler-core":"1V3uj","@vue/shared":"3SM3y","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1V3uj":[function(require,module,exports,__globalThis) {
+/**
+* @vue/compiler-core v3.5.13
+* (c) 2018-present Yuxi (Evan) You and Vue contributors
+* @license MIT
+**/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "generateCodeFrame", ()=>(0, _shared.generateCodeFrame));
+parcelHelpers.export(exports, "BASE_TRANSITION", ()=>BASE_TRANSITION);
+parcelHelpers.export(exports, "BindingTypes", ()=>BindingTypes);
+parcelHelpers.export(exports, "CAMELIZE", ()=>CAMELIZE);
+parcelHelpers.export(exports, "CAPITALIZE", ()=>CAPITALIZE);
+parcelHelpers.export(exports, "CREATE_BLOCK", ()=>CREATE_BLOCK);
+parcelHelpers.export(exports, "CREATE_COMMENT", ()=>CREATE_COMMENT);
+parcelHelpers.export(exports, "CREATE_ELEMENT_BLOCK", ()=>CREATE_ELEMENT_BLOCK);
+parcelHelpers.export(exports, "CREATE_ELEMENT_VNODE", ()=>CREATE_ELEMENT_VNODE);
+parcelHelpers.export(exports, "CREATE_SLOTS", ()=>CREATE_SLOTS);
+parcelHelpers.export(exports, "CREATE_STATIC", ()=>CREATE_STATIC);
+parcelHelpers.export(exports, "CREATE_TEXT", ()=>CREATE_TEXT);
+parcelHelpers.export(exports, "CREATE_VNODE", ()=>CREATE_VNODE);
+parcelHelpers.export(exports, "CompilerDeprecationTypes", ()=>CompilerDeprecationTypes);
+parcelHelpers.export(exports, "ConstantTypes", ()=>ConstantTypes);
+parcelHelpers.export(exports, "ElementTypes", ()=>ElementTypes);
+parcelHelpers.export(exports, "ErrorCodes", ()=>ErrorCodes);
+parcelHelpers.export(exports, "FRAGMENT", ()=>FRAGMENT);
+parcelHelpers.export(exports, "GUARD_REACTIVE_PROPS", ()=>GUARD_REACTIVE_PROPS);
+parcelHelpers.export(exports, "IS_MEMO_SAME", ()=>IS_MEMO_SAME);
+parcelHelpers.export(exports, "IS_REF", ()=>IS_REF);
+parcelHelpers.export(exports, "KEEP_ALIVE", ()=>KEEP_ALIVE);
+parcelHelpers.export(exports, "MERGE_PROPS", ()=>MERGE_PROPS);
+parcelHelpers.export(exports, "NORMALIZE_CLASS", ()=>NORMALIZE_CLASS);
+parcelHelpers.export(exports, "NORMALIZE_PROPS", ()=>NORMALIZE_PROPS);
+parcelHelpers.export(exports, "NORMALIZE_STYLE", ()=>NORMALIZE_STYLE);
+parcelHelpers.export(exports, "Namespaces", ()=>Namespaces);
+parcelHelpers.export(exports, "NodeTypes", ()=>NodeTypes);
+parcelHelpers.export(exports, "OPEN_BLOCK", ()=>OPEN_BLOCK);
+parcelHelpers.export(exports, "POP_SCOPE_ID", ()=>POP_SCOPE_ID);
+parcelHelpers.export(exports, "PUSH_SCOPE_ID", ()=>PUSH_SCOPE_ID);
+parcelHelpers.export(exports, "RENDER_LIST", ()=>RENDER_LIST);
+parcelHelpers.export(exports, "RENDER_SLOT", ()=>RENDER_SLOT);
+parcelHelpers.export(exports, "RESOLVE_COMPONENT", ()=>RESOLVE_COMPONENT);
+parcelHelpers.export(exports, "RESOLVE_DIRECTIVE", ()=>RESOLVE_DIRECTIVE);
+parcelHelpers.export(exports, "RESOLVE_DYNAMIC_COMPONENT", ()=>RESOLVE_DYNAMIC_COMPONENT);
+parcelHelpers.export(exports, "RESOLVE_FILTER", ()=>RESOLVE_FILTER);
+parcelHelpers.export(exports, "SET_BLOCK_TRACKING", ()=>SET_BLOCK_TRACKING);
+parcelHelpers.export(exports, "SUSPENSE", ()=>SUSPENSE);
+parcelHelpers.export(exports, "TELEPORT", ()=>TELEPORT);
+parcelHelpers.export(exports, "TO_DISPLAY_STRING", ()=>TO_DISPLAY_STRING);
+parcelHelpers.export(exports, "TO_HANDLERS", ()=>TO_HANDLERS);
+parcelHelpers.export(exports, "TO_HANDLER_KEY", ()=>TO_HANDLER_KEY);
+parcelHelpers.export(exports, "TS_NODE_TYPES", ()=>TS_NODE_TYPES);
+parcelHelpers.export(exports, "UNREF", ()=>UNREF);
+parcelHelpers.export(exports, "WITH_CTX", ()=>WITH_CTX);
+parcelHelpers.export(exports, "WITH_DIRECTIVES", ()=>WITH_DIRECTIVES);
+parcelHelpers.export(exports, "WITH_MEMO", ()=>WITH_MEMO);
+parcelHelpers.export(exports, "advancePositionWithClone", ()=>advancePositionWithClone);
+parcelHelpers.export(exports, "advancePositionWithMutation", ()=>advancePositionWithMutation);
+parcelHelpers.export(exports, "assert", ()=>assert);
+parcelHelpers.export(exports, "baseCompile", ()=>baseCompile);
+parcelHelpers.export(exports, "baseParse", ()=>baseParse);
+parcelHelpers.export(exports, "buildDirectiveArgs", ()=>buildDirectiveArgs);
+parcelHelpers.export(exports, "buildProps", ()=>buildProps);
+parcelHelpers.export(exports, "buildSlots", ()=>buildSlots);
+parcelHelpers.export(exports, "checkCompatEnabled", ()=>checkCompatEnabled);
+parcelHelpers.export(exports, "convertToBlock", ()=>convertToBlock);
+parcelHelpers.export(exports, "createArrayExpression", ()=>createArrayExpression);
+parcelHelpers.export(exports, "createAssignmentExpression", ()=>createAssignmentExpression);
+parcelHelpers.export(exports, "createBlockStatement", ()=>createBlockStatement);
+parcelHelpers.export(exports, "createCacheExpression", ()=>createCacheExpression);
+parcelHelpers.export(exports, "createCallExpression", ()=>createCallExpression);
+parcelHelpers.export(exports, "createCompilerError", ()=>createCompilerError);
+parcelHelpers.export(exports, "createCompoundExpression", ()=>createCompoundExpression);
+parcelHelpers.export(exports, "createConditionalExpression", ()=>createConditionalExpression);
+parcelHelpers.export(exports, "createForLoopParams", ()=>createForLoopParams);
+parcelHelpers.export(exports, "createFunctionExpression", ()=>createFunctionExpression);
+parcelHelpers.export(exports, "createIfStatement", ()=>createIfStatement);
+parcelHelpers.export(exports, "createInterpolation", ()=>createInterpolation);
+parcelHelpers.export(exports, "createObjectExpression", ()=>createObjectExpression);
+parcelHelpers.export(exports, "createObjectProperty", ()=>createObjectProperty);
+parcelHelpers.export(exports, "createReturnStatement", ()=>createReturnStatement);
+parcelHelpers.export(exports, "createRoot", ()=>createRoot);
+parcelHelpers.export(exports, "createSequenceExpression", ()=>createSequenceExpression);
+parcelHelpers.export(exports, "createSimpleExpression", ()=>createSimpleExpression);
+parcelHelpers.export(exports, "createStructuralDirectiveTransform", ()=>createStructuralDirectiveTransform);
+parcelHelpers.export(exports, "createTemplateLiteral", ()=>createTemplateLiteral);
+parcelHelpers.export(exports, "createTransformContext", ()=>createTransformContext);
+parcelHelpers.export(exports, "createVNodeCall", ()=>createVNodeCall);
+parcelHelpers.export(exports, "errorMessages", ()=>errorMessages);
+parcelHelpers.export(exports, "extractIdentifiers", ()=>extractIdentifiers);
+parcelHelpers.export(exports, "findDir", ()=>findDir);
+parcelHelpers.export(exports, "findProp", ()=>findProp);
+parcelHelpers.export(exports, "forAliasRE", ()=>forAliasRE);
+parcelHelpers.export(exports, "generate", ()=>generate);
+parcelHelpers.export(exports, "getBaseTransformPreset", ()=>getBaseTransformPreset);
+parcelHelpers.export(exports, "getConstantType", ()=>getConstantType);
+parcelHelpers.export(exports, "getMemoedVNodeCall", ()=>getMemoedVNodeCall);
+parcelHelpers.export(exports, "getVNodeBlockHelper", ()=>getVNodeBlockHelper);
+parcelHelpers.export(exports, "getVNodeHelper", ()=>getVNodeHelper);
+parcelHelpers.export(exports, "hasDynamicKeyVBind", ()=>hasDynamicKeyVBind);
+parcelHelpers.export(exports, "hasScopeRef", ()=>hasScopeRef);
+parcelHelpers.export(exports, "helperNameMap", ()=>helperNameMap);
+parcelHelpers.export(exports, "injectProp", ()=>injectProp);
+parcelHelpers.export(exports, "isCoreComponent", ()=>isCoreComponent);
+parcelHelpers.export(exports, "isFnExpression", ()=>isFnExpression);
+parcelHelpers.export(exports, "isFnExpressionBrowser", ()=>isFnExpressionBrowser);
+parcelHelpers.export(exports, "isFnExpressionNode", ()=>isFnExpressionNode);
+parcelHelpers.export(exports, "isFunctionType", ()=>isFunctionType);
+parcelHelpers.export(exports, "isInDestructureAssignment", ()=>isInDestructureAssignment);
+parcelHelpers.export(exports, "isInNewExpression", ()=>isInNewExpression);
+parcelHelpers.export(exports, "isMemberExpression", ()=>isMemberExpression);
+parcelHelpers.export(exports, "isMemberExpressionBrowser", ()=>isMemberExpressionBrowser);
+parcelHelpers.export(exports, "isMemberExpressionNode", ()=>isMemberExpressionNode);
+parcelHelpers.export(exports, "isReferencedIdentifier", ()=>isReferencedIdentifier);
+parcelHelpers.export(exports, "isSimpleIdentifier", ()=>isSimpleIdentifier);
+parcelHelpers.export(exports, "isSlotOutlet", ()=>isSlotOutlet);
+parcelHelpers.export(exports, "isStaticArgOf", ()=>isStaticArgOf);
+parcelHelpers.export(exports, "isStaticExp", ()=>isStaticExp);
+parcelHelpers.export(exports, "isStaticProperty", ()=>isStaticProperty);
+parcelHelpers.export(exports, "isStaticPropertyKey", ()=>isStaticPropertyKey);
+parcelHelpers.export(exports, "isTemplateNode", ()=>isTemplateNode);
+parcelHelpers.export(exports, "isText", ()=>isText$1);
+parcelHelpers.export(exports, "isVSlot", ()=>isVSlot);
+parcelHelpers.export(exports, "locStub", ()=>locStub);
+parcelHelpers.export(exports, "noopDirectiveTransform", ()=>noopDirectiveTransform);
+parcelHelpers.export(exports, "processExpression", ()=>processExpression);
+parcelHelpers.export(exports, "processFor", ()=>processFor);
+parcelHelpers.export(exports, "processIf", ()=>processIf);
+parcelHelpers.export(exports, "processSlotOutlet", ()=>processSlotOutlet);
+parcelHelpers.export(exports, "registerRuntimeHelpers", ()=>registerRuntimeHelpers);
+parcelHelpers.export(exports, "resolveComponentType", ()=>resolveComponentType);
+parcelHelpers.export(exports, "stringifyExpression", ()=>stringifyExpression);
+parcelHelpers.export(exports, "toValidAssetId", ()=>toValidAssetId);
+parcelHelpers.export(exports, "trackSlotScopes", ()=>trackSlotScopes);
+parcelHelpers.export(exports, "trackVForSlotScopes", ()=>trackVForSlotScopes);
+parcelHelpers.export(exports, "transform", ()=>transform);
+parcelHelpers.export(exports, "transformBind", ()=>transformBind);
+parcelHelpers.export(exports, "transformElement", ()=>transformElement);
+parcelHelpers.export(exports, "transformExpression", ()=>transformExpression);
+parcelHelpers.export(exports, "transformModel", ()=>transformModel);
+parcelHelpers.export(exports, "transformOn", ()=>transformOn);
+parcelHelpers.export(exports, "traverseNode", ()=>traverseNode);
+parcelHelpers.export(exports, "unwrapTSNode", ()=>unwrapTSNode);
+parcelHelpers.export(exports, "walkBlockDeclarations", ()=>walkBlockDeclarations);
+parcelHelpers.export(exports, "walkFunctionParams", ()=>walkFunctionParams);
+parcelHelpers.export(exports, "walkIdentifiers", ()=>walkIdentifiers);
+parcelHelpers.export(exports, "warnDeprecation", ()=>warnDeprecation);
+var _shared = require("@vue/shared");
+const FRAGMENT = Symbol(`Fragment`);
+const TELEPORT = Symbol(`Teleport`);
+const SUSPENSE = Symbol(`Suspense`);
+const KEEP_ALIVE = Symbol(`KeepAlive`);
+const BASE_TRANSITION = Symbol(`BaseTransition`);
+const OPEN_BLOCK = Symbol(`openBlock`);
+const CREATE_BLOCK = Symbol(`createBlock`);
+const CREATE_ELEMENT_BLOCK = Symbol(`createElementBlock`);
+const CREATE_VNODE = Symbol(`createVNode`);
+const CREATE_ELEMENT_VNODE = Symbol(`createElementVNode`);
+const CREATE_COMMENT = Symbol(`createCommentVNode`);
+const CREATE_TEXT = Symbol(`createTextVNode`);
+const CREATE_STATIC = Symbol(`createStaticVNode`);
+const RESOLVE_COMPONENT = Symbol(`resolveComponent`);
+const RESOLVE_DYNAMIC_COMPONENT = Symbol(`resolveDynamicComponent`);
+const RESOLVE_DIRECTIVE = Symbol(`resolveDirective`);
+const RESOLVE_FILTER = Symbol(`resolveFilter`);
+const WITH_DIRECTIVES = Symbol(`withDirectives`);
+const RENDER_LIST = Symbol(`renderList`);
+const RENDER_SLOT = Symbol(`renderSlot`);
+const CREATE_SLOTS = Symbol(`createSlots`);
+const TO_DISPLAY_STRING = Symbol(`toDisplayString`);
+const MERGE_PROPS = Symbol(`mergeProps`);
+const NORMALIZE_CLASS = Symbol(`normalizeClass`);
+const NORMALIZE_STYLE = Symbol(`normalizeStyle`);
+const NORMALIZE_PROPS = Symbol(`normalizeProps`);
+const GUARD_REACTIVE_PROPS = Symbol(`guardReactiveProps`);
+const TO_HANDLERS = Symbol(`toHandlers`);
+const CAMELIZE = Symbol(`camelize`);
+const CAPITALIZE = Symbol(`capitalize`);
+const TO_HANDLER_KEY = Symbol(`toHandlerKey`);
+const SET_BLOCK_TRACKING = Symbol(`setBlockTracking`);
+const PUSH_SCOPE_ID = Symbol(`pushScopeId`);
+const POP_SCOPE_ID = Symbol(`popScopeId`);
+const WITH_CTX = Symbol(`withCtx`);
+const UNREF = Symbol(`unref`);
+const IS_REF = Symbol(`isRef`);
+const WITH_MEMO = Symbol(`withMemo`);
+const IS_MEMO_SAME = Symbol(`isMemoSame`);
+const helperNameMap = {
+    [FRAGMENT]: `Fragment`,
+    [TELEPORT]: `Teleport`,
+    [SUSPENSE]: `Suspense`,
+    [KEEP_ALIVE]: `KeepAlive`,
+    [BASE_TRANSITION]: `BaseTransition`,
+    [OPEN_BLOCK]: `openBlock`,
+    [CREATE_BLOCK]: `createBlock`,
+    [CREATE_ELEMENT_BLOCK]: `createElementBlock`,
+    [CREATE_VNODE]: `createVNode`,
+    [CREATE_ELEMENT_VNODE]: `createElementVNode`,
+    [CREATE_COMMENT]: `createCommentVNode`,
+    [CREATE_TEXT]: `createTextVNode`,
+    [CREATE_STATIC]: `createStaticVNode`,
+    [RESOLVE_COMPONENT]: `resolveComponent`,
+    [RESOLVE_DYNAMIC_COMPONENT]: `resolveDynamicComponent`,
+    [RESOLVE_DIRECTIVE]: `resolveDirective`,
+    [RESOLVE_FILTER]: `resolveFilter`,
+    [WITH_DIRECTIVES]: `withDirectives`,
+    [RENDER_LIST]: `renderList`,
+    [RENDER_SLOT]: `renderSlot`,
+    [CREATE_SLOTS]: `createSlots`,
+    [TO_DISPLAY_STRING]: `toDisplayString`,
+    [MERGE_PROPS]: `mergeProps`,
+    [NORMALIZE_CLASS]: `normalizeClass`,
+    [NORMALIZE_STYLE]: `normalizeStyle`,
+    [NORMALIZE_PROPS]: `normalizeProps`,
+    [GUARD_REACTIVE_PROPS]: `guardReactiveProps`,
+    [TO_HANDLERS]: `toHandlers`,
+    [CAMELIZE]: `camelize`,
+    [CAPITALIZE]: `capitalize`,
+    [TO_HANDLER_KEY]: `toHandlerKey`,
+    [SET_BLOCK_TRACKING]: `setBlockTracking`,
+    [PUSH_SCOPE_ID]: `pushScopeId`,
+    [POP_SCOPE_ID]: `popScopeId`,
+    [WITH_CTX]: `withCtx`,
+    [UNREF]: `unref`,
+    [IS_REF]: `isRef`,
+    [WITH_MEMO]: `withMemo`,
+    [IS_MEMO_SAME]: `isMemoSame`
+};
+function registerRuntimeHelpers(helpers) {
+    Object.getOwnPropertySymbols(helpers).forEach((s)=>{
+        helperNameMap[s] = helpers[s];
+    });
+}
+const Namespaces = {
+    "HTML": 0,
+    "0": "HTML",
+    "SVG": 1,
+    "1": "SVG",
+    "MATH_ML": 2,
+    "2": "MATH_ML"
+};
+const NodeTypes = {
+    "ROOT": 0,
+    "0": "ROOT",
+    "ELEMENT": 1,
+    "1": "ELEMENT",
+    "TEXT": 2,
+    "2": "TEXT",
+    "COMMENT": 3,
+    "3": "COMMENT",
+    "SIMPLE_EXPRESSION": 4,
+    "4": "SIMPLE_EXPRESSION",
+    "INTERPOLATION": 5,
+    "5": "INTERPOLATION",
+    "ATTRIBUTE": 6,
+    "6": "ATTRIBUTE",
+    "DIRECTIVE": 7,
+    "7": "DIRECTIVE",
+    "COMPOUND_EXPRESSION": 8,
+    "8": "COMPOUND_EXPRESSION",
+    "IF": 9,
+    "9": "IF",
+    "IF_BRANCH": 10,
+    "10": "IF_BRANCH",
+    "FOR": 11,
+    "11": "FOR",
+    "TEXT_CALL": 12,
+    "12": "TEXT_CALL",
+    "VNODE_CALL": 13,
+    "13": "VNODE_CALL",
+    "JS_CALL_EXPRESSION": 14,
+    "14": "JS_CALL_EXPRESSION",
+    "JS_OBJECT_EXPRESSION": 15,
+    "15": "JS_OBJECT_EXPRESSION",
+    "JS_PROPERTY": 16,
+    "16": "JS_PROPERTY",
+    "JS_ARRAY_EXPRESSION": 17,
+    "17": "JS_ARRAY_EXPRESSION",
+    "JS_FUNCTION_EXPRESSION": 18,
+    "18": "JS_FUNCTION_EXPRESSION",
+    "JS_CONDITIONAL_EXPRESSION": 19,
+    "19": "JS_CONDITIONAL_EXPRESSION",
+    "JS_CACHE_EXPRESSION": 20,
+    "20": "JS_CACHE_EXPRESSION",
+    "JS_BLOCK_STATEMENT": 21,
+    "21": "JS_BLOCK_STATEMENT",
+    "JS_TEMPLATE_LITERAL": 22,
+    "22": "JS_TEMPLATE_LITERAL",
+    "JS_IF_STATEMENT": 23,
+    "23": "JS_IF_STATEMENT",
+    "JS_ASSIGNMENT_EXPRESSION": 24,
+    "24": "JS_ASSIGNMENT_EXPRESSION",
+    "JS_SEQUENCE_EXPRESSION": 25,
+    "25": "JS_SEQUENCE_EXPRESSION",
+    "JS_RETURN_STATEMENT": 26,
+    "26": "JS_RETURN_STATEMENT"
+};
+const ElementTypes = {
+    "ELEMENT": 0,
+    "0": "ELEMENT",
+    "COMPONENT": 1,
+    "1": "COMPONENT",
+    "SLOT": 2,
+    "2": "SLOT",
+    "TEMPLATE": 3,
+    "3": "TEMPLATE"
+};
+const ConstantTypes = {
+    "NOT_CONSTANT": 0,
+    "0": "NOT_CONSTANT",
+    "CAN_SKIP_PATCH": 1,
+    "1": "CAN_SKIP_PATCH",
+    "CAN_CACHE": 2,
+    "2": "CAN_CACHE",
+    "CAN_STRINGIFY": 3,
+    "3": "CAN_STRINGIFY"
+};
+const locStub = {
+    start: {
+        line: 1,
+        column: 1,
+        offset: 0
+    },
+    end: {
+        line: 1,
+        column: 1,
+        offset: 0
+    },
+    source: ""
+};
+function createRoot(children, source = "") {
+    return {
+        type: 0,
+        source,
+        children,
+        helpers: /* @__PURE__ */ new Set(),
+        components: [],
+        directives: [],
+        hoists: [],
+        imports: [],
+        cached: [],
+        temps: 0,
+        codegenNode: void 0,
+        loc: locStub
+    };
+}
+function createVNodeCall(context, tag, props, children, patchFlag, dynamicProps, directives, isBlock = false, disableTracking = false, isComponent = false, loc = locStub) {
+    if (context) {
+        if (isBlock) {
+            context.helper(OPEN_BLOCK);
+            context.helper(getVNodeBlockHelper(context.inSSR, isComponent));
+        } else context.helper(getVNodeHelper(context.inSSR, isComponent));
+        if (directives) context.helper(WITH_DIRECTIVES);
+    }
+    return {
+        type: 13,
+        tag,
+        props,
+        children,
+        patchFlag,
+        dynamicProps,
+        directives,
+        isBlock,
+        disableTracking,
+        isComponent,
+        loc
+    };
+}
+function createArrayExpression(elements, loc = locStub) {
+    return {
+        type: 17,
+        loc,
+        elements
+    };
+}
+function createObjectExpression(properties, loc = locStub) {
+    return {
+        type: 15,
+        loc,
+        properties
+    };
+}
+function createObjectProperty(key, value) {
+    return {
+        type: 16,
+        loc: locStub,
+        key: (0, _shared.isString)(key) ? createSimpleExpression(key, true) : key,
+        value
+    };
+}
+function createSimpleExpression(content, isStatic = false, loc = locStub, constType = 0) {
+    return {
+        type: 4,
+        loc,
+        content,
+        isStatic,
+        constType: isStatic ? 3 : constType
+    };
+}
+function createInterpolation(content, loc) {
+    return {
+        type: 5,
+        loc,
+        content: (0, _shared.isString)(content) ? createSimpleExpression(content, false, loc) : content
+    };
+}
+function createCompoundExpression(children, loc = locStub) {
+    return {
+        type: 8,
+        loc,
+        children
+    };
+}
+function createCallExpression(callee, args = [], loc = locStub) {
+    return {
+        type: 14,
+        loc,
+        callee,
+        arguments: args
+    };
+}
+function createFunctionExpression(params, returns, newline = false, isSlot = false, loc = locStub) {
+    return {
+        type: 18,
+        params,
+        returns,
+        newline,
+        isSlot,
+        loc
+    };
+}
+function createConditionalExpression(test, consequent, alternate, newline = true) {
+    return {
+        type: 19,
+        test,
+        consequent,
+        alternate,
+        newline,
+        loc: locStub
+    };
+}
+function createCacheExpression(index, value, needPauseTracking = false, inVOnce = false) {
+    return {
+        type: 20,
+        index,
+        value,
+        needPauseTracking,
+        inVOnce,
+        needArraySpread: false,
+        loc: locStub
+    };
+}
+function createBlockStatement(body) {
+    return {
+        type: 21,
+        body,
+        loc: locStub
+    };
+}
+function createTemplateLiteral(elements) {
+    return {
+        type: 22,
+        elements,
+        loc: locStub
+    };
+}
+function createIfStatement(test, consequent, alternate) {
+    return {
+        type: 23,
+        test,
+        consequent,
+        alternate,
+        loc: locStub
+    };
+}
+function createAssignmentExpression(left, right) {
+    return {
+        type: 24,
+        left,
+        right,
+        loc: locStub
+    };
+}
+function createSequenceExpression(expressions) {
+    return {
+        type: 25,
+        expressions,
+        loc: locStub
+    };
+}
+function createReturnStatement(returns) {
+    return {
+        type: 26,
+        returns,
+        loc: locStub
+    };
+}
+function getVNodeHelper(ssr, isComponent) {
+    return ssr || isComponent ? CREATE_VNODE : CREATE_ELEMENT_VNODE;
+}
+function getVNodeBlockHelper(ssr, isComponent) {
+    return ssr || isComponent ? CREATE_BLOCK : CREATE_ELEMENT_BLOCK;
+}
+function convertToBlock(node, { helper, removeHelper, inSSR }) {
+    if (!node.isBlock) {
+        node.isBlock = true;
+        removeHelper(getVNodeHelper(inSSR, node.isComponent));
+        helper(OPEN_BLOCK);
+        helper(getVNodeBlockHelper(inSSR, node.isComponent));
+    }
+}
+const defaultDelimitersOpen = new Uint8Array([
+    123,
+    123
+]);
+const defaultDelimitersClose = new Uint8Array([
+    125,
+    125
+]);
+function isTagStartChar(c) {
+    return c >= 97 && c <= 122 || c >= 65 && c <= 90;
+}
+function isWhitespace(c) {
+    return c === 32 || c === 10 || c === 9 || c === 12 || c === 13;
+}
+function isEndOfTagSection(c) {
+    return c === 47 || c === 62 || isWhitespace(c);
+}
+function toCharCodes(str) {
+    const ret = new Uint8Array(str.length);
+    for(let i = 0; i < str.length; i++)ret[i] = str.charCodeAt(i);
+    return ret;
+}
+const Sequences = {
+    Cdata: new Uint8Array([
+        67,
+        68,
+        65,
+        84,
+        65,
+        91
+    ]),
+    // CDATA[
+    CdataEnd: new Uint8Array([
+        93,
+        93,
+        62
+    ]),
+    // ]]>
+    CommentEnd: new Uint8Array([
+        45,
+        45,
+        62
+    ]),
+    // `-->`
+    ScriptEnd: new Uint8Array([
+        60,
+        47,
+        115,
+        99,
+        114,
+        105,
+        112,
+        116
+    ]),
+    // `<\/script`
+    StyleEnd: new Uint8Array([
+        60,
+        47,
+        115,
+        116,
+        121,
+        108,
+        101
+    ]),
+    // `</style`
+    TitleEnd: new Uint8Array([
+        60,
+        47,
+        116,
+        105,
+        116,
+        108,
+        101
+    ]),
+    // `</title`
+    TextareaEnd: new Uint8Array([
+        60,
+        47,
+        116,
+        101,
+        120,
+        116,
+        97,
+        114,
+        101,
+        97
+    ])
+};
+class Tokenizer {
+    constructor(stack, cbs){
+        this.stack = stack;
+        this.cbs = cbs;
+        /** The current state the tokenizer is in. */ this.state = 1;
+        /** The read buffer. */ this.buffer = "";
+        /** The beginning of the section that is currently being read. */ this.sectionStart = 0;
+        /** The index within the buffer that we are currently looking at. */ this.index = 0;
+        /** The start of the last entity. */ this.entityStart = 0;
+        /** Some behavior, eg. when decoding entities, is done while we are in another state. This keeps track of the other state type. */ this.baseState = 1;
+        /** For special parsing behavior inside of script and style tags. */ this.inRCDATA = false;
+        /** For disabling RCDATA tags handling */ this.inXML = false;
+        /** For disabling interpolation parsing in v-pre */ this.inVPre = false;
+        /** Record newline positions for fast line / column calculation */ this.newlines = [];
+        this.mode = 0;
+        this.delimiterOpen = defaultDelimitersOpen;
+        this.delimiterClose = defaultDelimitersClose;
+        this.delimiterIndex = -1;
+        this.currentSequence = void 0;
+        this.sequenceIndex = 0;
+    }
+    get inSFCRoot() {
+        return this.mode === 2 && this.stack.length === 0;
+    }
+    reset() {
+        this.state = 1;
+        this.mode = 0;
+        this.buffer = "";
+        this.sectionStart = 0;
+        this.index = 0;
+        this.baseState = 1;
+        this.inRCDATA = false;
+        this.currentSequence = void 0;
+        this.newlines.length = 0;
+        this.delimiterOpen = defaultDelimitersOpen;
+        this.delimiterClose = defaultDelimitersClose;
+    }
+    /**
+   * Generate Position object with line / column information using recorded
+   * newline positions. We know the index is always going to be an already
+   * processed index, so all the newlines up to this index should have been
+   * recorded.
+   */ getPos(index) {
+        let line = 1;
+        let column = index + 1;
+        for(let i = this.newlines.length - 1; i >= 0; i--){
+            const newlineIndex = this.newlines[i];
+            if (index > newlineIndex) {
+                line = i + 2;
+                column = index - newlineIndex;
+                break;
+            }
+        }
+        return {
+            column,
+            line,
+            offset: index
+        };
+    }
+    peek() {
+        return this.buffer.charCodeAt(this.index + 1);
+    }
+    stateText(c) {
+        if (c === 60) {
+            if (this.index > this.sectionStart) this.cbs.ontext(this.sectionStart, this.index);
+            this.state = 5;
+            this.sectionStart = this.index;
+        } else if (!this.inVPre && c === this.delimiterOpen[0]) {
+            this.state = 2;
+            this.delimiterIndex = 0;
+            this.stateInterpolationOpen(c);
+        }
+    }
+    stateInterpolationOpen(c) {
+        if (c === this.delimiterOpen[this.delimiterIndex]) {
+            if (this.delimiterIndex === this.delimiterOpen.length - 1) {
+                const start = this.index + 1 - this.delimiterOpen.length;
+                if (start > this.sectionStart) this.cbs.ontext(this.sectionStart, start);
+                this.state = 3;
+                this.sectionStart = start;
+            } else this.delimiterIndex++;
+        } else if (this.inRCDATA) {
+            this.state = 32;
+            this.stateInRCDATA(c);
+        } else {
+            this.state = 1;
+            this.stateText(c);
+        }
+    }
+    stateInterpolation(c) {
+        if (c === this.delimiterClose[0]) {
+            this.state = 4;
+            this.delimiterIndex = 0;
+            this.stateInterpolationClose(c);
+        }
+    }
+    stateInterpolationClose(c) {
+        if (c === this.delimiterClose[this.delimiterIndex]) {
+            if (this.delimiterIndex === this.delimiterClose.length - 1) {
+                this.cbs.oninterpolation(this.sectionStart, this.index + 1);
+                if (this.inRCDATA) this.state = 32;
+                else this.state = 1;
+                this.sectionStart = this.index + 1;
+            } else this.delimiterIndex++;
+        } else {
+            this.state = 3;
+            this.stateInterpolation(c);
+        }
+    }
+    stateSpecialStartSequence(c) {
+        const isEnd = this.sequenceIndex === this.currentSequence.length;
+        const isMatch = isEnd ? // If we are at the end of the sequence, make sure the tag name has ended
+        isEndOfTagSection(c) : // Otherwise, do a case-insensitive comparison
+        (c | 32) === this.currentSequence[this.sequenceIndex];
+        if (!isMatch) this.inRCDATA = false;
+        else if (!isEnd) {
+            this.sequenceIndex++;
+            return;
+        }
+        this.sequenceIndex = 0;
+        this.state = 6;
+        this.stateInTagName(c);
+    }
+    /** Look for an end tag. For <title> and <textarea>, also decode entities. */ stateInRCDATA(c) {
+        if (this.sequenceIndex === this.currentSequence.length) {
+            if (c === 62 || isWhitespace(c)) {
+                const endOfText = this.index - this.currentSequence.length;
+                if (this.sectionStart < endOfText) {
+                    const actualIndex = this.index;
+                    this.index = endOfText;
+                    this.cbs.ontext(this.sectionStart, endOfText);
+                    this.index = actualIndex;
+                }
+                this.sectionStart = endOfText + 2;
+                this.stateInClosingTagName(c);
+                this.inRCDATA = false;
+                return;
+            }
+            this.sequenceIndex = 0;
+        }
+        if ((c | 32) === this.currentSequence[this.sequenceIndex]) this.sequenceIndex += 1;
+        else if (this.sequenceIndex === 0) {
+            if (this.currentSequence === Sequences.TitleEnd || this.currentSequence === Sequences.TextareaEnd && !this.inSFCRoot) {
+                if (!this.inVPre && c === this.delimiterOpen[0]) {
+                    this.state = 2;
+                    this.delimiterIndex = 0;
+                    this.stateInterpolationOpen(c);
+                }
+            } else if (this.fastForwardTo(60)) this.sequenceIndex = 1;
+        } else this.sequenceIndex = Number(c === 60);
+    }
+    stateCDATASequence(c) {
+        if (c === Sequences.Cdata[this.sequenceIndex]) {
+            if (++this.sequenceIndex === Sequences.Cdata.length) {
+                this.state = 28;
+                this.currentSequence = Sequences.CdataEnd;
+                this.sequenceIndex = 0;
+                this.sectionStart = this.index + 1;
+            }
+        } else {
+            this.sequenceIndex = 0;
+            this.state = 23;
+            this.stateInDeclaration(c);
+        }
+    }
+    /**
+   * When we wait for one specific character, we can speed things up
+   * by skipping through the buffer until we find it.
+   *
+   * @returns Whether the character was found.
+   */ fastForwardTo(c) {
+        while(++this.index < this.buffer.length){
+            const cc = this.buffer.charCodeAt(this.index);
+            if (cc === 10) this.newlines.push(this.index);
+            if (cc === c) return true;
+        }
+        this.index = this.buffer.length - 1;
+        return false;
+    }
+    /**
+   * Comments and CDATA end with `-->` and `]]>`.
+   *
+   * Their common qualities are:
+   * - Their end sequences have a distinct character they start with.
+   * - That character is then repeated, so we have to check multiple repeats.
+   * - All characters but the start character of the sequence can be skipped.
+   */ stateInCommentLike(c) {
+        if (c === this.currentSequence[this.sequenceIndex]) {
+            if (++this.sequenceIndex === this.currentSequence.length) {
+                if (this.currentSequence === Sequences.CdataEnd) this.cbs.oncdata(this.sectionStart, this.index - 2);
+                else this.cbs.oncomment(this.sectionStart, this.index - 2);
+                this.sequenceIndex = 0;
+                this.sectionStart = this.index + 1;
+                this.state = 1;
+            }
+        } else if (this.sequenceIndex === 0) {
+            if (this.fastForwardTo(this.currentSequence[0])) this.sequenceIndex = 1;
+        } else if (c !== this.currentSequence[this.sequenceIndex - 1]) this.sequenceIndex = 0;
+    }
+    startSpecial(sequence, offset) {
+        this.enterRCDATA(sequence, offset);
+        this.state = 31;
+    }
+    enterRCDATA(sequence, offset) {
+        this.inRCDATA = true;
+        this.currentSequence = sequence;
+        this.sequenceIndex = offset;
+    }
+    stateBeforeTagName(c) {
+        if (c === 33) {
+            this.state = 22;
+            this.sectionStart = this.index + 1;
+        } else if (c === 63) {
+            this.state = 24;
+            this.sectionStart = this.index + 1;
+        } else if (isTagStartChar(c)) {
+            this.sectionStart = this.index;
+            if (this.mode === 0) this.state = 6;
+            else if (this.inSFCRoot) this.state = 34;
+            else if (!this.inXML) {
+                if (c === 116) this.state = 30;
+                else this.state = c === 115 ? 29 : 6;
+            } else this.state = 6;
+        } else if (c === 47) this.state = 8;
+        else {
+            this.state = 1;
+            this.stateText(c);
+        }
+    }
+    stateInTagName(c) {
+        if (isEndOfTagSection(c)) this.handleTagName(c);
+    }
+    stateInSFCRootTagName(c) {
+        if (isEndOfTagSection(c)) {
+            const tag = this.buffer.slice(this.sectionStart, this.index);
+            if (tag !== "template") this.enterRCDATA(toCharCodes(`</` + tag), 0);
+            this.handleTagName(c);
+        }
+    }
+    handleTagName(c) {
+        this.cbs.onopentagname(this.sectionStart, this.index);
+        this.sectionStart = -1;
+        this.state = 11;
+        this.stateBeforeAttrName(c);
+    }
+    stateBeforeClosingTagName(c) {
+        if (isWhitespace(c)) ;
+        else if (c === 62) {
+            this.cbs.onerr(14, this.index);
+            this.state = 1;
+            this.sectionStart = this.index + 1;
+        } else {
+            this.state = isTagStartChar(c) ? 9 : 27;
+            this.sectionStart = this.index;
+        }
+    }
+    stateInClosingTagName(c) {
+        if (c === 62 || isWhitespace(c)) {
+            this.cbs.onclosetag(this.sectionStart, this.index);
+            this.sectionStart = -1;
+            this.state = 10;
+            this.stateAfterClosingTagName(c);
+        }
+    }
+    stateAfterClosingTagName(c) {
+        if (c === 62) {
+            this.state = 1;
+            this.sectionStart = this.index + 1;
+        }
+    }
+    stateBeforeAttrName(c) {
+        if (c === 62) {
+            this.cbs.onopentagend(this.index);
+            if (this.inRCDATA) this.state = 32;
+            else this.state = 1;
+            this.sectionStart = this.index + 1;
+        } else if (c === 47) {
+            this.state = 7;
+            if (this.peek() !== 62) this.cbs.onerr(22, this.index);
+        } else if (c === 60 && this.peek() === 47) {
+            this.cbs.onopentagend(this.index);
+            this.state = 5;
+            this.sectionStart = this.index;
+        } else if (!isWhitespace(c)) {
+            if (c === 61) this.cbs.onerr(19, this.index);
+            this.handleAttrStart(c);
+        }
+    }
+    handleAttrStart(c) {
+        if (c === 118 && this.peek() === 45) {
+            this.state = 13;
+            this.sectionStart = this.index;
+        } else if (c === 46 || c === 58 || c === 64 || c === 35) {
+            this.cbs.ondirname(this.index, this.index + 1);
+            this.state = 14;
+            this.sectionStart = this.index + 1;
+        } else {
+            this.state = 12;
+            this.sectionStart = this.index;
+        }
+    }
+    stateInSelfClosingTag(c) {
+        if (c === 62) {
+            this.cbs.onselfclosingtag(this.index);
+            this.state = 1;
+            this.sectionStart = this.index + 1;
+            this.inRCDATA = false;
+        } else if (!isWhitespace(c)) {
+            this.state = 11;
+            this.stateBeforeAttrName(c);
+        }
+    }
+    stateInAttrName(c) {
+        if (c === 61 || isEndOfTagSection(c)) {
+            this.cbs.onattribname(this.sectionStart, this.index);
+            this.handleAttrNameEnd(c);
+        } else if (c === 34 || c === 39 || c === 60) this.cbs.onerr(17, this.index);
+    }
+    stateInDirName(c) {
+        if (c === 61 || isEndOfTagSection(c)) {
+            this.cbs.ondirname(this.sectionStart, this.index);
+            this.handleAttrNameEnd(c);
+        } else if (c === 58) {
+            this.cbs.ondirname(this.sectionStart, this.index);
+            this.state = 14;
+            this.sectionStart = this.index + 1;
+        } else if (c === 46) {
+            this.cbs.ondirname(this.sectionStart, this.index);
+            this.state = 16;
+            this.sectionStart = this.index + 1;
+        }
+    }
+    stateInDirArg(c) {
+        if (c === 61 || isEndOfTagSection(c)) {
+            this.cbs.ondirarg(this.sectionStart, this.index);
+            this.handleAttrNameEnd(c);
+        } else if (c === 91) this.state = 15;
+        else if (c === 46) {
+            this.cbs.ondirarg(this.sectionStart, this.index);
+            this.state = 16;
+            this.sectionStart = this.index + 1;
+        }
+    }
+    stateInDynamicDirArg(c) {
+        if (c === 93) this.state = 14;
+        else if (c === 61 || isEndOfTagSection(c)) {
+            this.cbs.ondirarg(this.sectionStart, this.index + 1);
+            this.handleAttrNameEnd(c);
+            this.cbs.onerr(27, this.index);
+        }
+    }
+    stateInDirModifier(c) {
+        if (c === 61 || isEndOfTagSection(c)) {
+            this.cbs.ondirmodifier(this.sectionStart, this.index);
+            this.handleAttrNameEnd(c);
+        } else if (c === 46) {
+            this.cbs.ondirmodifier(this.sectionStart, this.index);
+            this.sectionStart = this.index + 1;
+        }
+    }
+    handleAttrNameEnd(c) {
+        this.sectionStart = this.index;
+        this.state = 17;
+        this.cbs.onattribnameend(this.index);
+        this.stateAfterAttrName(c);
+    }
+    stateAfterAttrName(c) {
+        if (c === 61) this.state = 18;
+        else if (c === 47 || c === 62) {
+            this.cbs.onattribend(0, this.sectionStart);
+            this.sectionStart = -1;
+            this.state = 11;
+            this.stateBeforeAttrName(c);
+        } else if (!isWhitespace(c)) {
+            this.cbs.onattribend(0, this.sectionStart);
+            this.handleAttrStart(c);
+        }
+    }
+    stateBeforeAttrValue(c) {
+        if (c === 34) {
+            this.state = 19;
+            this.sectionStart = this.index + 1;
+        } else if (c === 39) {
+            this.state = 20;
+            this.sectionStart = this.index + 1;
+        } else if (!isWhitespace(c)) {
+            this.sectionStart = this.index;
+            this.state = 21;
+            this.stateInAttrValueNoQuotes(c);
+        }
+    }
+    handleInAttrValue(c, quote) {
+        if (c === quote || this.fastForwardTo(quote)) {
+            this.cbs.onattribdata(this.sectionStart, this.index);
+            this.sectionStart = -1;
+            this.cbs.onattribend(quote === 34 ? 3 : 2, this.index + 1);
+            this.state = 11;
+        }
+    }
+    stateInAttrValueDoubleQuotes(c) {
+        this.handleInAttrValue(c, 34);
+    }
+    stateInAttrValueSingleQuotes(c) {
+        this.handleInAttrValue(c, 39);
+    }
+    stateInAttrValueNoQuotes(c) {
+        if (isWhitespace(c) || c === 62) {
+            this.cbs.onattribdata(this.sectionStart, this.index);
+            this.sectionStart = -1;
+            this.cbs.onattribend(1, this.index);
+            this.state = 11;
+            this.stateBeforeAttrName(c);
+        } else if (c === 34 || c === 39 || c === 60 || c === 61 || c === 96) this.cbs.onerr(18, this.index);
+    }
+    stateBeforeDeclaration(c) {
+        if (c === 91) {
+            this.state = 26;
+            this.sequenceIndex = 0;
+        } else this.state = c === 45 ? 25 : 23;
+    }
+    stateInDeclaration(c) {
+        if (c === 62 || this.fastForwardTo(62)) {
+            this.state = 1;
+            this.sectionStart = this.index + 1;
+        }
+    }
+    stateInProcessingInstruction(c) {
+        if (c === 62 || this.fastForwardTo(62)) {
+            this.cbs.onprocessinginstruction(this.sectionStart, this.index);
+            this.state = 1;
+            this.sectionStart = this.index + 1;
+        }
+    }
+    stateBeforeComment(c) {
+        if (c === 45) {
+            this.state = 28;
+            this.currentSequence = Sequences.CommentEnd;
+            this.sequenceIndex = 2;
+            this.sectionStart = this.index + 1;
+        } else this.state = 23;
+    }
+    stateInSpecialComment(c) {
+        if (c === 62 || this.fastForwardTo(62)) {
+            this.cbs.oncomment(this.sectionStart, this.index);
+            this.state = 1;
+            this.sectionStart = this.index + 1;
+        }
+    }
+    stateBeforeSpecialS(c) {
+        if (c === Sequences.ScriptEnd[3]) this.startSpecial(Sequences.ScriptEnd, 4);
+        else if (c === Sequences.StyleEnd[3]) this.startSpecial(Sequences.StyleEnd, 4);
+        else {
+            this.state = 6;
+            this.stateInTagName(c);
+        }
+    }
+    stateBeforeSpecialT(c) {
+        if (c === Sequences.TitleEnd[3]) this.startSpecial(Sequences.TitleEnd, 4);
+        else if (c === Sequences.TextareaEnd[3]) this.startSpecial(Sequences.TextareaEnd, 4);
+        else {
+            this.state = 6;
+            this.stateInTagName(c);
+        }
+    }
+    startEntity() {}
+    stateInEntity() {}
+    /**
+   * Iterates through the buffer, calling the function corresponding to the current state.
+   *
+   * States that are more likely to be hit are higher up, as a performance improvement.
+   */ parse(input) {
+        this.buffer = input;
+        while(this.index < this.buffer.length){
+            const c = this.buffer.charCodeAt(this.index);
+            if (c === 10) this.newlines.push(this.index);
+            switch(this.state){
+                case 1:
+                    this.stateText(c);
+                    break;
+                case 2:
+                    this.stateInterpolationOpen(c);
+                    break;
+                case 3:
+                    this.stateInterpolation(c);
+                    break;
+                case 4:
+                    this.stateInterpolationClose(c);
+                    break;
+                case 31:
+                    this.stateSpecialStartSequence(c);
+                    break;
+                case 32:
+                    this.stateInRCDATA(c);
+                    break;
+                case 26:
+                    this.stateCDATASequence(c);
+                    break;
+                case 19:
+                    this.stateInAttrValueDoubleQuotes(c);
+                    break;
+                case 12:
+                    this.stateInAttrName(c);
+                    break;
+                case 13:
+                    this.stateInDirName(c);
+                    break;
+                case 14:
+                    this.stateInDirArg(c);
+                    break;
+                case 15:
+                    this.stateInDynamicDirArg(c);
+                    break;
+                case 16:
+                    this.stateInDirModifier(c);
+                    break;
+                case 28:
+                    this.stateInCommentLike(c);
+                    break;
+                case 27:
+                    this.stateInSpecialComment(c);
+                    break;
+                case 11:
+                    this.stateBeforeAttrName(c);
+                    break;
+                case 6:
+                    this.stateInTagName(c);
+                    break;
+                case 34:
+                    this.stateInSFCRootTagName(c);
+                    break;
+                case 9:
+                    this.stateInClosingTagName(c);
+                    break;
+                case 5:
+                    this.stateBeforeTagName(c);
+                    break;
+                case 17:
+                    this.stateAfterAttrName(c);
+                    break;
+                case 20:
+                    this.stateInAttrValueSingleQuotes(c);
+                    break;
+                case 18:
+                    this.stateBeforeAttrValue(c);
+                    break;
+                case 8:
+                    this.stateBeforeClosingTagName(c);
+                    break;
+                case 10:
+                    this.stateAfterClosingTagName(c);
+                    break;
+                case 29:
+                    this.stateBeforeSpecialS(c);
+                    break;
+                case 30:
+                    this.stateBeforeSpecialT(c);
+                    break;
+                case 21:
+                    this.stateInAttrValueNoQuotes(c);
+                    break;
+                case 7:
+                    this.stateInSelfClosingTag(c);
+                    break;
+                case 23:
+                    this.stateInDeclaration(c);
+                    break;
+                case 22:
+                    this.stateBeforeDeclaration(c);
+                    break;
+                case 25:
+                    this.stateBeforeComment(c);
+                    break;
+                case 24:
+                    this.stateInProcessingInstruction(c);
+                    break;
+                case 33:
+                    this.stateInEntity();
+                    break;
+            }
+            this.index++;
+        }
+        this.cleanup();
+        this.finish();
+    }
+    /**
+   * Remove data that has already been consumed from the buffer.
+   */ cleanup() {
+        if (this.sectionStart !== this.index) {
+            if (this.state === 1 || this.state === 32 && this.sequenceIndex === 0) {
+                this.cbs.ontext(this.sectionStart, this.index);
+                this.sectionStart = this.index;
+            } else if (this.state === 19 || this.state === 20 || this.state === 21) {
+                this.cbs.onattribdata(this.sectionStart, this.index);
+                this.sectionStart = this.index;
+            }
+        }
+    }
+    finish() {
+        this.handleTrailingData();
+        this.cbs.onend();
+    }
+    /** Handle any trailing data. */ handleTrailingData() {
+        const endIndex = this.buffer.length;
+        if (this.sectionStart >= endIndex) return;
+        if (this.state === 28) {
+            if (this.currentSequence === Sequences.CdataEnd) this.cbs.oncdata(this.sectionStart, endIndex);
+            else this.cbs.oncomment(this.sectionStart, endIndex);
+        } else if (this.state === 6 || this.state === 11 || this.state === 18 || this.state === 17 || this.state === 12 || this.state === 13 || this.state === 14 || this.state === 15 || this.state === 16 || this.state === 20 || this.state === 19 || this.state === 21 || this.state === 9) ;
+        else this.cbs.ontext(this.sectionStart, endIndex);
+    }
+    emitCodePoint(cp, consumed) {}
+}
+const CompilerDeprecationTypes = {
+    "COMPILER_IS_ON_ELEMENT": "COMPILER_IS_ON_ELEMENT",
+    "COMPILER_V_BIND_SYNC": "COMPILER_V_BIND_SYNC",
+    "COMPILER_V_BIND_OBJECT_ORDER": "COMPILER_V_BIND_OBJECT_ORDER",
+    "COMPILER_V_ON_NATIVE": "COMPILER_V_ON_NATIVE",
+    "COMPILER_V_IF_V_FOR_PRECEDENCE": "COMPILER_V_IF_V_FOR_PRECEDENCE",
+    "COMPILER_NATIVE_TEMPLATE": "COMPILER_NATIVE_TEMPLATE",
+    "COMPILER_INLINE_TEMPLATE": "COMPILER_INLINE_TEMPLATE",
+    "COMPILER_FILTERS": "COMPILER_FILTERS"
+};
+const deprecationData = {
+    ["COMPILER_IS_ON_ELEMENT"]: {
+        message: `Platform-native elements with "is" prop will no longer be treated as components in Vue 3 unless the "is" value is explicitly prefixed with "vue:".`,
+        link: `https://v3-migration.vuejs.org/breaking-changes/custom-elements-interop.html`
+    },
+    ["COMPILER_V_BIND_SYNC"]: {
+        message: (key)=>`.sync modifier for v-bind has been removed. Use v-model with argument instead. \`v-bind:${key}.sync\` should be changed to \`v-model:${key}\`.`,
+        link: `https://v3-migration.vuejs.org/breaking-changes/v-model.html`
+    },
+    ["COMPILER_V_BIND_OBJECT_ORDER"]: {
+        message: `v-bind="obj" usage is now order sensitive and behaves like JavaScript object spread: it will now overwrite an existing non-mergeable attribute that appears before v-bind in the case of conflict. To retain 2.x behavior, move v-bind to make it the first attribute. You can also suppress this warning if the usage is intended.`,
+        link: `https://v3-migration.vuejs.org/breaking-changes/v-bind.html`
+    },
+    ["COMPILER_V_ON_NATIVE"]: {
+        message: `.native modifier for v-on has been removed as is no longer necessary.`,
+        link: `https://v3-migration.vuejs.org/breaking-changes/v-on-native-modifier-removed.html`
+    },
+    ["COMPILER_V_IF_V_FOR_PRECEDENCE"]: {
+        message: `v-if / v-for precedence when used on the same element has changed in Vue 3: v-if now takes higher precedence and will no longer have access to v-for scope variables. It is best to avoid the ambiguity with <template> tags or use a computed property that filters v-for data source.`,
+        link: `https://v3-migration.vuejs.org/breaking-changes/v-if-v-for.html`
+    },
+    ["COMPILER_NATIVE_TEMPLATE"]: {
+        message: `<template> with no special directives will render as a native template element instead of its inner content in Vue 3.`
+    },
+    ["COMPILER_INLINE_TEMPLATE"]: {
+        message: `"inline-template" has been removed in Vue 3.`,
+        link: `https://v3-migration.vuejs.org/breaking-changes/inline-template-attribute.html`
+    },
+    ["COMPILER_FILTERS"]: {
+        message: `filters have been removed in Vue 3. The "|" symbol will be treated as native JavaScript bitwise OR operator. Use method calls or computed properties instead.`,
+        link: `https://v3-migration.vuejs.org/breaking-changes/filters.html`
+    }
+};
+function getCompatValue(key, { compatConfig }) {
+    const value = compatConfig && compatConfig[key];
+    if (key === "MODE") return value || 3;
+    else return value;
+}
+function isCompatEnabled(key, context) {
+    const mode = getCompatValue("MODE", context);
+    const value = getCompatValue(key, context);
+    return mode === 3 ? value === true : value !== false;
+}
+function checkCompatEnabled(key, context, loc, ...args) {
+    const enabled = isCompatEnabled(key, context);
+    if (enabled) warnDeprecation(key, context, loc, ...args);
+    return enabled;
+}
+function warnDeprecation(key, context, loc, ...args) {
+    const val = getCompatValue(key, context);
+    if (val === "suppress-warning") return;
+    const { message, link } = deprecationData[key];
+    const msg = `(deprecation ${key}) ${typeof message === "function" ? message(...args) : message}${link ? `
+  Details: ${link}` : ``}`;
+    const err = new SyntaxError(msg);
+    err.code = key;
+    if (loc) err.loc = loc;
+    context.onWarn(err);
+}
+function defaultOnError(error) {
+    throw error;
+}
+function defaultOnWarn(msg) {
+    console.warn(`[Vue warn] ${msg.message}`);
+}
+function createCompilerError(code, loc, messages, additionalMessage) {
+    const msg = (messages || errorMessages)[code] + (additionalMessage || ``);
+    const error = new SyntaxError(String(msg));
+    error.code = code;
+    error.loc = loc;
+    return error;
+}
+const ErrorCodes = {
+    "ABRUPT_CLOSING_OF_EMPTY_COMMENT": 0,
+    "0": "ABRUPT_CLOSING_OF_EMPTY_COMMENT",
+    "CDATA_IN_HTML_CONTENT": 1,
+    "1": "CDATA_IN_HTML_CONTENT",
+    "DUPLICATE_ATTRIBUTE": 2,
+    "2": "DUPLICATE_ATTRIBUTE",
+    "END_TAG_WITH_ATTRIBUTES": 3,
+    "3": "END_TAG_WITH_ATTRIBUTES",
+    "END_TAG_WITH_TRAILING_SOLIDUS": 4,
+    "4": "END_TAG_WITH_TRAILING_SOLIDUS",
+    "EOF_BEFORE_TAG_NAME": 5,
+    "5": "EOF_BEFORE_TAG_NAME",
+    "EOF_IN_CDATA": 6,
+    "6": "EOF_IN_CDATA",
+    "EOF_IN_COMMENT": 7,
+    "7": "EOF_IN_COMMENT",
+    "EOF_IN_SCRIPT_HTML_COMMENT_LIKE_TEXT": 8,
+    "8": "EOF_IN_SCRIPT_HTML_COMMENT_LIKE_TEXT",
+    "EOF_IN_TAG": 9,
+    "9": "EOF_IN_TAG",
+    "INCORRECTLY_CLOSED_COMMENT": 10,
+    "10": "INCORRECTLY_CLOSED_COMMENT",
+    "INCORRECTLY_OPENED_COMMENT": 11,
+    "11": "INCORRECTLY_OPENED_COMMENT",
+    "INVALID_FIRST_CHARACTER_OF_TAG_NAME": 12,
+    "12": "INVALID_FIRST_CHARACTER_OF_TAG_NAME",
+    "MISSING_ATTRIBUTE_VALUE": 13,
+    "13": "MISSING_ATTRIBUTE_VALUE",
+    "MISSING_END_TAG_NAME": 14,
+    "14": "MISSING_END_TAG_NAME",
+    "MISSING_WHITESPACE_BETWEEN_ATTRIBUTES": 15,
+    "15": "MISSING_WHITESPACE_BETWEEN_ATTRIBUTES",
+    "NESTED_COMMENT": 16,
+    "16": "NESTED_COMMENT",
+    "UNEXPECTED_CHARACTER_IN_ATTRIBUTE_NAME": 17,
+    "17": "UNEXPECTED_CHARACTER_IN_ATTRIBUTE_NAME",
+    "UNEXPECTED_CHARACTER_IN_UNQUOTED_ATTRIBUTE_VALUE": 18,
+    "18": "UNEXPECTED_CHARACTER_IN_UNQUOTED_ATTRIBUTE_VALUE",
+    "UNEXPECTED_EQUALS_SIGN_BEFORE_ATTRIBUTE_NAME": 19,
+    "19": "UNEXPECTED_EQUALS_SIGN_BEFORE_ATTRIBUTE_NAME",
+    "UNEXPECTED_NULL_CHARACTER": 20,
+    "20": "UNEXPECTED_NULL_CHARACTER",
+    "UNEXPECTED_QUESTION_MARK_INSTEAD_OF_TAG_NAME": 21,
+    "21": "UNEXPECTED_QUESTION_MARK_INSTEAD_OF_TAG_NAME",
+    "UNEXPECTED_SOLIDUS_IN_TAG": 22,
+    "22": "UNEXPECTED_SOLIDUS_IN_TAG",
+    "X_INVALID_END_TAG": 23,
+    "23": "X_INVALID_END_TAG",
+    "X_MISSING_END_TAG": 24,
+    "24": "X_MISSING_END_TAG",
+    "X_MISSING_INTERPOLATION_END": 25,
+    "25": "X_MISSING_INTERPOLATION_END",
+    "X_MISSING_DIRECTIVE_NAME": 26,
+    "26": "X_MISSING_DIRECTIVE_NAME",
+    "X_MISSING_DYNAMIC_DIRECTIVE_ARGUMENT_END": 27,
+    "27": "X_MISSING_DYNAMIC_DIRECTIVE_ARGUMENT_END",
+    "X_V_IF_NO_EXPRESSION": 28,
+    "28": "X_V_IF_NO_EXPRESSION",
+    "X_V_IF_SAME_KEY": 29,
+    "29": "X_V_IF_SAME_KEY",
+    "X_V_ELSE_NO_ADJACENT_IF": 30,
+    "30": "X_V_ELSE_NO_ADJACENT_IF",
+    "X_V_FOR_NO_EXPRESSION": 31,
+    "31": "X_V_FOR_NO_EXPRESSION",
+    "X_V_FOR_MALFORMED_EXPRESSION": 32,
+    "32": "X_V_FOR_MALFORMED_EXPRESSION",
+    "X_V_FOR_TEMPLATE_KEY_PLACEMENT": 33,
+    "33": "X_V_FOR_TEMPLATE_KEY_PLACEMENT",
+    "X_V_BIND_NO_EXPRESSION": 34,
+    "34": "X_V_BIND_NO_EXPRESSION",
+    "X_V_ON_NO_EXPRESSION": 35,
+    "35": "X_V_ON_NO_EXPRESSION",
+    "X_V_SLOT_UNEXPECTED_DIRECTIVE_ON_SLOT_OUTLET": 36,
+    "36": "X_V_SLOT_UNEXPECTED_DIRECTIVE_ON_SLOT_OUTLET",
+    "X_V_SLOT_MIXED_SLOT_USAGE": 37,
+    "37": "X_V_SLOT_MIXED_SLOT_USAGE",
+    "X_V_SLOT_DUPLICATE_SLOT_NAMES": 38,
+    "38": "X_V_SLOT_DUPLICATE_SLOT_NAMES",
+    "X_V_SLOT_EXTRANEOUS_DEFAULT_SLOT_CHILDREN": 39,
+    "39": "X_V_SLOT_EXTRANEOUS_DEFAULT_SLOT_CHILDREN",
+    "X_V_SLOT_MISPLACED": 40,
+    "40": "X_V_SLOT_MISPLACED",
+    "X_V_MODEL_NO_EXPRESSION": 41,
+    "41": "X_V_MODEL_NO_EXPRESSION",
+    "X_V_MODEL_MALFORMED_EXPRESSION": 42,
+    "42": "X_V_MODEL_MALFORMED_EXPRESSION",
+    "X_V_MODEL_ON_SCOPE_VARIABLE": 43,
+    "43": "X_V_MODEL_ON_SCOPE_VARIABLE",
+    "X_V_MODEL_ON_PROPS": 44,
+    "44": "X_V_MODEL_ON_PROPS",
+    "X_INVALID_EXPRESSION": 45,
+    "45": "X_INVALID_EXPRESSION",
+    "X_KEEP_ALIVE_INVALID_CHILDREN": 46,
+    "46": "X_KEEP_ALIVE_INVALID_CHILDREN",
+    "X_PREFIX_ID_NOT_SUPPORTED": 47,
+    "47": "X_PREFIX_ID_NOT_SUPPORTED",
+    "X_MODULE_MODE_NOT_SUPPORTED": 48,
+    "48": "X_MODULE_MODE_NOT_SUPPORTED",
+    "X_CACHE_HANDLER_NOT_SUPPORTED": 49,
+    "49": "X_CACHE_HANDLER_NOT_SUPPORTED",
+    "X_SCOPE_ID_NOT_SUPPORTED": 50,
+    "50": "X_SCOPE_ID_NOT_SUPPORTED",
+    "X_VNODE_HOOKS": 51,
+    "51": "X_VNODE_HOOKS",
+    "X_V_BIND_INVALID_SAME_NAME_ARGUMENT": 52,
+    "52": "X_V_BIND_INVALID_SAME_NAME_ARGUMENT",
+    "__EXTEND_POINT__": 53,
+    "53": "__EXTEND_POINT__"
+};
+const errorMessages = {
+    // parse errors
+    [0]: "Illegal comment.",
+    [1]: "CDATA section is allowed only in XML context.",
+    [2]: "Duplicate attribute.",
+    [3]: "End tag cannot have attributes.",
+    [4]: "Illegal '/' in tags.",
+    [5]: "Unexpected EOF in tag.",
+    [6]: "Unexpected EOF in CDATA section.",
+    [7]: "Unexpected EOF in comment.",
+    [8]: "Unexpected EOF in script.",
+    [9]: "Unexpected EOF in tag.",
+    [10]: "Incorrectly closed comment.",
+    [11]: "Incorrectly opened comment.",
+    [12]: "Illegal tag name. Use '&lt;' to print '<'.",
+    [13]: "Attribute value was expected.",
+    [14]: "End tag name was expected.",
+    [15]: "Whitespace was expected.",
+    [16]: "Unexpected '<!--' in comment.",
+    [17]: `Attribute name cannot contain U+0022 ("), U+0027 ('), and U+003C (<).`,
+    [18]: "Unquoted attribute value cannot contain U+0022 (\"), U+0027 ('), U+003C (<), U+003D (=), and U+0060 (`).",
+    [19]: "Attribute name cannot start with '='.",
+    [21]: "'<?' is allowed only in XML context.",
+    [20]: `Unexpected null character.`,
+    [22]: "Illegal '/' in tags.",
+    // Vue-specific parse errors
+    [23]: "Invalid end tag.",
+    [24]: "Element is missing end tag.",
+    [25]: "Interpolation end sign was not found.",
+    [27]: "End bracket for dynamic directive argument was not found. Note that dynamic directive argument cannot contain spaces.",
+    [26]: "Legal directive name was expected.",
+    // transform errors
+    [28]: `v-if/v-else-if is missing expression.`,
+    [29]: `v-if/else branches must use unique keys.`,
+    [30]: `v-else/v-else-if has no adjacent v-if or v-else-if.`,
+    [31]: `v-for is missing expression.`,
+    [32]: `v-for has invalid expression.`,
+    [33]: `<template v-for> key should be placed on the <template> tag.`,
+    [34]: `v-bind is missing expression.`,
+    [52]: `v-bind with same-name shorthand only allows static argument.`,
+    [35]: `v-on is missing expression.`,
+    [36]: `Unexpected custom directive on <slot> outlet.`,
+    [37]: `Mixed v-slot usage on both the component and nested <template>. When there are multiple named slots, all slots should use <template> syntax to avoid scope ambiguity.`,
+    [38]: `Duplicate slot names found. `,
+    [39]: `Extraneous children found when component already has explicitly named default slot. These children will be ignored.`,
+    [40]: `v-slot can only be used on components or <template> tags.`,
+    [41]: `v-model is missing expression.`,
+    [42]: `v-model value must be a valid JavaScript member expression.`,
+    [43]: `v-model cannot be used on v-for or v-slot scope variables because they are not writable.`,
+    [44]: `v-model cannot be used on a prop, because local prop bindings are not writable.
+Use a v-bind binding combined with a v-on listener that emits update:x event instead.`,
+    [45]: `Error parsing JavaScript expression: `,
+    [46]: `<KeepAlive> expects exactly one child component.`,
+    [51]: `@vnode-* hooks in templates are no longer supported. Use the vue: prefix instead. For example, @vnode-mounted should be changed to @vue:mounted. @vnode-* hooks support has been removed in 3.4.`,
+    // generic errors
+    [47]: `"prefixIdentifiers" option is not supported in this build of compiler.`,
+    [48]: `ES module mode is not supported in this build of compiler.`,
+    [49]: `"cacheHandlers" option is only supported when the "prefixIdentifiers" option is enabled.`,
+    [50]: `"scopeId" option is only supported in module mode.`,
+    // just to fulfill types
+    [53]: ``
+};
+function walkIdentifiers(root, onIdentifier, includeAll = false, parentStack = [], knownIds = /* @__PURE__ */ Object.create(null)) {
+    return;
+}
+function isReferencedIdentifier(id, parent, parentStack) {
+    return false;
+}
+function isInDestructureAssignment(parent, parentStack) {
+    if (parent && (parent.type === "ObjectProperty" || parent.type === "ArrayPattern")) {
+        let i = parentStack.length;
+        while(i--){
+            const p = parentStack[i];
+            if (p.type === "AssignmentExpression") return true;
+            else if (p.type !== "ObjectProperty" && !p.type.endsWith("Pattern")) break;
+        }
+    }
+    return false;
+}
+function isInNewExpression(parentStack) {
+    let i = parentStack.length;
+    while(i--){
+        const p = parentStack[i];
+        if (p.type === "NewExpression") return true;
+        else if (p.type !== "MemberExpression") break;
+    }
+    return false;
+}
+function walkFunctionParams(node, onIdent) {
+    for (const p of node.params)for (const id of extractIdentifiers(p))onIdent(id);
+}
+function walkBlockDeclarations(block, onIdent) {
+    for (const stmt of block.body){
+        if (stmt.type === "VariableDeclaration") {
+            if (stmt.declare) continue;
+            for (const decl of stmt.declarations)for (const id of extractIdentifiers(decl.id))onIdent(id);
+        } else if (stmt.type === "FunctionDeclaration" || stmt.type === "ClassDeclaration") {
+            if (stmt.declare || !stmt.id) continue;
+            onIdent(stmt.id);
+        } else if (isForStatement(stmt)) walkForStatement(stmt, true, onIdent);
+    }
+}
+function isForStatement(stmt) {
+    return stmt.type === "ForOfStatement" || stmt.type === "ForInStatement" || stmt.type === "ForStatement";
+}
+function walkForStatement(stmt, isVar, onIdent) {
+    const variable = stmt.type === "ForStatement" ? stmt.init : stmt.left;
+    if (variable && variable.type === "VariableDeclaration" && (variable.kind === "var" ? isVar : !isVar)) {
+        for (const decl of variable.declarations)for (const id of extractIdentifiers(decl.id))onIdent(id);
+    }
+}
+function extractIdentifiers(param, nodes = []) {
+    switch(param.type){
+        case "Identifier":
+            nodes.push(param);
+            break;
+        case "MemberExpression":
+            let object = param;
+            while(object.type === "MemberExpression")object = object.object;
+            nodes.push(object);
+            break;
+        case "ObjectPattern":
+            for (const prop of param.properties)if (prop.type === "RestElement") extractIdentifiers(prop.argument, nodes);
+            else extractIdentifiers(prop.value, nodes);
+            break;
+        case "ArrayPattern":
+            param.elements.forEach((element)=>{
+                if (element) extractIdentifiers(element, nodes);
+            });
+            break;
+        case "RestElement":
+            extractIdentifiers(param.argument, nodes);
+            break;
+        case "AssignmentPattern":
+            extractIdentifiers(param.left, nodes);
+            break;
+    }
+    return nodes;
+}
+const isFunctionType = (node)=>{
+    return /Function(?:Expression|Declaration)$|Method$/.test(node.type);
+};
+const isStaticProperty = (node)=>node && (node.type === "ObjectProperty" || node.type === "ObjectMethod") && !node.computed;
+const isStaticPropertyKey = (node, parent)=>isStaticProperty(parent) && parent.key === node;
+const TS_NODE_TYPES = [
+    "TSAsExpression",
+    // foo as number
+    "TSTypeAssertion",
+    // (<number>foo)
+    "TSNonNullExpression",
+    // foo!
+    "TSInstantiationExpression",
+    // foo<string>
+    "TSSatisfiesExpression"
+];
+function unwrapTSNode(node) {
+    if (TS_NODE_TYPES.includes(node.type)) return unwrapTSNode(node.expression);
+    else return node;
+}
+const isStaticExp = (p)=>p.type === 4 && p.isStatic;
+function isCoreComponent(tag) {
+    switch(tag){
+        case "Teleport":
+        case "teleport":
+            return TELEPORT;
+        case "Suspense":
+        case "suspense":
+            return SUSPENSE;
+        case "KeepAlive":
+        case "keep-alive":
+            return KEEP_ALIVE;
+        case "BaseTransition":
+        case "base-transition":
+            return BASE_TRANSITION;
+    }
+}
+const nonIdentifierRE = /^\d|[^\$\w\xA0-\uFFFF]/;
+const isSimpleIdentifier = (name)=>!nonIdentifierRE.test(name);
+const validFirstIdentCharRE = /[A-Za-z_$\xA0-\uFFFF]/;
+const validIdentCharRE = /[\.\?\w$\xA0-\uFFFF]/;
+const whitespaceRE = /\s+[.[]\s*|\s*[.[]\s+/g;
+const getExpSource = (exp)=>exp.type === 4 ? exp.content : exp.loc.source;
+const isMemberExpressionBrowser = (exp)=>{
+    const path = getExpSource(exp).trim().replace(whitespaceRE, (s)=>s.trim());
+    let state = 0 /* inMemberExp */ ;
+    let stateStack = [];
+    let currentOpenBracketCount = 0;
+    let currentOpenParensCount = 0;
+    let currentStringType = null;
+    for(let i = 0; i < path.length; i++){
+        const char = path.charAt(i);
+        switch(state){
+            case 0 /* inMemberExp */ :
+                if (char === "[") {
+                    stateStack.push(state);
+                    state = 1 /* inBrackets */ ;
+                    currentOpenBracketCount++;
+                } else if (char === "(") {
+                    stateStack.push(state);
+                    state = 2 /* inParens */ ;
+                    currentOpenParensCount++;
+                } else if (!(i === 0 ? validFirstIdentCharRE : validIdentCharRE).test(char)) return false;
+                break;
+            case 1 /* inBrackets */ :
+                if (char === `'` || char === `"` || char === "`") {
+                    stateStack.push(state);
+                    state = 3 /* inString */ ;
+                    currentStringType = char;
+                } else if (char === `[`) currentOpenBracketCount++;
+                else if (char === `]`) {
+                    if (!--currentOpenBracketCount) state = stateStack.pop();
+                }
+                break;
+            case 2 /* inParens */ :
+                if (char === `'` || char === `"` || char === "`") {
+                    stateStack.push(state);
+                    state = 3 /* inString */ ;
+                    currentStringType = char;
+                } else if (char === `(`) currentOpenParensCount++;
+                else if (char === `)`) {
+                    if (i === path.length - 1) return false;
+                    if (!--currentOpenParensCount) state = stateStack.pop();
+                }
+                break;
+            case 3 /* inString */ :
+                if (char === currentStringType) {
+                    state = stateStack.pop();
+                    currentStringType = null;
+                }
+                break;
+        }
+    }
+    return !currentOpenBracketCount && !currentOpenParensCount;
+};
+const isMemberExpressionNode = (0, _shared.NOOP);
+const isMemberExpression = isMemberExpressionBrowser;
+const fnExpRE = /^\s*(async\s*)?(\([^)]*?\)|[\w$_]+)\s*(:[^=]+)?=>|^\s*(async\s+)?function(?:\s+[\w$]+)?\s*\(/;
+const isFnExpressionBrowser = (exp)=>fnExpRE.test(getExpSource(exp));
+const isFnExpressionNode = (0, _shared.NOOP);
+const isFnExpression = isFnExpressionBrowser;
+function advancePositionWithClone(pos, source, numberOfCharacters = source.length) {
+    return advancePositionWithMutation({
+        offset: pos.offset,
+        line: pos.line,
+        column: pos.column
+    }, source, numberOfCharacters);
+}
+function advancePositionWithMutation(pos, source, numberOfCharacters = source.length) {
+    let linesCount = 0;
+    let lastNewLinePos = -1;
+    for(let i = 0; i < numberOfCharacters; i++)if (source.charCodeAt(i) === 10) {
+        linesCount++;
+        lastNewLinePos = i;
+    }
+    pos.offset += numberOfCharacters;
+    pos.line += linesCount;
+    pos.column = lastNewLinePos === -1 ? pos.column + numberOfCharacters : numberOfCharacters - lastNewLinePos;
+    return pos;
+}
+function assert(condition, msg) {
+    if (!condition) throw new Error(msg || `unexpected compiler condition`);
+}
+function findDir(node, name, allowEmpty = false) {
+    for(let i = 0; i < node.props.length; i++){
+        const p = node.props[i];
+        if (p.type === 7 && (allowEmpty || p.exp) && ((0, _shared.isString)(name) ? p.name === name : name.test(p.name))) return p;
+    }
+}
+function findProp(node, name, dynamicOnly = false, allowEmpty = false) {
+    for(let i = 0; i < node.props.length; i++){
+        const p = node.props[i];
+        if (p.type === 6) {
+            if (dynamicOnly) continue;
+            if (p.name === name && (p.value || allowEmpty)) return p;
+        } else if (p.name === "bind" && (p.exp || allowEmpty) && isStaticArgOf(p.arg, name)) return p;
+    }
+}
+function isStaticArgOf(arg, name) {
+    return !!(arg && isStaticExp(arg) && arg.content === name);
+}
+function hasDynamicKeyVBind(node) {
+    return node.props.some((p)=>p.type === 7 && p.name === "bind" && (!p.arg || // v-bind="obj"
+        p.arg.type !== 4 || // v-bind:[_ctx.foo]
+        !p.arg.isStatic));
+}
+function isText$1(node) {
+    return node.type === 5 || node.type === 2;
+}
+function isVSlot(p) {
+    return p.type === 7 && p.name === "slot";
+}
+function isTemplateNode(node) {
+    return node.type === 1 && node.tagType === 3;
+}
+function isSlotOutlet(node) {
+    return node.type === 1 && node.tagType === 2;
+}
+const propsHelperSet = /* @__PURE__ */ new Set([
+    NORMALIZE_PROPS,
+    GUARD_REACTIVE_PROPS
+]);
+function getUnnormalizedProps(props, callPath = []) {
+    if (props && !(0, _shared.isString)(props) && props.type === 14) {
+        const callee = props.callee;
+        if (!(0, _shared.isString)(callee) && propsHelperSet.has(callee)) return getUnnormalizedProps(props.arguments[0], callPath.concat(props));
+    }
+    return [
+        props,
+        callPath
+    ];
+}
+function injectProp(node, prop, context) {
+    let propsWithInjection;
+    let props = node.type === 13 ? node.props : node.arguments[2];
+    let callPath = [];
+    let parentCall;
+    if (props && !(0, _shared.isString)(props) && props.type === 14) {
+        const ret = getUnnormalizedProps(props);
+        props = ret[0];
+        callPath = ret[1];
+        parentCall = callPath[callPath.length - 1];
+    }
+    if (props == null || (0, _shared.isString)(props)) propsWithInjection = createObjectExpression([
+        prop
+    ]);
+    else if (props.type === 14) {
+        const first = props.arguments[0];
+        if (!(0, _shared.isString)(first) && first.type === 15) {
+            if (!hasProp(prop, first)) first.properties.unshift(prop);
+        } else if (props.callee === TO_HANDLERS) propsWithInjection = createCallExpression(context.helper(MERGE_PROPS), [
+            createObjectExpression([
+                prop
+            ]),
+            props
+        ]);
+        else props.arguments.unshift(createObjectExpression([
+            prop
+        ]));
+        !propsWithInjection && (propsWithInjection = props);
+    } else if (props.type === 15) {
+        if (!hasProp(prop, props)) props.properties.unshift(prop);
+        propsWithInjection = props;
+    } else {
+        propsWithInjection = createCallExpression(context.helper(MERGE_PROPS), [
+            createObjectExpression([
+                prop
+            ]),
+            props
+        ]);
+        if (parentCall && parentCall.callee === GUARD_REACTIVE_PROPS) parentCall = callPath[callPath.length - 2];
+    }
+    if (node.type === 13) {
+        if (parentCall) parentCall.arguments[0] = propsWithInjection;
+        else node.props = propsWithInjection;
+    } else if (parentCall) parentCall.arguments[0] = propsWithInjection;
+    else node.arguments[2] = propsWithInjection;
+}
+function hasProp(prop, props) {
+    let result = false;
+    if (prop.key.type === 4) {
+        const propKeyName = prop.key.content;
+        result = props.properties.some((p)=>p.key.type === 4 && p.key.content === propKeyName);
+    }
+    return result;
+}
+function toValidAssetId(name, type) {
+    return `_${type}_${name.replace(/[^\w]/g, (searchValue, replaceValue)=>{
+        return searchValue === "-" ? "_" : name.charCodeAt(replaceValue).toString();
+    })}`;
+}
+function hasScopeRef(node, ids) {
+    if (!node || Object.keys(ids).length === 0) return false;
+    switch(node.type){
+        case 1:
+            for(let i = 0; i < node.props.length; i++){
+                const p = node.props[i];
+                if (p.type === 7 && (hasScopeRef(p.arg, ids) || hasScopeRef(p.exp, ids))) return true;
+            }
+            return node.children.some((c)=>hasScopeRef(c, ids));
+        case 11:
+            if (hasScopeRef(node.source, ids)) return true;
+            return node.children.some((c)=>hasScopeRef(c, ids));
+        case 9:
+            return node.branches.some((b)=>hasScopeRef(b, ids));
+        case 10:
+            if (hasScopeRef(node.condition, ids)) return true;
+            return node.children.some((c)=>hasScopeRef(c, ids));
+        case 4:
+            return !node.isStatic && isSimpleIdentifier(node.content) && !!ids[node.content];
+        case 8:
+            return node.children.some((c)=>(0, _shared.isObject)(c) && hasScopeRef(c, ids));
+        case 5:
+        case 12:
+            return hasScopeRef(node.content, ids);
+        case 2:
+        case 3:
+        case 20:
+            return false;
+        default:
+            return false;
+    }
+}
+function getMemoedVNodeCall(node) {
+    if (node.type === 14 && node.callee === WITH_MEMO) return node.arguments[1].returns;
+    else return node;
+}
+const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+(\S[\s\S]*)/;
+const defaultParserOptions = {
+    parseMode: "base",
+    ns: 0,
+    delimiters: [
+        `{{`,
+        `}}`
+    ],
+    getNamespace: ()=>0,
+    isVoidTag: (0, _shared.NO),
+    isPreTag: (0, _shared.NO),
+    isIgnoreNewlineTag: (0, _shared.NO),
+    isCustomElement: (0, _shared.NO),
+    onError: defaultOnError,
+    onWarn: defaultOnWarn,
+    comments: true,
+    prefixIdentifiers: false
+};
+let currentOptions = defaultParserOptions;
+let currentRoot = null;
+let currentInput = "";
+let currentOpenTag = null;
+let currentProp = null;
+let currentAttrValue = "";
+let currentAttrStartIndex = -1;
+let currentAttrEndIndex = -1;
+let inPre = 0;
+let inVPre = false;
+let currentVPreBoundary = null;
+const stack = [];
+const tokenizer = new Tokenizer(stack, {
+    onerr: emitError,
+    ontext (start, end) {
+        onText(getSlice(start, end), start, end);
+    },
+    ontextentity (char, start, end) {
+        onText(char, start, end);
+    },
+    oninterpolation (start, end) {
+        if (inVPre) return onText(getSlice(start, end), start, end);
+        let innerStart = start + tokenizer.delimiterOpen.length;
+        let innerEnd = end - tokenizer.delimiterClose.length;
+        while(isWhitespace(currentInput.charCodeAt(innerStart)))innerStart++;
+        while(isWhitespace(currentInput.charCodeAt(innerEnd - 1)))innerEnd--;
+        let exp = getSlice(innerStart, innerEnd);
+        if (exp.includes("&")) exp = currentOptions.decodeEntities(exp, false);
+        addNode({
+            type: 5,
+            content: createExp(exp, false, getLoc(innerStart, innerEnd)),
+            loc: getLoc(start, end)
+        });
+    },
+    onopentagname (start, end) {
+        const name = getSlice(start, end);
+        currentOpenTag = {
+            type: 1,
+            tag: name,
+            ns: currentOptions.getNamespace(name, stack[0], currentOptions.ns),
+            tagType: 0,
+            // will be refined on tag close
+            props: [],
+            children: [],
+            loc: getLoc(start - 1, end),
+            codegenNode: void 0
+        };
+    },
+    onopentagend (end) {
+        endOpenTag(end);
+    },
+    onclosetag (start, end) {
+        const name = getSlice(start, end);
+        if (!currentOptions.isVoidTag(name)) {
+            let found = false;
+            for(let i = 0; i < stack.length; i++){
+                const e = stack[i];
+                if (e.tag.toLowerCase() === name.toLowerCase()) {
+                    found = true;
+                    if (i > 0) emitError(24, stack[0].loc.start.offset);
+                    for(let j = 0; j <= i; j++){
+                        const el = stack.shift();
+                        onCloseTag(el, end, j < i);
+                    }
+                    break;
+                }
+            }
+            if (!found) emitError(23, backTrack(start, 60));
+        }
+    },
+    onselfclosingtag (end) {
+        const name = currentOpenTag.tag;
+        currentOpenTag.isSelfClosing = true;
+        endOpenTag(end);
+        if (stack[0] && stack[0].tag === name) onCloseTag(stack.shift(), end);
+    },
+    onattribname (start, end) {
+        currentProp = {
+            type: 6,
+            name: getSlice(start, end),
+            nameLoc: getLoc(start, end),
+            value: void 0,
+            loc: getLoc(start)
+        };
+    },
+    ondirname (start, end) {
+        const raw = getSlice(start, end);
+        const name = raw === "." || raw === ":" ? "bind" : raw === "@" ? "on" : raw === "#" ? "slot" : raw.slice(2);
+        if (!inVPre && name === "") emitError(26, start);
+        if (inVPre || name === "") currentProp = {
+            type: 6,
+            name: raw,
+            nameLoc: getLoc(start, end),
+            value: void 0,
+            loc: getLoc(start)
+        };
+        else {
+            currentProp = {
+                type: 7,
+                name,
+                rawName: raw,
+                exp: void 0,
+                arg: void 0,
+                modifiers: raw === "." ? [
+                    createSimpleExpression("prop")
+                ] : [],
+                loc: getLoc(start)
+            };
+            if (name === "pre") {
+                inVPre = tokenizer.inVPre = true;
+                currentVPreBoundary = currentOpenTag;
+                const props = currentOpenTag.props;
+                for(let i = 0; i < props.length; i++)if (props[i].type === 7) props[i] = dirToAttr(props[i]);
+            }
+        }
+    },
+    ondirarg (start, end) {
+        if (start === end) return;
+        const arg = getSlice(start, end);
+        if (inVPre) {
+            currentProp.name += arg;
+            setLocEnd(currentProp.nameLoc, end);
+        } else {
+            const isStatic = arg[0] !== `[`;
+            currentProp.arg = createExp(isStatic ? arg : arg.slice(1, -1), isStatic, getLoc(start, end), isStatic ? 3 : 0);
+        }
+    },
+    ondirmodifier (start, end) {
+        const mod = getSlice(start, end);
+        if (inVPre) {
+            currentProp.name += "." + mod;
+            setLocEnd(currentProp.nameLoc, end);
+        } else if (currentProp.name === "slot") {
+            const arg = currentProp.arg;
+            if (arg) {
+                arg.content += "." + mod;
+                setLocEnd(arg.loc, end);
+            }
+        } else {
+            const exp = createSimpleExpression(mod, true, getLoc(start, end));
+            currentProp.modifiers.push(exp);
+        }
+    },
+    onattribdata (start, end) {
+        currentAttrValue += getSlice(start, end);
+        if (currentAttrStartIndex < 0) currentAttrStartIndex = start;
+        currentAttrEndIndex = end;
+    },
+    onattribentity (char, start, end) {
+        currentAttrValue += char;
+        if (currentAttrStartIndex < 0) currentAttrStartIndex = start;
+        currentAttrEndIndex = end;
+    },
+    onattribnameend (end) {
+        const start = currentProp.loc.start.offset;
+        const name = getSlice(start, end);
+        if (currentProp.type === 7) currentProp.rawName = name;
+        if (currentOpenTag.props.some((p)=>(p.type === 7 ? p.rawName : p.name) === name)) emitError(2, start);
+    },
+    onattribend (quote, end) {
+        if (currentOpenTag && currentProp) {
+            setLocEnd(currentProp.loc, end);
+            if (quote !== 0) {
+                if (currentAttrValue.includes("&")) currentAttrValue = currentOptions.decodeEntities(currentAttrValue, true);
+                if (currentProp.type === 6) {
+                    if (currentProp.name === "class") currentAttrValue = condense(currentAttrValue).trim();
+                    if (quote === 1 && !currentAttrValue) emitError(13, end);
+                    currentProp.value = {
+                        type: 2,
+                        content: currentAttrValue,
+                        loc: quote === 1 ? getLoc(currentAttrStartIndex, currentAttrEndIndex) : getLoc(currentAttrStartIndex - 1, currentAttrEndIndex + 1)
+                    };
+                    if (tokenizer.inSFCRoot && currentOpenTag.tag === "template" && currentProp.name === "lang" && currentAttrValue && currentAttrValue !== "html") tokenizer.enterRCDATA(toCharCodes(`</template`), 0);
+                } else {
+                    let expParseMode = 0 /* Normal */ ;
+                    currentProp.exp = createExp(currentAttrValue, false, getLoc(currentAttrStartIndex, currentAttrEndIndex), 0, expParseMode);
+                    if (currentProp.name === "for") currentProp.forParseResult = parseForExpression(currentProp.exp);
+                    let syncIndex = -1;
+                    if (currentProp.name === "bind" && (syncIndex = currentProp.modifiers.findIndex((mod)=>mod.content === "sync")) > -1 && checkCompatEnabled("COMPILER_V_BIND_SYNC", currentOptions, currentProp.loc, currentProp.rawName)) {
+                        currentProp.name = "model";
+                        currentProp.modifiers.splice(syncIndex, 1);
+                    }
+                }
+            }
+            if (currentProp.type !== 7 || currentProp.name !== "pre") currentOpenTag.props.push(currentProp);
+        }
+        currentAttrValue = "";
+        currentAttrStartIndex = currentAttrEndIndex = -1;
+    },
+    oncomment (start, end) {
+        if (currentOptions.comments) addNode({
+            type: 3,
+            content: getSlice(start, end),
+            loc: getLoc(start - 4, end + 3)
+        });
+    },
+    onend () {
+        const end = currentInput.length;
+        if (tokenizer.state !== 1) switch(tokenizer.state){
+            case 5:
+            case 8:
+                emitError(5, end);
+                break;
+            case 3:
+            case 4:
+                emitError(25, tokenizer.sectionStart);
+                break;
+            case 28:
+                if (tokenizer.currentSequence === Sequences.CdataEnd) emitError(6, end);
+                else emitError(7, end);
+                break;
+            case 6:
+            case 7:
+            case 9:
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+            case 16:
+            case 17:
+            case 18:
+            case 19:
+            // "
+            case 20:
+            // '
+            case 21:
+                emitError(9, end);
+                break;
+        }
+        for(let index = 0; index < stack.length; index++){
+            onCloseTag(stack[index], end - 1);
+            emitError(24, stack[index].loc.start.offset);
+        }
+    },
+    oncdata (start, end) {
+        if (stack[0].ns !== 0) onText(getSlice(start, end), start, end);
+        else emitError(1, start - 9);
+    },
+    onprocessinginstruction (start) {
+        if ((stack[0] ? stack[0].ns : currentOptions.ns) === 0) emitError(21, start - 1);
+    }
+});
+const forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
+const stripParensRE = /^\(|\)$/g;
+function parseForExpression(input) {
+    const loc = input.loc;
+    const exp = input.content;
+    const inMatch = exp.match(forAliasRE);
+    if (!inMatch) return;
+    const [, LHS, RHS] = inMatch;
+    const createAliasExpression = (content, offset, asParam = false)=>{
+        const start = loc.start.offset + offset;
+        const end = start + content.length;
+        return createExp(content, false, getLoc(start, end), 0, asParam ? 1 /* Params */  : 0 /* Normal */ );
+    };
+    const result = {
+        source: createAliasExpression(RHS.trim(), exp.indexOf(RHS, LHS.length)),
+        value: void 0,
+        key: void 0,
+        index: void 0,
+        finalized: false
+    };
+    let valueContent = LHS.trim().replace(stripParensRE, "").trim();
+    const trimmedOffset = LHS.indexOf(valueContent);
+    const iteratorMatch = valueContent.match(forIteratorRE);
+    if (iteratorMatch) {
+        valueContent = valueContent.replace(forIteratorRE, "").trim();
+        const keyContent = iteratorMatch[1].trim();
+        let keyOffset;
+        if (keyContent) {
+            keyOffset = exp.indexOf(keyContent, trimmedOffset + valueContent.length);
+            result.key = createAliasExpression(keyContent, keyOffset, true);
+        }
+        if (iteratorMatch[2]) {
+            const indexContent = iteratorMatch[2].trim();
+            if (indexContent) result.index = createAliasExpression(indexContent, exp.indexOf(indexContent, result.key ? keyOffset + keyContent.length : trimmedOffset + valueContent.length), true);
+        }
+    }
+    if (valueContent) result.value = createAliasExpression(valueContent, trimmedOffset, true);
+    return result;
+}
+function getSlice(start, end) {
+    return currentInput.slice(start, end);
+}
+function endOpenTag(end) {
+    if (tokenizer.inSFCRoot) currentOpenTag.innerLoc = getLoc(end + 1, end + 1);
+    addNode(currentOpenTag);
+    const { tag, ns } = currentOpenTag;
+    if (ns === 0 && currentOptions.isPreTag(tag)) inPre++;
+    if (currentOptions.isVoidTag(tag)) onCloseTag(currentOpenTag, end);
+    else {
+        stack.unshift(currentOpenTag);
+        if (ns === 1 || ns === 2) tokenizer.inXML = true;
+    }
+    currentOpenTag = null;
+}
+function onText(content, start, end) {
+    {
+        const tag = stack[0] && stack[0].tag;
+        if (tag !== "script" && tag !== "style" && content.includes("&")) content = currentOptions.decodeEntities(content, false);
+    }
+    const parent = stack[0] || currentRoot;
+    const lastNode = parent.children[parent.children.length - 1];
+    if (lastNode && lastNode.type === 2) {
+        lastNode.content += content;
+        setLocEnd(lastNode.loc, end);
+    } else parent.children.push({
+        type: 2,
+        content,
+        loc: getLoc(start, end)
+    });
+}
+function onCloseTag(el, end, isImplied = false) {
+    if (isImplied) setLocEnd(el.loc, backTrack(end, 60));
+    else setLocEnd(el.loc, lookAhead(end, 62) + 1);
+    if (tokenizer.inSFCRoot) {
+        if (el.children.length) el.innerLoc.end = (0, _shared.extend)({}, el.children[el.children.length - 1].loc.end);
+        else el.innerLoc.end = (0, _shared.extend)({}, el.innerLoc.start);
+        el.innerLoc.source = getSlice(el.innerLoc.start.offset, el.innerLoc.end.offset);
+    }
+    const { tag, ns, children } = el;
+    if (!inVPre) {
+        if (tag === "slot") el.tagType = 2;
+        else if (isFragmentTemplate(el)) el.tagType = 3;
+        else if (isComponent(el)) el.tagType = 1;
+    }
+    if (!tokenizer.inRCDATA) el.children = condenseWhitespace(children);
+    if (ns === 0 && currentOptions.isIgnoreNewlineTag(tag)) {
+        const first = children[0];
+        if (first && first.type === 2) first.content = first.content.replace(/^\r?\n/, "");
+    }
+    if (ns === 0 && currentOptions.isPreTag(tag)) inPre--;
+    if (currentVPreBoundary === el) {
+        inVPre = tokenizer.inVPre = false;
+        currentVPreBoundary = null;
+    }
+    if (tokenizer.inXML && (stack[0] ? stack[0].ns : currentOptions.ns) === 0) tokenizer.inXML = false;
+    {
+        const props = el.props;
+        if (isCompatEnabled("COMPILER_V_IF_V_FOR_PRECEDENCE", currentOptions)) {
+            let hasIf = false;
+            let hasFor = false;
+            for(let i = 0; i < props.length; i++){
+                const p = props[i];
+                if (p.type === 7) {
+                    if (p.name === "if") hasIf = true;
+                    else if (p.name === "for") hasFor = true;
+                }
+                if (hasIf && hasFor) {
+                    warnDeprecation("COMPILER_V_IF_V_FOR_PRECEDENCE", currentOptions, el.loc);
+                    break;
+                }
+            }
+        }
+        if (!tokenizer.inSFCRoot && isCompatEnabled("COMPILER_NATIVE_TEMPLATE", currentOptions) && el.tag === "template" && !isFragmentTemplate(el)) {
+            warnDeprecation("COMPILER_NATIVE_TEMPLATE", currentOptions, el.loc);
+            const parent = stack[0] || currentRoot;
+            const index = parent.children.indexOf(el);
+            parent.children.splice(index, 1, ...el.children);
+        }
+        const inlineTemplateProp = props.find((p)=>p.type === 6 && p.name === "inline-template");
+        if (inlineTemplateProp && checkCompatEnabled("COMPILER_INLINE_TEMPLATE", currentOptions, inlineTemplateProp.loc) && el.children.length) inlineTemplateProp.value = {
+            type: 2,
+            content: getSlice(el.children[0].loc.start.offset, el.children[el.children.length - 1].loc.end.offset),
+            loc: inlineTemplateProp.loc
+        };
+    }
+}
+function lookAhead(index, c) {
+    let i = index;
+    while(currentInput.charCodeAt(i) !== c && i < currentInput.length - 1)i++;
+    return i;
+}
+function backTrack(index, c) {
+    let i = index;
+    while(currentInput.charCodeAt(i) !== c && i >= 0)i--;
+    return i;
+}
+const specialTemplateDir = /* @__PURE__ */ new Set([
+    "if",
+    "else",
+    "else-if",
+    "for",
+    "slot"
+]);
+function isFragmentTemplate({ tag, props }) {
+    if (tag === "template") for(let i = 0; i < props.length; i++){
+        if (props[i].type === 7 && specialTemplateDir.has(props[i].name)) return true;
+    }
+    return false;
+}
+function isComponent({ tag, props }) {
+    if (currentOptions.isCustomElement(tag)) return false;
+    if (tag === "component" || isUpperCase(tag.charCodeAt(0)) || isCoreComponent(tag) || currentOptions.isBuiltInComponent && currentOptions.isBuiltInComponent(tag) || currentOptions.isNativeTag && !currentOptions.isNativeTag(tag)) return true;
+    for(let i = 0; i < props.length; i++){
+        const p = props[i];
+        if (p.type === 6) {
+            if (p.name === "is" && p.value) {
+                if (p.value.content.startsWith("vue:")) return true;
+                else if (checkCompatEnabled("COMPILER_IS_ON_ELEMENT", currentOptions, p.loc)) return true;
+            }
+        } else if (p.name === "bind" && isStaticArgOf(p.arg, "is") && checkCompatEnabled("COMPILER_IS_ON_ELEMENT", currentOptions, p.loc)) return true;
+    }
+    return false;
+}
+function isUpperCase(c) {
+    return c > 64 && c < 91;
+}
+const windowsNewlineRE = /\r\n/g;
+function condenseWhitespace(nodes, tag) {
+    const shouldCondense = currentOptions.whitespace !== "preserve";
+    let removedWhitespace = false;
+    for(let i = 0; i < nodes.length; i++){
+        const node = nodes[i];
+        if (node.type === 2) {
+            if (!inPre) {
+                if (isAllWhitespace(node.content)) {
+                    const prev = nodes[i - 1] && nodes[i - 1].type;
+                    const next = nodes[i + 1] && nodes[i + 1].type;
+                    if (!prev || !next || shouldCondense && (prev === 3 && (next === 3 || next === 1) || prev === 1 && (next === 3 || next === 1 && hasNewlineChar(node.content)))) {
+                        removedWhitespace = true;
+                        nodes[i] = null;
+                    } else node.content = " ";
+                } else if (shouldCondense) node.content = condense(node.content);
+            } else node.content = node.content.replace(windowsNewlineRE, "\n");
+        }
+    }
+    return removedWhitespace ? nodes.filter(Boolean) : nodes;
+}
+function isAllWhitespace(str) {
+    for(let i = 0; i < str.length; i++){
+        if (!isWhitespace(str.charCodeAt(i))) return false;
+    }
+    return true;
+}
+function hasNewlineChar(str) {
+    for(let i = 0; i < str.length; i++){
+        const c = str.charCodeAt(i);
+        if (c === 10 || c === 13) return true;
+    }
+    return false;
+}
+function condense(str) {
+    let ret = "";
+    let prevCharIsWhitespace = false;
+    for(let i = 0; i < str.length; i++){
+        if (isWhitespace(str.charCodeAt(i))) {
+            if (!prevCharIsWhitespace) {
+                ret += " ";
+                prevCharIsWhitespace = true;
+            }
+        } else {
+            ret += str[i];
+            prevCharIsWhitespace = false;
+        }
+    }
+    return ret;
+}
+function addNode(node) {
+    (stack[0] || currentRoot).children.push(node);
+}
+function getLoc(start, end) {
+    return {
+        start: tokenizer.getPos(start),
+        // @ts-expect-error allow late attachment
+        end: end == null ? end : tokenizer.getPos(end),
+        // @ts-expect-error allow late attachment
+        source: end == null ? end : getSlice(start, end)
+    };
+}
+function cloneLoc(loc) {
+    return getLoc(loc.start.offset, loc.end.offset);
+}
+function setLocEnd(loc, end) {
+    loc.end = tokenizer.getPos(end);
+    loc.source = getSlice(loc.start.offset, end);
+}
+function dirToAttr(dir) {
+    const attr = {
+        type: 6,
+        name: dir.rawName,
+        nameLoc: getLoc(dir.loc.start.offset, dir.loc.start.offset + dir.rawName.length),
+        value: void 0,
+        loc: dir.loc
+    };
+    if (dir.exp) {
+        const loc = dir.exp.loc;
+        if (loc.end.offset < dir.loc.end.offset) {
+            loc.start.offset--;
+            loc.start.column--;
+            loc.end.offset++;
+            loc.end.column++;
+        }
+        attr.value = {
+            type: 2,
+            content: dir.exp.content,
+            loc
+        };
+    }
+    return attr;
+}
+function createExp(content, isStatic = false, loc, constType = 0, parseMode = 0 /* Normal */ ) {
+    const exp = createSimpleExpression(content, isStatic, loc, constType);
+    return exp;
+}
+function emitError(code, index, message) {
+    currentOptions.onError(createCompilerError(code, getLoc(index, index), void 0, message));
+}
+function reset() {
+    tokenizer.reset();
+    currentOpenTag = null;
+    currentProp = null;
+    currentAttrValue = "";
+    currentAttrStartIndex = -1;
+    currentAttrEndIndex = -1;
+    stack.length = 0;
+}
+function baseParse(input, options) {
+    reset();
+    currentInput = input;
+    currentOptions = (0, _shared.extend)({}, defaultParserOptions);
+    if (options) {
+        let key;
+        for(key in options)if (options[key] != null) currentOptions[key] = options[key];
+    }
+    if (!currentOptions.decodeEntities) throw new Error(`[@vue/compiler-core] decodeEntities option is required in browser builds.`);
+    tokenizer.mode = currentOptions.parseMode === "html" ? 1 : currentOptions.parseMode === "sfc" ? 2 : 0;
+    tokenizer.inXML = currentOptions.ns === 1 || currentOptions.ns === 2;
+    const delimiters = options && options.delimiters;
+    if (delimiters) {
+        tokenizer.delimiterOpen = toCharCodes(delimiters[0]);
+        tokenizer.delimiterClose = toCharCodes(delimiters[1]);
+    }
+    const root = currentRoot = createRoot([], input);
+    tokenizer.parse(currentInput);
+    root.loc = getLoc(0, input.length);
+    root.children = condenseWhitespace(root.children);
+    currentRoot = null;
+    return root;
+}
+function cacheStatic(root, context) {
+    walk(root, void 0, context, // Root node is unfortunately non-hoistable due to potential parent
+    // fallthrough attributes.
+    isSingleElementRoot(root, root.children[0]));
+}
+function isSingleElementRoot(root, child) {
+    const { children } = root;
+    return children.length === 1 && child.type === 1 && !isSlotOutlet(child);
+}
+function walk(node, parent, context, doNotHoistNode = false, inFor = false) {
+    const { children } = node;
+    const toCache = [];
+    for(let i = 0; i < children.length; i++){
+        const child = children[i];
+        if (child.type === 1 && child.tagType === 0) {
+            const constantType = doNotHoistNode ? 0 : getConstantType(child, context);
+            if (constantType > 0) {
+                if (constantType >= 2) {
+                    child.codegenNode.patchFlag = -1;
+                    toCache.push(child);
+                    continue;
+                }
+            } else {
+                const codegenNode = child.codegenNode;
+                if (codegenNode.type === 13) {
+                    const flag = codegenNode.patchFlag;
+                    if ((flag === void 0 || flag === 512 || flag === 1) && getGeneratedPropsConstantType(child, context) >= 2) {
+                        const props = getNodeProps(child);
+                        if (props) codegenNode.props = context.hoist(props);
+                    }
+                    if (codegenNode.dynamicProps) codegenNode.dynamicProps = context.hoist(codegenNode.dynamicProps);
+                }
+            }
+        } else if (child.type === 12) {
+            const constantType = doNotHoistNode ? 0 : getConstantType(child, context);
+            if (constantType >= 2) {
+                toCache.push(child);
+                continue;
+            }
+        }
+        if (child.type === 1) {
+            const isComponent = child.tagType === 1;
+            if (isComponent) context.scopes.vSlot++;
+            walk(child, node, context, false, inFor);
+            if (isComponent) context.scopes.vSlot--;
+        } else if (child.type === 11) walk(child, node, context, child.children.length === 1, true);
+        else if (child.type === 9) for(let i2 = 0; i2 < child.branches.length; i2++)walk(child.branches[i2], node, context, child.branches[i2].children.length === 1, inFor);
+    }
+    let cachedAsArray = false;
+    if (toCache.length === children.length && node.type === 1) {
+        if (node.tagType === 0 && node.codegenNode && node.codegenNode.type === 13 && (0, _shared.isArray)(node.codegenNode.children)) {
+            node.codegenNode.children = getCacheExpression(createArrayExpression(node.codegenNode.children));
+            cachedAsArray = true;
+        } else if (node.tagType === 1 && node.codegenNode && node.codegenNode.type === 13 && node.codegenNode.children && !(0, _shared.isArray)(node.codegenNode.children) && node.codegenNode.children.type === 15) {
+            const slot = getSlotNode(node.codegenNode, "default");
+            if (slot) {
+                slot.returns = getCacheExpression(createArrayExpression(slot.returns));
+                cachedAsArray = true;
+            }
+        } else if (node.tagType === 3 && parent && parent.type === 1 && parent.tagType === 1 && parent.codegenNode && parent.codegenNode.type === 13 && parent.codegenNode.children && !(0, _shared.isArray)(parent.codegenNode.children) && parent.codegenNode.children.type === 15) {
+            const slotName = findDir(node, "slot", true);
+            const slot = slotName && slotName.arg && getSlotNode(parent.codegenNode, slotName.arg);
+            if (slot) {
+                slot.returns = getCacheExpression(createArrayExpression(slot.returns));
+                cachedAsArray = true;
+            }
+        }
+    }
+    if (!cachedAsArray) for (const child of toCache)child.codegenNode = context.cache(child.codegenNode);
+    function getCacheExpression(value) {
+        const exp = context.cache(value);
+        if (inFor && context.hmr) exp.needArraySpread = true;
+        return exp;
+    }
+    function getSlotNode(node2, name) {
+        if (node2.children && !(0, _shared.isArray)(node2.children) && node2.children.type === 15) {
+            const slot = node2.children.properties.find((p)=>p.key === name || p.key.content === name);
+            return slot && slot.value;
+        }
+    }
+    if (toCache.length && context.transformHoist) context.transformHoist(children, context, node);
+}
+function getConstantType(node, context) {
+    const { constantCache } = context;
+    switch(node.type){
+        case 1:
+            if (node.tagType !== 0) return 0;
+            const cached = constantCache.get(node);
+            if (cached !== void 0) return cached;
+            const codegenNode = node.codegenNode;
+            if (codegenNode.type !== 13) return 0;
+            if (codegenNode.isBlock && node.tag !== "svg" && node.tag !== "foreignObject" && node.tag !== "math") return 0;
+            if (codegenNode.patchFlag === void 0) {
+                let returnType2 = 3;
+                const generatedPropsType = getGeneratedPropsConstantType(node, context);
+                if (generatedPropsType === 0) {
+                    constantCache.set(node, 0);
+                    return 0;
+                }
+                if (generatedPropsType < returnType2) returnType2 = generatedPropsType;
+                for(let i = 0; i < node.children.length; i++){
+                    const childType = getConstantType(node.children[i], context);
+                    if (childType === 0) {
+                        constantCache.set(node, 0);
+                        return 0;
+                    }
+                    if (childType < returnType2) returnType2 = childType;
+                }
+                if (returnType2 > 1) for(let i = 0; i < node.props.length; i++){
+                    const p = node.props[i];
+                    if (p.type === 7 && p.name === "bind" && p.exp) {
+                        const expType = getConstantType(p.exp, context);
+                        if (expType === 0) {
+                            constantCache.set(node, 0);
+                            return 0;
+                        }
+                        if (expType < returnType2) returnType2 = expType;
+                    }
+                }
+                if (codegenNode.isBlock) {
+                    for(let i = 0; i < node.props.length; i++){
+                        const p = node.props[i];
+                        if (p.type === 7) {
+                            constantCache.set(node, 0);
+                            return 0;
+                        }
+                    }
+                    context.removeHelper(OPEN_BLOCK);
+                    context.removeHelper(getVNodeBlockHelper(context.inSSR, codegenNode.isComponent));
+                    codegenNode.isBlock = false;
+                    context.helper(getVNodeHelper(context.inSSR, codegenNode.isComponent));
+                }
+                constantCache.set(node, returnType2);
+                return returnType2;
+            } else {
+                constantCache.set(node, 0);
+                return 0;
+            }
+        case 2:
+        case 3:
+            return 3;
+        case 9:
+        case 11:
+        case 10:
+            return 0;
+        case 5:
+        case 12:
+            return getConstantType(node.content, context);
+        case 4:
+            return node.constType;
+        case 8:
+            let returnType = 3;
+            for(let i = 0; i < node.children.length; i++){
+                const child = node.children[i];
+                if ((0, _shared.isString)(child) || (0, _shared.isSymbol)(child)) continue;
+                const childType = getConstantType(child, context);
+                if (childType === 0) return 0;
+                else if (childType < returnType) returnType = childType;
+            }
+            return returnType;
+        case 20:
+            return 2;
+        default:
+            return 0;
+    }
+}
+const allowHoistedHelperSet = /* @__PURE__ */ new Set([
+    NORMALIZE_CLASS,
+    NORMALIZE_STYLE,
+    NORMALIZE_PROPS,
+    GUARD_REACTIVE_PROPS
+]);
+function getConstantTypeOfHelperCall(value, context) {
+    if (value.type === 14 && !(0, _shared.isString)(value.callee) && allowHoistedHelperSet.has(value.callee)) {
+        const arg = value.arguments[0];
+        if (arg.type === 4) return getConstantType(arg, context);
+        else if (arg.type === 14) return getConstantTypeOfHelperCall(arg, context);
+    }
+    return 0;
+}
+function getGeneratedPropsConstantType(node, context) {
+    let returnType = 3;
+    const props = getNodeProps(node);
+    if (props && props.type === 15) {
+        const { properties } = props;
+        for(let i = 0; i < properties.length; i++){
+            const { key, value } = properties[i];
+            const keyType = getConstantType(key, context);
+            if (keyType === 0) return keyType;
+            if (keyType < returnType) returnType = keyType;
+            let valueType;
+            if (value.type === 4) valueType = getConstantType(value, context);
+            else if (value.type === 14) valueType = getConstantTypeOfHelperCall(value, context);
+            else valueType = 0;
+            if (valueType === 0) return valueType;
+            if (valueType < returnType) returnType = valueType;
+        }
+    }
+    return returnType;
+}
+function getNodeProps(node) {
+    const codegenNode = node.codegenNode;
+    if (codegenNode.type === 13) return codegenNode.props;
+}
+function createTransformContext(root, { filename = "", prefixIdentifiers = false, hoistStatic = false, hmr = false, cacheHandlers = false, nodeTransforms = [], directiveTransforms = {}, transformHoist = null, isBuiltInComponent = (0, _shared.NOOP), isCustomElement = (0, _shared.NOOP), expressionPlugins = [], scopeId = null, slotted = true, ssr = false, inSSR = false, ssrCssVars = ``, bindingMetadata = (0, _shared.EMPTY_OBJ), inline = false, isTS = false, onError = defaultOnError, onWarn = defaultOnWarn, compatConfig }) {
+    const nameMatch = filename.replace(/\?.*$/, "").match(/([^/\\]+)\.\w+$/);
+    const context = {
+        // options
+        filename,
+        selfName: nameMatch && (0, _shared.capitalize)((0, _shared.camelize)(nameMatch[1])),
+        prefixIdentifiers,
+        hoistStatic,
+        hmr,
+        cacheHandlers,
+        nodeTransforms,
+        directiveTransforms,
+        transformHoist,
+        isBuiltInComponent,
+        isCustomElement,
+        expressionPlugins,
+        scopeId,
+        slotted,
+        ssr,
+        inSSR,
+        ssrCssVars,
+        bindingMetadata,
+        inline,
+        isTS,
+        onError,
+        onWarn,
+        compatConfig,
+        // state
+        root,
+        helpers: /* @__PURE__ */ new Map(),
+        components: /* @__PURE__ */ new Set(),
+        directives: /* @__PURE__ */ new Set(),
+        hoists: [],
+        imports: [],
+        cached: [],
+        constantCache: /* @__PURE__ */ new WeakMap(),
+        temps: 0,
+        identifiers: /* @__PURE__ */ Object.create(null),
+        scopes: {
+            vFor: 0,
+            vSlot: 0,
+            vPre: 0,
+            vOnce: 0
+        },
+        parent: null,
+        grandParent: null,
+        currentNode: root,
+        childIndex: 0,
+        inVOnce: false,
+        // methods
+        helper (name) {
+            const count = context.helpers.get(name) || 0;
+            context.helpers.set(name, count + 1);
+            return name;
+        },
+        removeHelper (name) {
+            const count = context.helpers.get(name);
+            if (count) {
+                const currentCount = count - 1;
+                if (!currentCount) context.helpers.delete(name);
+                else context.helpers.set(name, currentCount);
+            }
+        },
+        helperString (name) {
+            return `_${helperNameMap[context.helper(name)]}`;
+        },
+        replaceNode (node) {
+            if (!context.currentNode) throw new Error(`Node being replaced is already removed.`);
+            if (!context.parent) throw new Error(`Cannot replace root node.`);
+            context.parent.children[context.childIndex] = context.currentNode = node;
+        },
+        removeNode (node) {
+            if (!context.parent) throw new Error(`Cannot remove root node.`);
+            const list = context.parent.children;
+            const removalIndex = node ? list.indexOf(node) : context.currentNode ? context.childIndex : -1;
+            if (removalIndex < 0) throw new Error(`node being removed is not a child of current parent`);
+            if (!node || node === context.currentNode) {
+                context.currentNode = null;
+                context.onNodeRemoved();
+            } else if (context.childIndex > removalIndex) {
+                context.childIndex--;
+                context.onNodeRemoved();
+            }
+            context.parent.children.splice(removalIndex, 1);
+        },
+        onNodeRemoved: (0, _shared.NOOP),
+        addIdentifiers (exp) {},
+        removeIdentifiers (exp) {},
+        hoist (exp) {
+            if ((0, _shared.isString)(exp)) exp = createSimpleExpression(exp);
+            context.hoists.push(exp);
+            const identifier = createSimpleExpression(`_hoisted_${context.hoists.length}`, false, exp.loc, 2);
+            identifier.hoisted = exp;
+            return identifier;
+        },
+        cache (exp, isVNode = false, inVOnce = false) {
+            const cacheExp = createCacheExpression(context.cached.length, exp, isVNode, inVOnce);
+            context.cached.push(cacheExp);
+            return cacheExp;
+        }
+    };
+    context.filters = /* @__PURE__ */ new Set();
+    return context;
+}
+function transform(root, options) {
+    const context = createTransformContext(root, options);
+    traverseNode(root, context);
+    if (options.hoistStatic) cacheStatic(root, context);
+    if (!options.ssr) createRootCodegen(root, context);
+    root.helpers = /* @__PURE__ */ new Set([
+        ...context.helpers.keys()
+    ]);
+    root.components = [
+        ...context.components
+    ];
+    root.directives = [
+        ...context.directives
+    ];
+    root.imports = context.imports;
+    root.hoists = context.hoists;
+    root.temps = context.temps;
+    root.cached = context.cached;
+    root.transformed = true;
+    root.filters = [
+        ...context.filters
+    ];
+}
+function createRootCodegen(root, context) {
+    const { helper } = context;
+    const { children } = root;
+    if (children.length === 1) {
+        const child = children[0];
+        if (isSingleElementRoot(root, child) && child.codegenNode) {
+            const codegenNode = child.codegenNode;
+            if (codegenNode.type === 13) convertToBlock(codegenNode, context);
+            root.codegenNode = codegenNode;
+        } else root.codegenNode = child;
+    } else if (children.length > 1) {
+        let patchFlag = 64;
+        if (children.filter((c)=>c.type !== 3).length === 1) patchFlag |= 2048;
+        root.codegenNode = createVNodeCall(context, helper(FRAGMENT), void 0, root.children, patchFlag, void 0, void 0, true, void 0, false);
+    }
+}
+function traverseChildren(parent, context) {
+    let i = 0;
+    const nodeRemoved = ()=>{
+        i--;
+    };
+    for(; i < parent.children.length; i++){
+        const child = parent.children[i];
+        if ((0, _shared.isString)(child)) continue;
+        context.grandParent = context.parent;
+        context.parent = parent;
+        context.childIndex = i;
+        context.onNodeRemoved = nodeRemoved;
+        traverseNode(child, context);
+    }
+}
+function traverseNode(node, context) {
+    context.currentNode = node;
+    const { nodeTransforms } = context;
+    const exitFns = [];
+    for(let i2 = 0; i2 < nodeTransforms.length; i2++){
+        const onExit = nodeTransforms[i2](node, context);
+        if (onExit) {
+            if ((0, _shared.isArray)(onExit)) exitFns.push(...onExit);
+            else exitFns.push(onExit);
+        }
+        if (!context.currentNode) return;
+        else node = context.currentNode;
+    }
+    switch(node.type){
+        case 3:
+            if (!context.ssr) context.helper(CREATE_COMMENT);
+            break;
+        case 5:
+            if (!context.ssr) context.helper(TO_DISPLAY_STRING);
+            break;
+        // for container types, further traverse downwards
+        case 9:
+            for(let i2 = 0; i2 < node.branches.length; i2++)traverseNode(node.branches[i2], context);
+            break;
+        case 10:
+        case 11:
+        case 1:
+        case 0:
+            traverseChildren(node, context);
+            break;
+    }
+    context.currentNode = node;
+    let i = exitFns.length;
+    while(i--)exitFns[i]();
+}
+function createStructuralDirectiveTransform(name, fn) {
+    const matches = (0, _shared.isString)(name) ? (n)=>n === name : (n)=>name.test(n);
+    return (node, context)=>{
+        if (node.type === 1) {
+            const { props } = node;
+            if (node.tagType === 3 && props.some(isVSlot)) return;
+            const exitFns = [];
+            for(let i = 0; i < props.length; i++){
+                const prop = props[i];
+                if (prop.type === 7 && matches(prop.name)) {
+                    props.splice(i, 1);
+                    i--;
+                    const onExit = fn(node, prop, context);
+                    if (onExit) exitFns.push(onExit);
+                }
+            }
+            return exitFns;
+        }
+    };
+}
+const PURE_ANNOTATION = `/*@__PURE__*/`;
+const aliasHelper = (s)=>`${helperNameMap[s]}: _${helperNameMap[s]}`;
+function createCodegenContext(ast, { mode = "function", prefixIdentifiers = mode === "module", sourceMap = false, filename = `template.vue.html`, scopeId = null, optimizeImports = false, runtimeGlobalName = `Vue`, runtimeModuleName = `vue`, ssrRuntimeModuleName = "vue/server-renderer", ssr = false, isTS = false, inSSR = false }) {
+    const context = {
+        mode,
+        prefixIdentifiers,
+        sourceMap,
+        filename,
+        scopeId,
+        optimizeImports,
+        runtimeGlobalName,
+        runtimeModuleName,
+        ssrRuntimeModuleName,
+        ssr,
+        isTS,
+        inSSR,
+        source: ast.source,
+        code: ``,
+        column: 1,
+        line: 1,
+        offset: 0,
+        indentLevel: 0,
+        pure: false,
+        map: void 0,
+        helper (key) {
+            return `_${helperNameMap[key]}`;
+        },
+        push (code, newlineIndex = -2 /* None */ , node) {
+            context.code += code;
+        },
+        indent () {
+            newline(++context.indentLevel);
+        },
+        deindent (withoutNewLine = false) {
+            if (withoutNewLine) --context.indentLevel;
+            else newline(--context.indentLevel);
+        },
+        newline () {
+            newline(context.indentLevel);
+        }
+    };
+    function newline(n) {
+        context.push("\n" + `  `.repeat(n), 0 /* Start */ );
+    }
+    return context;
+}
+function generate(ast, options = {}) {
+    const context = createCodegenContext(ast, options);
+    if (options.onContextCreated) options.onContextCreated(context);
+    const { mode, push, prefixIdentifiers, indent, deindent, newline, scopeId, ssr } = context;
+    const helpers = Array.from(ast.helpers);
+    const hasHelpers = helpers.length > 0;
+    const useWithBlock = !prefixIdentifiers && mode !== "module";
+    const preambleContext = context;
+    genFunctionPreamble(ast, preambleContext);
+    const functionName = ssr ? `ssrRender` : `render`;
+    const args = ssr ? [
+        "_ctx",
+        "_push",
+        "_parent",
+        "_attrs"
+    ] : [
+        "_ctx",
+        "_cache"
+    ];
+    const signature = args.join(", ");
+    push(`function ${functionName}(${signature}) {`);
+    indent();
+    if (useWithBlock) {
+        push(`with (_ctx) {`);
+        indent();
+        if (hasHelpers) {
+            push(`const { ${helpers.map(aliasHelper).join(", ")} } = _Vue
+`, -1 /* End */ );
+            newline();
+        }
+    }
+    if (ast.components.length) {
+        genAssets(ast.components, "component", context);
+        if (ast.directives.length || ast.temps > 0) newline();
+    }
+    if (ast.directives.length) {
+        genAssets(ast.directives, "directive", context);
+        if (ast.temps > 0) newline();
+    }
+    if (ast.filters && ast.filters.length) {
+        newline();
+        genAssets(ast.filters, "filter", context);
+        newline();
+    }
+    if (ast.temps > 0) {
+        push(`let `);
+        for(let i = 0; i < ast.temps; i++)push(`${i > 0 ? `, ` : ``}_temp${i}`);
+    }
+    if (ast.components.length || ast.directives.length || ast.temps) {
+        push(`
+`, 0 /* Start */ );
+        newline();
+    }
+    if (!ssr) push(`return `);
+    if (ast.codegenNode) genNode(ast.codegenNode, context);
+    else push(`null`);
+    if (useWithBlock) {
+        deindent();
+        push(`}`);
+    }
+    deindent();
+    push(`}`);
+    return {
+        ast,
+        code: context.code,
+        preamble: ``,
+        map: context.map ? context.map.toJSON() : void 0
+    };
+}
+function genFunctionPreamble(ast, context) {
+    const { ssr, prefixIdentifiers, push, newline, runtimeModuleName, runtimeGlobalName, ssrRuntimeModuleName } = context;
+    const VueBinding = runtimeGlobalName;
+    const helpers = Array.from(ast.helpers);
+    if (helpers.length > 0) {
+        push(`const _Vue = ${VueBinding}
+`, -1 /* End */ );
+        if (ast.hoists.length) {
+            const staticHelpers = [
+                CREATE_VNODE,
+                CREATE_ELEMENT_VNODE,
+                CREATE_COMMENT,
+                CREATE_TEXT,
+                CREATE_STATIC
+            ].filter((helper)=>helpers.includes(helper)).map(aliasHelper).join(", ");
+            push(`const { ${staticHelpers} } = _Vue
+`, -1 /* End */ );
+        }
+    }
+    genHoists(ast.hoists, context);
+    newline();
+    push(`return `);
+}
+function genAssets(assets, type, { helper, push, newline, isTS }) {
+    const resolver = helper(type === "filter" ? RESOLVE_FILTER : type === "component" ? RESOLVE_COMPONENT : RESOLVE_DIRECTIVE);
+    for(let i = 0; i < assets.length; i++){
+        let id = assets[i];
+        const maybeSelfReference = id.endsWith("__self");
+        if (maybeSelfReference) id = id.slice(0, -6);
+        push(`const ${toValidAssetId(id, type)} = ${resolver}(${JSON.stringify(id)}${maybeSelfReference ? `, true` : ``})${isTS ? `!` : ``}`);
+        if (i < assets.length - 1) newline();
+    }
+}
+function genHoists(hoists, context) {
+    if (!hoists.length) return;
+    context.pure = true;
+    const { push, newline } = context;
+    newline();
+    for(let i = 0; i < hoists.length; i++){
+        const exp = hoists[i];
+        if (exp) {
+            push(`const _hoisted_${i + 1} = `);
+            genNode(exp, context);
+            newline();
+        }
+    }
+    context.pure = false;
+}
+function isText(n) {
+    return (0, _shared.isString)(n) || n.type === 4 || n.type === 2 || n.type === 5 || n.type === 8;
+}
+function genNodeListAsArray(nodes, context) {
+    const multilines = nodes.length > 3 || nodes.some((n)=>(0, _shared.isArray)(n) || !isText(n));
+    context.push(`[`);
+    multilines && context.indent();
+    genNodeList(nodes, context, multilines);
+    multilines && context.deindent();
+    context.push(`]`);
+}
+function genNodeList(nodes, context, multilines = false, comma = true) {
+    const { push, newline } = context;
+    for(let i = 0; i < nodes.length; i++){
+        const node = nodes[i];
+        if ((0, _shared.isString)(node)) push(node, -3 /* Unknown */ );
+        else if ((0, _shared.isArray)(node)) genNodeListAsArray(node, context);
+        else genNode(node, context);
+        if (i < nodes.length - 1) {
+            if (multilines) {
+                comma && push(",");
+                newline();
+            } else comma && push(", ");
+        }
+    }
+}
+function genNode(node, context) {
+    if ((0, _shared.isString)(node)) {
+        context.push(node, -3 /* Unknown */ );
+        return;
+    }
+    if ((0, _shared.isSymbol)(node)) {
+        context.push(context.helper(node));
+        return;
+    }
+    switch(node.type){
+        case 1:
+        case 9:
+        case 11:
+            assert(node.codegenNode != null, `Codegen node is missing for element/if/for node. Apply appropriate transforms first.`);
+            genNode(node.codegenNode, context);
+            break;
+        case 2:
+            genText(node, context);
+            break;
+        case 4:
+            genExpression(node, context);
+            break;
+        case 5:
+            genInterpolation(node, context);
+            break;
+        case 12:
+            genNode(node.codegenNode, context);
+            break;
+        case 8:
+            genCompoundExpression(node, context);
+            break;
+        case 3:
+            genComment(node, context);
+            break;
+        case 13:
+            genVNodeCall(node, context);
+            break;
+        case 14:
+            genCallExpression(node, context);
+            break;
+        case 15:
+            genObjectExpression(node, context);
+            break;
+        case 17:
+            genArrayExpression(node, context);
+            break;
+        case 18:
+            genFunctionExpression(node, context);
+            break;
+        case 19:
+            genConditionalExpression(node, context);
+            break;
+        case 20:
+            genCacheExpression(node, context);
+            break;
+        case 21:
+            genNodeList(node.body, context, true, false);
+            break;
+        // SSR only types
+        case 22:
+            break;
+        case 23:
+            break;
+        case 24:
+            break;
+        case 25:
+            break;
+        case 26:
+            break;
+        /* v8 ignore start */ case 10:
+            break;
+        default:
+            {
+                assert(false, `unhandled codegen node type: ${node.type}`);
+                const exhaustiveCheck = node;
+                return exhaustiveCheck;
+            }
+    }
+}
+function genText(node, context) {
+    context.push(JSON.stringify(node.content), -3 /* Unknown */ , node);
+}
+function genExpression(node, context) {
+    const { content, isStatic } = node;
+    context.push(isStatic ? JSON.stringify(content) : content, -3 /* Unknown */ , node);
+}
+function genInterpolation(node, context) {
+    const { push, helper, pure } = context;
+    if (pure) push(PURE_ANNOTATION);
+    push(`${helper(TO_DISPLAY_STRING)}(`);
+    genNode(node.content, context);
+    push(`)`);
+}
+function genCompoundExpression(node, context) {
+    for(let i = 0; i < node.children.length; i++){
+        const child = node.children[i];
+        if ((0, _shared.isString)(child)) context.push(child, -3 /* Unknown */ );
+        else genNode(child, context);
+    }
+}
+function genExpressionAsPropertyKey(node, context) {
+    const { push } = context;
+    if (node.type === 8) {
+        push(`[`);
+        genCompoundExpression(node, context);
+        push(`]`);
+    } else if (node.isStatic) {
+        const text = isSimpleIdentifier(node.content) ? node.content : JSON.stringify(node.content);
+        push(text, -2 /* None */ , node);
+    } else push(`[${node.content}]`, -3 /* Unknown */ , node);
+}
+function genComment(node, context) {
+    const { push, helper, pure } = context;
+    if (pure) push(PURE_ANNOTATION);
+    push(`${helper(CREATE_COMMENT)}(${JSON.stringify(node.content)})`, -3 /* Unknown */ , node);
+}
+function genVNodeCall(node, context) {
+    const { push, helper, pure } = context;
+    const { tag, props, children, patchFlag, dynamicProps, directives, isBlock, disableTracking, isComponent } = node;
+    let patchFlagString;
+    if (patchFlag) {
+        if (patchFlag < 0) patchFlagString = patchFlag + ` /* ${(0, _shared.PatchFlagNames)[patchFlag]} */`;
+        else {
+            const flagNames = Object.keys((0, _shared.PatchFlagNames)).map(Number).filter((n)=>n > 0 && patchFlag & n).map((n)=>(0, _shared.PatchFlagNames)[n]).join(`, `);
+            patchFlagString = patchFlag + ` /* ${flagNames} */`;
+        }
+    }
+    if (directives) push(helper(WITH_DIRECTIVES) + `(`);
+    if (isBlock) push(`(${helper(OPEN_BLOCK)}(${disableTracking ? `true` : ``}), `);
+    if (pure) push(PURE_ANNOTATION);
+    const callHelper = isBlock ? getVNodeBlockHelper(context.inSSR, isComponent) : getVNodeHelper(context.inSSR, isComponent);
+    push(helper(callHelper) + `(`, -2 /* None */ , node);
+    genNodeList(genNullableArgs([
+        tag,
+        props,
+        children,
+        patchFlagString,
+        dynamicProps
+    ]), context);
+    push(`)`);
+    if (isBlock) push(`)`);
+    if (directives) {
+        push(`, `);
+        genNode(directives, context);
+        push(`)`);
+    }
+}
+function genNullableArgs(args) {
+    let i = args.length;
+    while(i--){
+        if (args[i] != null) break;
+    }
+    return args.slice(0, i + 1).map((arg)=>arg || `null`);
+}
+function genCallExpression(node, context) {
+    const { push, helper, pure } = context;
+    const callee = (0, _shared.isString)(node.callee) ? node.callee : helper(node.callee);
+    if (pure) push(PURE_ANNOTATION);
+    push(callee + `(`, -2 /* None */ , node);
+    genNodeList(node.arguments, context);
+    push(`)`);
+}
+function genObjectExpression(node, context) {
+    const { push, indent, deindent, newline } = context;
+    const { properties } = node;
+    if (!properties.length) {
+        push(`{}`, -2 /* None */ , node);
+        return;
+    }
+    const multilines = properties.length > 1 || properties.some((p)=>p.value.type !== 4);
+    push(multilines ? `{` : `{ `);
+    multilines && indent();
+    for(let i = 0; i < properties.length; i++){
+        const { key, value } = properties[i];
+        genExpressionAsPropertyKey(key, context);
+        push(`: `);
+        genNode(value, context);
+        if (i < properties.length - 1) {
+            push(`,`);
+            newline();
+        }
+    }
+    multilines && deindent();
+    push(multilines ? `}` : ` }`);
+}
+function genArrayExpression(node, context) {
+    genNodeListAsArray(node.elements, context);
+}
+function genFunctionExpression(node, context) {
+    const { push, indent, deindent } = context;
+    const { params, returns, body, newline, isSlot } = node;
+    if (isSlot) push(`_${helperNameMap[WITH_CTX]}(`);
+    push(`(`, -2 /* None */ , node);
+    if ((0, _shared.isArray)(params)) genNodeList(params, context);
+    else if (params) genNode(params, context);
+    push(`) => `);
+    if (newline || body) {
+        push(`{`);
+        indent();
+    }
+    if (returns) {
+        if (newline) push(`return `);
+        if ((0, _shared.isArray)(returns)) genNodeListAsArray(returns, context);
+        else genNode(returns, context);
+    } else if (body) genNode(body, context);
+    if (newline || body) {
+        deindent();
+        push(`}`);
+    }
+    if (isSlot) {
+        if (node.isNonScopedSlot) push(`, undefined, true`);
+        push(`)`);
+    }
+}
+function genConditionalExpression(node, context) {
+    const { test, consequent, alternate, newline: needNewline } = node;
+    const { push, indent, deindent, newline } = context;
+    if (test.type === 4) {
+        const needsParens = !isSimpleIdentifier(test.content);
+        needsParens && push(`(`);
+        genExpression(test, context);
+        needsParens && push(`)`);
+    } else {
+        push(`(`);
+        genNode(test, context);
+        push(`)`);
+    }
+    needNewline && indent();
+    context.indentLevel++;
+    needNewline || push(` `);
+    push(`? `);
+    genNode(consequent, context);
+    context.indentLevel--;
+    needNewline && newline();
+    needNewline || push(` `);
+    push(`: `);
+    const isNested = alternate.type === 19;
+    if (!isNested) context.indentLevel++;
+    genNode(alternate, context);
+    if (!isNested) context.indentLevel--;
+    needNewline && deindent(true);
+}
+function genCacheExpression(node, context) {
+    const { push, helper, indent, deindent, newline } = context;
+    const { needPauseTracking, needArraySpread } = node;
+    if (needArraySpread) push(`[...(`);
+    push(`_cache[${node.index}] || (`);
+    if (needPauseTracking) {
+        indent();
+        push(`${helper(SET_BLOCK_TRACKING)}(-1`);
+        if (node.inVOnce) push(`, true`);
+        push(`),`);
+        newline();
+        push(`(`);
+    }
+    push(`_cache[${node.index}] = `);
+    genNode(node.value, context);
+    if (needPauseTracking) {
+        push(`).cacheIndex = ${node.index},`);
+        newline();
+        push(`${helper(SET_BLOCK_TRACKING)}(1),`);
+        newline();
+        push(`_cache[${node.index}]`);
+        deindent();
+    }
+    push(`)`);
+    if (needArraySpread) push(`)]`);
+}
+const prohibitedKeywordRE = new RegExp("\\b" + "arguments,await,break,case,catch,class,const,continue,debugger,default,delete,do,else,export,extends,finally,for,function,if,import,let,new,return,super,switch,throw,try,var,void,while,with,yield".split(",").join("\\b|\\b") + "\\b");
+const stripStringRE = /'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*\$\{|\}(?:[^`\\]|\\.)*`|`(?:[^`\\]|\\.)*`/g;
+function validateBrowserExpression(node, context, asParams = false, asRawStatements = false) {
+    const exp = node.content;
+    if (!exp.trim()) return;
+    try {
+        new Function(asRawStatements ? ` ${exp} ` : `return ${asParams ? `(${exp}) => {}` : `(${exp})`}`);
+    } catch (e) {
+        let message = e.message;
+        const keywordMatch = exp.replace(stripStringRE, "").match(prohibitedKeywordRE);
+        if (keywordMatch) message = `avoid using JavaScript keyword as property name: "${keywordMatch[0]}"`;
+        context.onError(createCompilerError(45, node.loc, void 0, message));
+    }
+}
+const transformExpression = (node, context)=>{
+    if (node.type === 5) node.content = processExpression(node.content, context);
+    else if (node.type === 1) {
+        const memo = findDir(node, "memo");
+        for(let i = 0; i < node.props.length; i++){
+            const dir = node.props[i];
+            if (dir.type === 7 && dir.name !== "for") {
+                const exp = dir.exp;
+                const arg = dir.arg;
+                if (exp && exp.type === 4 && !(dir.name === "on" && arg) && // key has been processed in transformFor(vMemo + vFor)
+                !(memo && arg && arg.type === 4 && arg.content === "key")) dir.exp = processExpression(exp, context, // slot args must be processed as function params
+                dir.name === "slot");
+                if (arg && arg.type === 4 && !arg.isStatic) dir.arg = processExpression(arg, context);
+            }
+        }
+    }
+};
+function processExpression(node, context, asParams = false, asRawStatements = false, localVars = Object.create(context.identifiers)) {
+    validateBrowserExpression(node, context, asParams, asRawStatements);
+    return node;
+}
+function stringifyExpression(exp) {
+    if ((0, _shared.isString)(exp)) return exp;
+    else if (exp.type === 4) return exp.content;
+    else return exp.children.map(stringifyExpression).join("");
+}
+const transformIf = createStructuralDirectiveTransform(/^(if|else|else-if)$/, (node, dir, context)=>{
+    return processIf(node, dir, context, (ifNode, branch, isRoot)=>{
+        const siblings = context.parent.children;
+        let i = siblings.indexOf(ifNode);
+        let key = 0;
+        while(i-- >= 0){
+            const sibling = siblings[i];
+            if (sibling && sibling.type === 9) key += sibling.branches.length;
+        }
+        return ()=>{
+            if (isRoot) ifNode.codegenNode = createCodegenNodeForBranch(branch, key, context);
+            else {
+                const parentCondition = getParentCondition(ifNode.codegenNode);
+                parentCondition.alternate = createCodegenNodeForBranch(branch, key + ifNode.branches.length - 1, context);
+            }
+        };
+    });
+});
+function processIf(node, dir, context, processCodegen) {
+    if (dir.name !== "else" && (!dir.exp || !dir.exp.content.trim())) {
+        const loc = dir.exp ? dir.exp.loc : node.loc;
+        context.onError(createCompilerError(28, dir.loc));
+        dir.exp = createSimpleExpression(`true`, false, loc);
+    }
+    if (0, dir.exp) validateBrowserExpression(dir.exp, context);
+    if (dir.name === "if") {
+        const branch = createIfBranch(node, dir);
+        const ifNode = {
+            type: 9,
+            loc: cloneLoc(node.loc),
+            branches: [
+                branch
+            ]
+        };
+        context.replaceNode(ifNode);
+        if (processCodegen) return processCodegen(ifNode, branch, true);
+    } else {
+        const siblings = context.parent.children;
+        const comments = [];
+        let i = siblings.indexOf(node);
+        while(i-- >= -1){
+            const sibling = siblings[i];
+            if (sibling && sibling.type === 3) {
+                context.removeNode(sibling);
+                comments.unshift(sibling);
+                continue;
+            }
+            if (sibling && sibling.type === 2 && !sibling.content.trim().length) {
+                context.removeNode(sibling);
+                continue;
+            }
+            if (sibling && sibling.type === 9) {
+                if (dir.name === "else-if" && sibling.branches[sibling.branches.length - 1].condition === void 0) context.onError(createCompilerError(30, node.loc));
+                context.removeNode();
+                const branch = createIfBranch(node, dir);
+                if ((0, comments.length) && // #3619 ignore comments if the v-if is direct child of <transition>
+                !(context.parent && context.parent.type === 1 && (context.parent.tag === "transition" || context.parent.tag === "Transition"))) branch.children = [
+                    ...comments,
+                    ...branch.children
+                ];
+                {
+                    const key = branch.userKey;
+                    if (key) sibling.branches.forEach(({ userKey })=>{
+                        if (isSameKey(userKey, key)) context.onError(createCompilerError(29, branch.userKey.loc));
+                    });
+                }
+                sibling.branches.push(branch);
+                const onExit = processCodegen && processCodegen(sibling, branch, false);
+                traverseNode(branch, context);
+                if (onExit) onExit();
+                context.currentNode = null;
+            } else context.onError(createCompilerError(30, node.loc));
+            break;
+        }
+    }
+}
+function createIfBranch(node, dir) {
+    const isTemplateIf = node.tagType === 3;
+    return {
+        type: 10,
+        loc: node.loc,
+        condition: dir.name === "else" ? void 0 : dir.exp,
+        children: isTemplateIf && !findDir(node, "for") ? node.children : [
+            node
+        ],
+        userKey: findProp(node, `key`),
+        isTemplateIf
+    };
+}
+function createCodegenNodeForBranch(branch, keyIndex, context) {
+    if (branch.condition) return createConditionalExpression(branch.condition, createChildrenCodegenNode(branch, keyIndex, context), // make sure to pass in asBlock: true so that the comment node call
+    // closes the current block.
+    createCallExpression(context.helper(CREATE_COMMENT), [
+        '"v-if"',
+        "true"
+    ]));
+    else return createChildrenCodegenNode(branch, keyIndex, context);
+}
+function createChildrenCodegenNode(branch, keyIndex, context) {
+    const { helper } = context;
+    const keyProperty = createObjectProperty(`key`, createSimpleExpression(`${keyIndex}`, false, locStub, 2));
+    const { children } = branch;
+    const firstChild = children[0];
+    const needFragmentWrapper = children.length !== 1 || firstChild.type !== 1;
+    if (needFragmentWrapper) {
+        if (children.length === 1 && firstChild.type === 11) {
+            const vnodeCall = firstChild.codegenNode;
+            injectProp(vnodeCall, keyProperty, context);
+            return vnodeCall;
+        } else {
+            let patchFlag = 64;
+            if (!branch.isTemplateIf && children.filter((c)=>c.type !== 3).length === 1) patchFlag |= 2048;
+            return createVNodeCall(context, helper(FRAGMENT), createObjectExpression([
+                keyProperty
+            ]), children, patchFlag, void 0, void 0, true, false, false, branch.loc);
+        }
+    } else {
+        const ret = firstChild.codegenNode;
+        const vnodeCall = getMemoedVNodeCall(ret);
+        if (vnodeCall.type === 13) convertToBlock(vnodeCall, context);
+        injectProp(vnodeCall, keyProperty, context);
+        return ret;
+    }
+}
+function isSameKey(a, b) {
+    if (!a || a.type !== b.type) return false;
+    if (a.type === 6) {
+        if (a.value.content !== b.value.content) return false;
+    } else {
+        const exp = a.exp;
+        const branchExp = b.exp;
+        if (exp.type !== branchExp.type) return false;
+        if (exp.type !== 4 || exp.isStatic !== branchExp.isStatic || exp.content !== branchExp.content) return false;
+    }
+    return true;
+}
+function getParentCondition(node) {
+    while(true){
+        if (node.type === 19) {
+            if (node.alternate.type === 19) node = node.alternate;
+            else return node;
+        } else if (node.type === 20) node = node.value;
+    }
+}
+const transformBind = (dir, _node, context)=>{
+    const { modifiers, loc } = dir;
+    const arg = dir.arg;
+    let { exp } = dir;
+    if (exp && exp.type === 4 && !exp.content.trim()) exp = void 0;
+    if (!exp) {
+        if (arg.type !== 4 || !arg.isStatic) {
+            context.onError(createCompilerError(52, arg.loc));
+            return {
+                props: [
+                    createObjectProperty(arg, createSimpleExpression("", true, loc))
+                ]
+            };
+        }
+        transformBindShorthand(dir);
+        exp = dir.exp;
+    }
+    if (arg.type !== 4) {
+        arg.children.unshift(`(`);
+        arg.children.push(`) || ""`);
+    } else if (!arg.isStatic) arg.content = `${arg.content} || ""`;
+    if (modifiers.some((mod)=>mod.content === "camel")) {
+        if (arg.type === 4) {
+            if (arg.isStatic) arg.content = (0, _shared.camelize)(arg.content);
+            else arg.content = `${context.helperString(CAMELIZE)}(${arg.content})`;
+        } else {
+            arg.children.unshift(`${context.helperString(CAMELIZE)}(`);
+            arg.children.push(`)`);
+        }
+    }
+    if (!context.inSSR) {
+        if (modifiers.some((mod)=>mod.content === "prop")) injectPrefix(arg, ".");
+        if (modifiers.some((mod)=>mod.content === "attr")) injectPrefix(arg, "^");
+    }
+    return {
+        props: [
+            createObjectProperty(arg, exp)
+        ]
+    };
+};
+const transformBindShorthand = (dir, context)=>{
+    const arg = dir.arg;
+    const propName = (0, _shared.camelize)(arg.content);
+    dir.exp = createSimpleExpression(propName, false, arg.loc);
+};
+const injectPrefix = (arg, prefix)=>{
+    if (arg.type === 4) {
+        if (arg.isStatic) arg.content = prefix + arg.content;
+        else arg.content = `\`${prefix}\${${arg.content}}\``;
+    } else {
+        arg.children.unshift(`'${prefix}' + (`);
+        arg.children.push(`)`);
+    }
+};
+const transformFor = createStructuralDirectiveTransform("for", (node, dir, context)=>{
+    const { helper, removeHelper } = context;
+    return processFor(node, dir, context, (forNode)=>{
+        const renderExp = createCallExpression(helper(RENDER_LIST), [
+            forNode.source
+        ]);
+        const isTemplate = isTemplateNode(node);
+        const memo = findDir(node, "memo");
+        const keyProp = findProp(node, `key`, false, true);
+        const isDirKey = keyProp && keyProp.type === 7;
+        if (isDirKey && !keyProp.exp) transformBindShorthand(keyProp);
+        let keyExp = keyProp && (keyProp.type === 6 ? keyProp.value ? createSimpleExpression(keyProp.value.content, true) : void 0 : keyProp.exp);
+        const keyProperty = keyProp && keyExp ? createObjectProperty(`key`, keyExp) : null;
+        const isStableFragment = forNode.source.type === 4 && forNode.source.constType > 0;
+        const fragmentFlag = isStableFragment ? 64 : keyProp ? 128 : 256;
+        forNode.codegenNode = createVNodeCall(context, helper(FRAGMENT), void 0, renderExp, fragmentFlag, void 0, void 0, true, !isStableFragment, false, node.loc);
+        return ()=>{
+            let childBlock;
+            const { children } = forNode;
+            if (isTemplate) node.children.some((c)=>{
+                if (c.type === 1) {
+                    const key = findProp(c, "key");
+                    if (key) {
+                        context.onError(createCompilerError(33, key.loc));
+                        return true;
+                    }
+                }
+            });
+            const needFragmentWrapper = children.length !== 1 || children[0].type !== 1;
+            const slotOutlet = isSlotOutlet(node) ? node : isTemplate && node.children.length === 1 && isSlotOutlet(node.children[0]) ? node.children[0] : null;
+            if (slotOutlet) {
+                childBlock = slotOutlet.codegenNode;
+                if (isTemplate && keyProperty) injectProp(childBlock, keyProperty, context);
+            } else if (needFragmentWrapper) childBlock = createVNodeCall(context, helper(FRAGMENT), keyProperty ? createObjectExpression([
+                keyProperty
+            ]) : void 0, node.children, 64, void 0, void 0, true, void 0, false);
+            else {
+                childBlock = children[0].codegenNode;
+                if (isTemplate && keyProperty) injectProp(childBlock, keyProperty, context);
+                if (childBlock.isBlock !== !isStableFragment) {
+                    if (childBlock.isBlock) {
+                        removeHelper(OPEN_BLOCK);
+                        removeHelper(getVNodeBlockHelper(context.inSSR, childBlock.isComponent));
+                    } else removeHelper(getVNodeHelper(context.inSSR, childBlock.isComponent));
+                }
+                childBlock.isBlock = !isStableFragment;
+                if (childBlock.isBlock) {
+                    helper(OPEN_BLOCK);
+                    helper(getVNodeBlockHelper(context.inSSR, childBlock.isComponent));
+                } else helper(getVNodeHelper(context.inSSR, childBlock.isComponent));
+            }
+            if (memo) {
+                const loop = createFunctionExpression(createForLoopParams(forNode.parseResult, [
+                    createSimpleExpression(`_cached`)
+                ]));
+                loop.body = createBlockStatement([
+                    createCompoundExpression([
+                        `const _memo = (`,
+                        memo.exp,
+                        `)`
+                    ]),
+                    createCompoundExpression([
+                        `if (_cached`,
+                        ...keyExp ? [
+                            ` && _cached.key === `,
+                            keyExp
+                        ] : [],
+                        ` && ${context.helperString(IS_MEMO_SAME)}(_cached, _memo)) return _cached`
+                    ]),
+                    createCompoundExpression([
+                        `const _item = `,
+                        childBlock
+                    ]),
+                    createSimpleExpression(`_item.memo = _memo`),
+                    createSimpleExpression(`return _item`)
+                ]);
+                renderExp.arguments.push(loop, createSimpleExpression(`_cache`), createSimpleExpression(String(context.cached.length)));
+                context.cached.push(null);
+            } else renderExp.arguments.push(createFunctionExpression(createForLoopParams(forNode.parseResult), childBlock, true));
+        };
+    });
+});
+function processFor(node, dir, context, processCodegen) {
+    if (!dir.exp) {
+        context.onError(createCompilerError(31, dir.loc));
+        return;
+    }
+    const parseResult = dir.forParseResult;
+    if (!parseResult) {
+        context.onError(createCompilerError(32, dir.loc));
+        return;
+    }
+    finalizeForParseResult(parseResult, context);
+    const { addIdentifiers, removeIdentifiers, scopes } = context;
+    const { source, value, key, index } = parseResult;
+    const forNode = {
+        type: 11,
+        loc: dir.loc,
+        source,
+        valueAlias: value,
+        keyAlias: key,
+        objectIndexAlias: index,
+        parseResult,
+        children: isTemplateNode(node) ? node.children : [
+            node
+        ]
+    };
+    context.replaceNode(forNode);
+    scopes.vFor++;
+    const onExit = processCodegen && processCodegen(forNode);
+    return ()=>{
+        scopes.vFor--;
+        if (onExit) onExit();
+    };
+}
+function finalizeForParseResult(result, context) {
+    if (result.finalized) return;
+    validateBrowserExpression(result.source, context);
+    if (result.key) validateBrowserExpression(result.key, context, true);
+    if (result.index) validateBrowserExpression(result.index, context, true);
+    if (result.value) validateBrowserExpression(result.value, context, true);
+    result.finalized = true;
+}
+function createForLoopParams({ value, key, index }, memoArgs = []) {
+    return createParamsList([
+        value,
+        key,
+        index,
+        ...memoArgs
+    ]);
+}
+function createParamsList(args) {
+    let i = args.length;
+    while(i--){
+        if (args[i]) break;
+    }
+    return args.slice(0, i + 1).map((arg, i2)=>arg || createSimpleExpression(`_`.repeat(i2 + 1), false));
+}
+const defaultFallback = createSimpleExpression(`undefined`, false);
+const trackSlotScopes = (node, context)=>{
+    if (node.type === 1 && (node.tagType === 1 || node.tagType === 3)) {
+        const vSlot = findDir(node, "slot");
+        if (vSlot) {
+            vSlot.exp;
+            context.scopes.vSlot++;
+            return ()=>{
+                context.scopes.vSlot--;
+            };
+        }
+    }
+};
+const trackVForSlotScopes = (node, context)=>{
+    let vFor;
+    if (isTemplateNode(node) && node.props.some(isVSlot) && (vFor = findDir(node, "for"))) {
+        const result = vFor.forParseResult;
+        if (result) {
+            finalizeForParseResult(result, context);
+            const { value, key, index } = result;
+            const { addIdentifiers, removeIdentifiers } = context;
+            value && addIdentifiers(value);
+            key && addIdentifiers(key);
+            index && addIdentifiers(index);
+            return ()=>{
+                value && removeIdentifiers(value);
+                key && removeIdentifiers(key);
+                index && removeIdentifiers(index);
+            };
+        }
+    }
+};
+const buildClientSlotFn = (props, _vForExp, children, loc)=>createFunctionExpression(props, children, false, true, children.length ? children[0].loc : loc);
+function buildSlots(node, context, buildSlotFn = buildClientSlotFn) {
+    context.helper(WITH_CTX);
+    const { children, loc } = node;
+    const slotsProperties = [];
+    const dynamicSlots = [];
+    let hasDynamicSlots = context.scopes.vSlot > 0 || context.scopes.vFor > 0;
+    const onComponentSlot = findDir(node, "slot", true);
+    if (onComponentSlot) {
+        const { arg, exp } = onComponentSlot;
+        if (arg && !isStaticExp(arg)) hasDynamicSlots = true;
+        slotsProperties.push(createObjectProperty(arg || createSimpleExpression("default", true), buildSlotFn(exp, void 0, children, loc)));
+    }
+    let hasTemplateSlots = false;
+    let hasNamedDefaultSlot = false;
+    const implicitDefaultChildren = [];
+    const seenSlotNames = /* @__PURE__ */ new Set();
+    let conditionalBranchIndex = 0;
+    for(let i = 0; i < children.length; i++){
+        const slotElement = children[i];
+        let slotDir;
+        if (!isTemplateNode(slotElement) || !(slotDir = findDir(slotElement, "slot", true))) {
+            if (slotElement.type !== 3) implicitDefaultChildren.push(slotElement);
+            continue;
+        }
+        if (onComponentSlot) {
+            context.onError(createCompilerError(37, slotDir.loc));
+            break;
+        }
+        hasTemplateSlots = true;
+        const { children: slotChildren, loc: slotLoc } = slotElement;
+        const { arg: slotName = createSimpleExpression(`default`, true), exp: slotProps, loc: dirLoc } = slotDir;
+        let staticSlotName;
+        if (isStaticExp(slotName)) staticSlotName = slotName ? slotName.content : `default`;
+        else hasDynamicSlots = true;
+        const vFor = findDir(slotElement, "for");
+        const slotFunction = buildSlotFn(slotProps, vFor, slotChildren, slotLoc);
+        let vIf;
+        let vElse;
+        if (vIf = findDir(slotElement, "if")) {
+            hasDynamicSlots = true;
+            dynamicSlots.push(createConditionalExpression(vIf.exp, buildDynamicSlot(slotName, slotFunction, conditionalBranchIndex++), defaultFallback));
+        } else if (vElse = findDir(slotElement, /^else(-if)?$/, true)) {
+            let j = i;
+            let prev;
+            while(j--){
+                prev = children[j];
+                if (prev.type !== 3) break;
+            }
+            if (prev && isTemplateNode(prev) && findDir(prev, /^(else-)?if$/)) {
+                let conditional = dynamicSlots[dynamicSlots.length - 1];
+                while(conditional.alternate.type === 19)conditional = conditional.alternate;
+                conditional.alternate = vElse.exp ? createConditionalExpression(vElse.exp, buildDynamicSlot(slotName, slotFunction, conditionalBranchIndex++), defaultFallback) : buildDynamicSlot(slotName, slotFunction, conditionalBranchIndex++);
+            } else context.onError(createCompilerError(30, vElse.loc));
+        } else if (vFor) {
+            hasDynamicSlots = true;
+            const parseResult = vFor.forParseResult;
+            if (parseResult) {
+                finalizeForParseResult(parseResult, context);
+                dynamicSlots.push(createCallExpression(context.helper(RENDER_LIST), [
+                    parseResult.source,
+                    createFunctionExpression(createForLoopParams(parseResult), buildDynamicSlot(slotName, slotFunction), true)
+                ]));
+            } else context.onError(createCompilerError(32, vFor.loc));
+        } else {
+            if (staticSlotName) {
+                if (seenSlotNames.has(staticSlotName)) {
+                    context.onError(createCompilerError(38, dirLoc));
+                    continue;
+                }
+                seenSlotNames.add(staticSlotName);
+                if (staticSlotName === "default") hasNamedDefaultSlot = true;
+            }
+            slotsProperties.push(createObjectProperty(slotName, slotFunction));
+        }
+    }
+    if (!onComponentSlot) {
+        const buildDefaultSlotProperty = (props, children2)=>{
+            const fn = buildSlotFn(props, void 0, children2, loc);
+            if (context.compatConfig) fn.isNonScopedSlot = true;
+            return createObjectProperty(`default`, fn);
+        };
+        if (!hasTemplateSlots) slotsProperties.push(buildDefaultSlotProperty(void 0, children));
+        else if (implicitDefaultChildren.length && // #3766
+        // with whitespace: 'preserve', whitespaces between slots will end up in
+        // implicitDefaultChildren. Ignore if all implicit children are whitespaces.
+        implicitDefaultChildren.some((node2)=>isNonWhitespaceContent(node2))) {
+            if (hasNamedDefaultSlot) context.onError(createCompilerError(39, implicitDefaultChildren[0].loc));
+            else slotsProperties.push(buildDefaultSlotProperty(void 0, implicitDefaultChildren));
+        }
+    }
+    const slotFlag = hasDynamicSlots ? 2 : hasForwardedSlots(node.children) ? 3 : 1;
+    let slots = createObjectExpression(slotsProperties.concat(createObjectProperty(`_`, // 2 = compiled but dynamic = can skip normalization, but must run diff
+    // 1 = compiled and static = can skip normalization AND diff as optimized
+    createSimpleExpression(slotFlag + ` /* ${(0, _shared.slotFlagsText)[slotFlag]} */`, false))), loc);
+    if (dynamicSlots.length) slots = createCallExpression(context.helper(CREATE_SLOTS), [
+        slots,
+        createArrayExpression(dynamicSlots)
+    ]);
+    return {
+        slots,
+        hasDynamicSlots
+    };
+}
+function buildDynamicSlot(name, fn, index) {
+    const props = [
+        createObjectProperty(`name`, name),
+        createObjectProperty(`fn`, fn)
+    ];
+    if (index != null) props.push(createObjectProperty(`key`, createSimpleExpression(String(index), true)));
+    return createObjectExpression(props);
+}
+function hasForwardedSlots(children) {
+    for(let i = 0; i < children.length; i++){
+        const child = children[i];
+        switch(child.type){
+            case 1:
+                if (child.tagType === 2 || hasForwardedSlots(child.children)) return true;
+                break;
+            case 9:
+                if (hasForwardedSlots(child.branches)) return true;
+                break;
+            case 10:
+            case 11:
+                if (hasForwardedSlots(child.children)) return true;
+                break;
+        }
+    }
+    return false;
+}
+function isNonWhitespaceContent(node) {
+    if (node.type !== 2 && node.type !== 12) return true;
+    return node.type === 2 ? !!node.content.trim() : isNonWhitespaceContent(node.content);
+}
+const directiveImportMap = /* @__PURE__ */ new WeakMap();
+const transformElement = (node, context)=>{
+    return function postTransformElement() {
+        node = context.currentNode;
+        if (!(node.type === 1 && (node.tagType === 0 || node.tagType === 1))) return;
+        const { tag, props } = node;
+        const isComponent = node.tagType === 1;
+        let vnodeTag = isComponent ? resolveComponentType(node, context) : `"${tag}"`;
+        const isDynamicComponent = (0, _shared.isObject)(vnodeTag) && vnodeTag.callee === RESOLVE_DYNAMIC_COMPONENT;
+        let vnodeProps;
+        let vnodeChildren;
+        let patchFlag = 0;
+        let vnodeDynamicProps;
+        let dynamicPropNames;
+        let vnodeDirectives;
+        let shouldUseBlock = // dynamic component may resolve to plain elements
+        isDynamicComponent || vnodeTag === TELEPORT || vnodeTag === SUSPENSE || !isComponent && // <svg> and <foreignObject> must be forced into blocks so that block
+        // updates inside get proper isSVG flag at runtime. (#639, #643)
+        // This is technically web-specific, but splitting the logic out of core
+        // leads to too much unnecessary complexity.
+        (tag === "svg" || tag === "foreignObject" || tag === "math");
+        if (props.length > 0) {
+            const propsBuildResult = buildProps(node, context, void 0, isComponent, isDynamicComponent);
+            vnodeProps = propsBuildResult.props;
+            patchFlag = propsBuildResult.patchFlag;
+            dynamicPropNames = propsBuildResult.dynamicPropNames;
+            const directives = propsBuildResult.directives;
+            vnodeDirectives = directives && directives.length ? createArrayExpression(directives.map((dir)=>buildDirectiveArgs(dir, context))) : void 0;
+            if (propsBuildResult.shouldUseBlock) shouldUseBlock = true;
+        }
+        if (node.children.length > 0) {
+            if (vnodeTag === KEEP_ALIVE) {
+                shouldUseBlock = true;
+                patchFlag |= 1024;
+                if (node.children.length > 1) context.onError(createCompilerError(46, {
+                    start: node.children[0].loc.start,
+                    end: node.children[node.children.length - 1].loc.end,
+                    source: ""
+                }));
+            }
+            const shouldBuildAsSlots = isComponent && // Teleport is not a real component and has dedicated runtime handling
+            vnodeTag !== TELEPORT && // explained above.
+            vnodeTag !== KEEP_ALIVE;
+            if (shouldBuildAsSlots) {
+                const { slots, hasDynamicSlots } = buildSlots(node, context);
+                vnodeChildren = slots;
+                if (hasDynamicSlots) patchFlag |= 1024;
+            } else if (node.children.length === 1 && vnodeTag !== TELEPORT) {
+                const child = node.children[0];
+                const type = child.type;
+                const hasDynamicTextChild = type === 5 || type === 8;
+                if (hasDynamicTextChild && getConstantType(child, context) === 0) patchFlag |= 1;
+                if (hasDynamicTextChild || type === 2) vnodeChildren = child;
+                else vnodeChildren = node.children;
+            } else vnodeChildren = node.children;
+        }
+        if (dynamicPropNames && dynamicPropNames.length) vnodeDynamicProps = stringifyDynamicPropNames(dynamicPropNames);
+        node.codegenNode = createVNodeCall(context, vnodeTag, vnodeProps, vnodeChildren, patchFlag === 0 ? void 0 : patchFlag, vnodeDynamicProps, vnodeDirectives, !!shouldUseBlock, false, isComponent, node.loc);
+    };
+};
+function resolveComponentType(node, context, ssr = false) {
+    let { tag } = node;
+    const isExplicitDynamic = isComponentTag(tag);
+    const isProp = findProp(node, "is", false, true);
+    if (isProp) {
+        if (isExplicitDynamic || isCompatEnabled("COMPILER_IS_ON_ELEMENT", context)) {
+            let exp;
+            if (isProp.type === 6) exp = isProp.value && createSimpleExpression(isProp.value.content, true);
+            else {
+                exp = isProp.exp;
+                if (!exp) exp = createSimpleExpression(`is`, false, isProp.arg.loc);
+            }
+            if (exp) return createCallExpression(context.helper(RESOLVE_DYNAMIC_COMPONENT), [
+                exp
+            ]);
+        } else if (isProp.type === 6 && isProp.value.content.startsWith("vue:")) tag = isProp.value.content.slice(4);
+    }
+    const builtIn = isCoreComponent(tag) || context.isBuiltInComponent(tag);
+    if (builtIn) {
+        if (!ssr) context.helper(builtIn);
+        return builtIn;
+    }
+    context.helper(RESOLVE_COMPONENT);
+    context.components.add(tag);
+    return toValidAssetId(tag, `component`);
+}
+function buildProps(node, context, props = node.props, isComponent, isDynamicComponent, ssr = false) {
+    const { tag, loc: elementLoc, children } = node;
+    let properties = [];
+    const mergeArgs = [];
+    const runtimeDirectives = [];
+    const hasChildren = children.length > 0;
+    let shouldUseBlock = false;
+    let patchFlag = 0;
+    let hasRef = false;
+    let hasClassBinding = false;
+    let hasStyleBinding = false;
+    let hasHydrationEventBinding = false;
+    let hasDynamicKeys = false;
+    let hasVnodeHook = false;
+    const dynamicPropNames = [];
+    const pushMergeArg = (arg)=>{
+        if (properties.length) {
+            mergeArgs.push(createObjectExpression(dedupeProperties(properties), elementLoc));
+            properties = [];
+        }
+        if (arg) mergeArgs.push(arg);
+    };
+    const pushRefVForMarker = ()=>{
+        if (context.scopes.vFor > 0) properties.push(createObjectProperty(createSimpleExpression("ref_for", true), createSimpleExpression("true")));
+    };
+    const analyzePatchFlag = ({ key, value })=>{
+        if (isStaticExp(key)) {
+            const name = key.content;
+            const isEventHandler = (0, _shared.isOn)(name);
+            if (isEventHandler && (!isComponent || isDynamicComponent) && // omit the flag for click handlers because hydration gives click
+            // dedicated fast path.
+            name.toLowerCase() !== "onclick" && // omit v-model handlers
+            name !== "onUpdate:modelValue" && // omit onVnodeXXX hooks
+            !(0, _shared.isReservedProp)(name)) hasHydrationEventBinding = true;
+            if (isEventHandler && (0, _shared.isReservedProp)(name)) hasVnodeHook = true;
+            if (isEventHandler && value.type === 14) value = value.arguments[0];
+            if (value.type === 20 || (value.type === 4 || value.type === 8) && getConstantType(value, context) > 0) return;
+            if (name === "ref") hasRef = true;
+            else if (name === "class") hasClassBinding = true;
+            else if (name === "style") hasStyleBinding = true;
+            else if (name !== "key" && !dynamicPropNames.includes(name)) dynamicPropNames.push(name);
+            if (isComponent && (name === "class" || name === "style") && !dynamicPropNames.includes(name)) dynamicPropNames.push(name);
+        } else hasDynamicKeys = true;
+    };
+    for(let i = 0; i < props.length; i++){
+        const prop = props[i];
+        if (prop.type === 6) {
+            const { loc, name, nameLoc, value } = prop;
+            let isStatic = true;
+            if (name === "ref") {
+                hasRef = true;
+                pushRefVForMarker();
+            }
+            if (name === "is" && (isComponentTag(tag) || value && value.content.startsWith("vue:") || isCompatEnabled("COMPILER_IS_ON_ELEMENT", context))) continue;
+            properties.push(createObjectProperty(createSimpleExpression(name, true, nameLoc), createSimpleExpression(value ? value.content : "", isStatic, value ? value.loc : loc)));
+        } else {
+            const { name, arg, exp, loc, modifiers } = prop;
+            const isVBind = name === "bind";
+            const isVOn = name === "on";
+            if (name === "slot") {
+                if (!isComponent) context.onError(createCompilerError(40, loc));
+                continue;
+            }
+            if (name === "once" || name === "memo") continue;
+            if (name === "is" || isVBind && isStaticArgOf(arg, "is") && (isComponentTag(tag) || isCompatEnabled("COMPILER_IS_ON_ELEMENT", context))) continue;
+            if (isVOn && ssr) continue;
+            if (// #938: elements with dynamic keys should be forced into blocks
+            isVBind && isStaticArgOf(arg, "key") || // inline before-update hooks need to force block so that it is invoked
+            // before children
+            isVOn && hasChildren && isStaticArgOf(arg, "vue:before-update")) shouldUseBlock = true;
+            if (isVBind && isStaticArgOf(arg, "ref")) pushRefVForMarker();
+            if (!arg && (isVBind || isVOn)) {
+                hasDynamicKeys = true;
+                if (exp) {
+                    if (isVBind) {
+                        pushRefVForMarker();
+                        pushMergeArg();
+                        {
+                            const hasOverridableKeys = mergeArgs.some((arg2)=>{
+                                if (arg2.type === 15) return arg2.properties.some(({ key })=>{
+                                    if (key.type !== 4 || !key.isStatic) return true;
+                                    return key.content !== "class" && key.content !== "style" && !(0, _shared.isOn)(key.content);
+                                });
+                                else return true;
+                            });
+                            if (hasOverridableKeys) checkCompatEnabled("COMPILER_V_BIND_OBJECT_ORDER", context, loc);
+                        }
+                        if (isCompatEnabled("COMPILER_V_BIND_OBJECT_ORDER", context)) {
+                            mergeArgs.unshift(exp);
+                            continue;
+                        }
+                        mergeArgs.push(exp);
+                    } else pushMergeArg({
+                        type: 14,
+                        loc,
+                        callee: context.helper(TO_HANDLERS),
+                        arguments: isComponent ? [
+                            exp
+                        ] : [
+                            exp,
+                            `true`
+                        ]
+                    });
+                } else context.onError(createCompilerError(isVBind ? 34 : 35, loc));
+                continue;
+            }
+            if (isVBind && modifiers.some((mod)=>mod.content === "prop")) patchFlag |= 32;
+            const directiveTransform = context.directiveTransforms[name];
+            if (directiveTransform) {
+                const { props: props2, needRuntime } = directiveTransform(prop, node, context);
+                !ssr && props2.forEach(analyzePatchFlag);
+                if (isVOn && arg && !isStaticExp(arg)) pushMergeArg(createObjectExpression(props2, elementLoc));
+                else properties.push(...props2);
+                if (needRuntime) {
+                    runtimeDirectives.push(prop);
+                    if ((0, _shared.isSymbol)(needRuntime)) directiveImportMap.set(prop, needRuntime);
+                }
+            } else if (!(0, _shared.isBuiltInDirective)(name)) {
+                runtimeDirectives.push(prop);
+                if (hasChildren) shouldUseBlock = true;
+            }
+        }
+    }
+    let propsExpression = void 0;
+    if (mergeArgs.length) {
+        pushMergeArg();
+        if (mergeArgs.length > 1) propsExpression = createCallExpression(context.helper(MERGE_PROPS), mergeArgs, elementLoc);
+        else propsExpression = mergeArgs[0];
+    } else if (properties.length) propsExpression = createObjectExpression(dedupeProperties(properties), elementLoc);
+    if (hasDynamicKeys) patchFlag |= 16;
+    else {
+        if (hasClassBinding && !isComponent) patchFlag |= 2;
+        if (hasStyleBinding && !isComponent) patchFlag |= 4;
+        if (dynamicPropNames.length) patchFlag |= 8;
+        if (hasHydrationEventBinding) patchFlag |= 32;
+    }
+    if (!shouldUseBlock && (patchFlag === 0 || patchFlag === 32) && (hasRef || hasVnodeHook || runtimeDirectives.length > 0)) patchFlag |= 512;
+    if (!context.inSSR && propsExpression) switch(propsExpression.type){
+        case 15:
+            let classKeyIndex = -1;
+            let styleKeyIndex = -1;
+            let hasDynamicKey = false;
+            for(let i = 0; i < propsExpression.properties.length; i++){
+                const key = propsExpression.properties[i].key;
+                if (isStaticExp(key)) {
+                    if (key.content === "class") classKeyIndex = i;
+                    else if (key.content === "style") styleKeyIndex = i;
+                } else if (!key.isHandlerKey) hasDynamicKey = true;
+            }
+            const classProp = propsExpression.properties[classKeyIndex];
+            const styleProp = propsExpression.properties[styleKeyIndex];
+            if (!hasDynamicKey) {
+                if (classProp && !isStaticExp(classProp.value)) classProp.value = createCallExpression(context.helper(NORMALIZE_CLASS), [
+                    classProp.value
+                ]);
+                if (styleProp && // the static style is compiled into an object,
+                // so use `hasStyleBinding` to ensure that it is a dynamic style binding
+                (hasStyleBinding || styleProp.value.type === 4 && styleProp.value.content.trim()[0] === `[` || // v-bind:style and style both exist,
+                // v-bind:style with static literal object
+                styleProp.value.type === 17)) styleProp.value = createCallExpression(context.helper(NORMALIZE_STYLE), [
+                    styleProp.value
+                ]);
+            } else propsExpression = createCallExpression(context.helper(NORMALIZE_PROPS), [
+                propsExpression
+            ]);
+            break;
+        case 14:
+            break;
+        default:
+            propsExpression = createCallExpression(context.helper(NORMALIZE_PROPS), [
+                createCallExpression(context.helper(GUARD_REACTIVE_PROPS), [
+                    propsExpression
+                ])
+            ]);
+            break;
+    }
+    return {
+        props: propsExpression,
+        directives: runtimeDirectives,
+        patchFlag,
+        dynamicPropNames,
+        shouldUseBlock
+    };
+}
+function dedupeProperties(properties) {
+    const knownProps = /* @__PURE__ */ new Map();
+    const deduped = [];
+    for(let i = 0; i < properties.length; i++){
+        const prop = properties[i];
+        if (prop.key.type === 8 || !prop.key.isStatic) {
+            deduped.push(prop);
+            continue;
+        }
+        const name = prop.key.content;
+        const existing = knownProps.get(name);
+        if (existing) {
+            if (name === "style" || name === "class" || (0, _shared.isOn)(name)) mergeAsArray(existing, prop);
+        } else {
+            knownProps.set(name, prop);
+            deduped.push(prop);
+        }
+    }
+    return deduped;
+}
+function mergeAsArray(existing, incoming) {
+    if (existing.value.type === 17) existing.value.elements.push(incoming.value);
+    else existing.value = createArrayExpression([
+        existing.value,
+        incoming.value
+    ], existing.loc);
+}
+function buildDirectiveArgs(dir, context) {
+    const dirArgs = [];
+    const runtime = directiveImportMap.get(dir);
+    if (runtime) dirArgs.push(context.helperString(runtime));
+    else {
+        context.helper(RESOLVE_DIRECTIVE);
+        context.directives.add(dir.name);
+        dirArgs.push(toValidAssetId(dir.name, `directive`));
+    }
+    const { loc } = dir;
+    if (dir.exp) dirArgs.push(dir.exp);
+    if (dir.arg) {
+        if (!dir.exp) dirArgs.push(`void 0`);
+        dirArgs.push(dir.arg);
+    }
+    if (Object.keys(dir.modifiers).length) {
+        if (!dir.arg) {
+            if (!dir.exp) dirArgs.push(`void 0`);
+            dirArgs.push(`void 0`);
+        }
+        const trueExpression = createSimpleExpression(`true`, false, loc);
+        dirArgs.push(createObjectExpression(dir.modifiers.map((modifier)=>createObjectProperty(modifier, trueExpression)), loc));
+    }
+    return createArrayExpression(dirArgs, dir.loc);
+}
+function stringifyDynamicPropNames(props) {
+    let propsNamesString = `[`;
+    for(let i = 0, l = props.length; i < l; i++){
+        propsNamesString += JSON.stringify(props[i]);
+        if (i < l - 1) propsNamesString += ", ";
+    }
+    return propsNamesString + `]`;
+}
+function isComponentTag(tag) {
+    return tag === "component" || tag === "Component";
+}
+const transformSlotOutlet = (node, context)=>{
+    if (isSlotOutlet(node)) {
+        const { children, loc } = node;
+        const { slotName, slotProps } = processSlotOutlet(node, context);
+        const slotArgs = [
+            context.prefixIdentifiers ? `_ctx.$slots` : `$slots`,
+            slotName,
+            "{}",
+            "undefined",
+            "true"
+        ];
+        let expectedLen = 2;
+        if (slotProps) {
+            slotArgs[2] = slotProps;
+            expectedLen = 3;
+        }
+        if (children.length) {
+            slotArgs[3] = createFunctionExpression([], children, false, false, loc);
+            expectedLen = 4;
+        }
+        if (context.scopeId && !context.slotted) expectedLen = 5;
+        slotArgs.splice(expectedLen);
+        node.codegenNode = createCallExpression(context.helper(RENDER_SLOT), slotArgs, loc);
+    }
+};
+function processSlotOutlet(node, context) {
+    let slotName = `"default"`;
+    let slotProps = void 0;
+    const nonNameProps = [];
+    for(let i = 0; i < node.props.length; i++){
+        const p = node.props[i];
+        if (p.type === 6) {
+            if (p.value) {
+                if (p.name === "name") slotName = JSON.stringify(p.value.content);
+                else {
+                    p.name = (0, _shared.camelize)(p.name);
+                    nonNameProps.push(p);
+                }
+            }
+        } else if (p.name === "bind" && isStaticArgOf(p.arg, "name")) {
+            if (p.exp) slotName = p.exp;
+            else if (p.arg && p.arg.type === 4) {
+                const name = (0, _shared.camelize)(p.arg.content);
+                slotName = p.exp = createSimpleExpression(name, false, p.arg.loc);
+            }
+        } else {
+            if (p.name === "bind" && p.arg && isStaticExp(p.arg)) p.arg.content = (0, _shared.camelize)(p.arg.content);
+            nonNameProps.push(p);
+        }
+    }
+    if (nonNameProps.length > 0) {
+        const { props, directives } = buildProps(node, context, nonNameProps, false, false);
+        slotProps = props;
+        if (directives.length) context.onError(createCompilerError(36, directives[0].loc));
+    }
+    return {
+        slotName,
+        slotProps
+    };
+}
+const transformOn = (dir, node, context, augmentor)=>{
+    const { loc, modifiers, arg } = dir;
+    if (!dir.exp && !modifiers.length) context.onError(createCompilerError(35, loc));
+    let eventName;
+    if (arg.type === 4) {
+        if (arg.isStatic) {
+            let rawName = arg.content;
+            if (rawName.startsWith("vnode")) context.onError(createCompilerError(51, arg.loc));
+            if (rawName.startsWith("vue:")) rawName = `vnode-${rawName.slice(4)}`;
+            const eventString = node.tagType !== 0 || rawName.startsWith("vnode") || !/[A-Z]/.test(rawName) ? // for non-element and vnode lifecycle event listeners, auto convert
+            // it to camelCase. See issue #2249
+            (0, _shared.toHandlerKey)((0, _shared.camelize)(rawName)) : // preserve case for plain element listeners that have uppercase
+            // letters, as these may be custom elements' custom events
+            `on:${rawName}`;
+            eventName = createSimpleExpression(eventString, true, arg.loc);
+        } else eventName = createCompoundExpression([
+            `${context.helperString(TO_HANDLER_KEY)}(`,
+            arg,
+            `)`
+        ]);
+    } else {
+        eventName = arg;
+        eventName.children.unshift(`${context.helperString(TO_HANDLER_KEY)}(`);
+        eventName.children.push(`)`);
+    }
+    let exp = dir.exp;
+    if (exp && !exp.content.trim()) exp = void 0;
+    let shouldCache = context.cacheHandlers && !exp && !context.inVOnce;
+    if (exp) {
+        const isMemberExp = isMemberExpression(exp);
+        const isInlineStatement = !(isMemberExp || isFnExpression(exp));
+        const hasMultipleStatements = exp.content.includes(`;`);
+        validateBrowserExpression(exp, context, false, hasMultipleStatements);
+        if (isInlineStatement || shouldCache && isMemberExp) exp = createCompoundExpression([
+            `${isInlineStatement ? `$event` : `${``}(...args)`} => ${hasMultipleStatements ? `{` : `(`}`,
+            exp,
+            hasMultipleStatements ? `}` : `)`
+        ]);
+    }
+    let ret = {
+        props: [
+            createObjectProperty(eventName, exp || createSimpleExpression(`() => {}`, false, loc))
+        ]
+    };
+    if (augmentor) ret = augmentor(ret);
+    if (shouldCache) ret.props[0].value = context.cache(ret.props[0].value);
+    ret.props.forEach((p)=>p.key.isHandlerKey = true);
+    return ret;
+};
+const transformText = (node, context)=>{
+    if (node.type === 0 || node.type === 1 || node.type === 11 || node.type === 10) return ()=>{
+        const children = node.children;
+        let currentContainer = void 0;
+        let hasText = false;
+        for(let i = 0; i < children.length; i++){
+            const child = children[i];
+            if (isText$1(child)) {
+                hasText = true;
+                for(let j = i + 1; j < children.length; j++){
+                    const next = children[j];
+                    if (isText$1(next)) {
+                        if (!currentContainer) currentContainer = children[i] = createCompoundExpression([
+                            child
+                        ], child.loc);
+                        currentContainer.children.push(` + `, next);
+                        children.splice(j, 1);
+                        j--;
+                    } else {
+                        currentContainer = void 0;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!hasText || // if this is a plain element with a single text child, leave it
+        // as-is since the runtime has dedicated fast path for this by directly
+        // setting textContent of the element.
+        // for component root it's always normalized anyway.
+        children.length === 1 && (node.type === 0 || node.type === 1 && node.tagType === 0 && // #3756
+        // custom directives can potentially add DOM elements arbitrarily,
+        // we need to avoid setting textContent of the element at runtime
+        // to avoid accidentally overwriting the DOM elements added
+        // by the user through custom directives.
+        !node.props.find((p)=>p.type === 7 && !context.directiveTransforms[p.name]) && // in compat mode, <template> tags with no special directives
+        // will be rendered as a fragment so its children must be
+        // converted into vnodes.
+        !(node.tag === "template"))) return;
+        for(let i = 0; i < children.length; i++){
+            const child = children[i];
+            if (isText$1(child) || child.type === 8) {
+                const callArgs = [];
+                if (child.type !== 2 || child.content !== " ") callArgs.push(child);
+                if (!context.ssr && getConstantType(child, context) === 0) callArgs.push(1 + ` /* ${(0, _shared.PatchFlagNames)[1]} */`);
+                children[i] = {
+                    type: 12,
+                    content: child,
+                    loc: child.loc,
+                    codegenNode: createCallExpression(context.helper(CREATE_TEXT), callArgs)
+                };
+            }
+        }
+    };
+};
+const seen$1 = /* @__PURE__ */ new WeakSet();
+const transformOnce = (node, context)=>{
+    if (node.type === 1 && findDir(node, "once", true)) {
+        if (seen$1.has(node) || context.inVOnce || context.inSSR) return;
+        seen$1.add(node);
+        context.inVOnce = true;
+        context.helper(SET_BLOCK_TRACKING);
+        return ()=>{
+            context.inVOnce = false;
+            const cur = context.currentNode;
+            if (cur.codegenNode) cur.codegenNode = context.cache(cur.codegenNode, true, true);
+        };
+    }
+};
+const transformModel = (dir, node, context)=>{
+    const { exp, arg } = dir;
+    if (!exp) {
+        context.onError(createCompilerError(41, dir.loc));
+        return createTransformProps();
+    }
+    const rawExp = exp.loc.source.trim();
+    const expString = exp.type === 4 ? exp.content : rawExp;
+    const bindingType = context.bindingMetadata[rawExp];
+    if (bindingType === "props" || bindingType === "props-aliased") {
+        context.onError(createCompilerError(44, exp.loc));
+        return createTransformProps();
+    }
+    const maybeRef = false;
+    if (!expString.trim() || !isMemberExpression(exp) && !maybeRef) {
+        context.onError(createCompilerError(42, exp.loc));
+        return createTransformProps();
+    }
+    const propName = arg ? arg : createSimpleExpression("modelValue", true);
+    const eventName = arg ? isStaticExp(arg) ? `onUpdate:${(0, _shared.camelize)(arg.content)}` : createCompoundExpression([
+        '"onUpdate:" + ',
+        arg
+    ]) : `onUpdate:modelValue`;
+    let assignmentExp;
+    const eventArg = context.isTS ? `($event: any)` : `$event`;
+    assignmentExp = createCompoundExpression([
+        `${eventArg} => ((`,
+        exp,
+        `) = $event)`
+    ]);
+    const props = [
+        // modelValue: foo
+        createObjectProperty(propName, dir.exp),
+        // "onUpdate:modelValue": $event => (foo = $event)
+        createObjectProperty(eventName, assignmentExp)
+    ];
+    if (dir.modifiers.length && node.tagType === 1) {
+        const modifiers = dir.modifiers.map((m)=>m.content).map((m)=>(isSimpleIdentifier(m) ? m : JSON.stringify(m)) + `: true`).join(`, `);
+        const modifiersKey = arg ? isStaticExp(arg) ? `${arg.content}Modifiers` : createCompoundExpression([
+            arg,
+            ' + "Modifiers"'
+        ]) : `modelModifiers`;
+        props.push(createObjectProperty(modifiersKey, createSimpleExpression(`{ ${modifiers} }`, false, dir.loc, 2)));
+    }
+    return createTransformProps(props);
+};
+function createTransformProps(props = []) {
+    return {
+        props
+    };
+}
+const validDivisionCharRE = /[\w).+\-_$\]]/;
+const transformFilter = (node, context)=>{
+    if (!isCompatEnabled("COMPILER_FILTERS", context)) return;
+    if (node.type === 5) rewriteFilter(node.content, context);
+    else if (node.type === 1) node.props.forEach((prop)=>{
+        if (prop.type === 7 && prop.name !== "for" && prop.exp) rewriteFilter(prop.exp, context);
+    });
+};
+function rewriteFilter(node, context) {
+    if (node.type === 4) parseFilter(node, context);
+    else for(let i = 0; i < node.children.length; i++){
+        const child = node.children[i];
+        if (typeof child !== "object") continue;
+        if (child.type === 4) parseFilter(child, context);
+        else if (child.type === 8) rewriteFilter(node, context);
+        else if (child.type === 5) rewriteFilter(child.content, context);
+    }
+}
+function parseFilter(node, context) {
+    const exp = node.content;
+    let inSingle = false;
+    let inDouble = false;
+    let inTemplateString = false;
+    let inRegex = false;
+    let curly = 0;
+    let square = 0;
+    let paren = 0;
+    let lastFilterIndex = 0;
+    let c, prev, i, expression, filters = [];
+    for(i = 0; i < exp.length; i++){
+        prev = c;
+        c = exp.charCodeAt(i);
+        if (inSingle) {
+            if (c === 39 && prev !== 92) inSingle = false;
+        } else if (inDouble) {
+            if (c === 34 && prev !== 92) inDouble = false;
+        } else if (inTemplateString) {
+            if (c === 96 && prev !== 92) inTemplateString = false;
+        } else if (inRegex) {
+            if (c === 47 && prev !== 92) inRegex = false;
+        } else if (c === 124 && // pipe
+        exp.charCodeAt(i + 1) !== 124 && exp.charCodeAt(i - 1) !== 124 && !curly && !square && !paren) {
+            if (expression === void 0) {
+                lastFilterIndex = i + 1;
+                expression = exp.slice(0, i).trim();
+            } else pushFilter();
+        } else {
+            switch(c){
+                case 34:
+                    inDouble = true;
+                    break;
+                // "
+                case 39:
+                    inSingle = true;
+                    break;
+                // '
+                case 96:
+                    inTemplateString = true;
+                    break;
+                // `
+                case 40:
+                    paren++;
+                    break;
+                // (
+                case 41:
+                    paren--;
+                    break;
+                // )
+                case 91:
+                    square++;
+                    break;
+                // [
+                case 93:
+                    square--;
+                    break;
+                // ]
+                case 123:
+                    curly++;
+                    break;
+                // {
+                case 125:
+                    curly--;
+                    break;
+            }
+            if (c === 47) {
+                let j = i - 1;
+                let p;
+                for(; j >= 0; j--){
+                    p = exp.charAt(j);
+                    if (p !== " ") break;
+                }
+                if (!p || !validDivisionCharRE.test(p)) inRegex = true;
+            }
+        }
+    }
+    if (expression === void 0) expression = exp.slice(0, i).trim();
+    else if (lastFilterIndex !== 0) pushFilter();
+    function pushFilter() {
+        filters.push(exp.slice(lastFilterIndex, i).trim());
+        lastFilterIndex = i + 1;
+    }
+    if (filters.length) {
+        warnDeprecation("COMPILER_FILTERS", context, node.loc);
+        for(i = 0; i < filters.length; i++)expression = wrapFilter(expression, filters[i], context);
+        node.content = expression;
+        node.ast = void 0;
+    }
+}
+function wrapFilter(exp, filter, context) {
+    context.helper(RESOLVE_FILTER);
+    const i = filter.indexOf("(");
+    if (i < 0) {
+        context.filters.add(filter);
+        return `${toValidAssetId(filter, "filter")}(${exp})`;
+    } else {
+        const name = filter.slice(0, i);
+        const args = filter.slice(i + 1);
+        context.filters.add(name);
+        return `${toValidAssetId(name, "filter")}(${exp}${args !== ")" ? "," + args : args}`;
+    }
+}
+const seen = /* @__PURE__ */ new WeakSet();
+const transformMemo = (node, context)=>{
+    if (node.type === 1) {
+        const dir = findDir(node, "memo");
+        if (!dir || seen.has(node)) return;
+        seen.add(node);
+        return ()=>{
+            const codegenNode = node.codegenNode || context.currentNode.codegenNode;
+            if (codegenNode && codegenNode.type === 13) {
+                if (node.tagType !== 1) convertToBlock(codegenNode, context);
+                node.codegenNode = createCallExpression(context.helper(WITH_MEMO), [
+                    dir.exp,
+                    createFunctionExpression(void 0, codegenNode),
+                    `_cache`,
+                    String(context.cached.length)
+                ]);
+                context.cached.push(null);
+            }
+        };
+    }
+};
+function getBaseTransformPreset(prefixIdentifiers) {
+    return [
+        [
+            transformOnce,
+            transformIf,
+            transformMemo,
+            transformFor,
+            transformFilter,
+            transformExpression,
+            transformSlotOutlet,
+            transformElement,
+            trackSlotScopes,
+            transformText
+        ],
+        {
+            on: transformOn,
+            bind: transformBind,
+            model: transformModel
+        }
+    ];
+}
+function baseCompile(source, options = {}) {
+    const onError = options.onError || defaultOnError;
+    const isModuleMode = options.mode === "module";
+    if (options.prefixIdentifiers === true) onError(createCompilerError(47));
+    else if (isModuleMode) onError(createCompilerError(48));
+    const prefixIdentifiers = false;
+    if (options.cacheHandlers) onError(createCompilerError(49));
+    if (options.scopeId && !isModuleMode) onError(createCompilerError(50));
+    const resolvedOptions = (0, _shared.extend)({}, options, {
+        prefixIdentifiers
+    });
+    const ast = (0, _shared.isString)(source) ? baseParse(source, resolvedOptions) : source;
+    const [nodeTransforms, directiveTransforms] = getBaseTransformPreset();
+    transform(ast, (0, _shared.extend)({}, resolvedOptions, {
+        nodeTransforms: [
+            ...nodeTransforms,
+            ...options.nodeTransforms || []
+        ],
+        directiveTransforms: (0, _shared.extend)({}, directiveTransforms, options.directiveTransforms || {})
+    }));
+    return generate(ast, resolvedOptions);
+}
+const BindingTypes = {
+    "DATA": "data",
+    "PROPS": "props",
+    "PROPS_ALIASED": "props-aliased",
+    "SETUP_LET": "setup-let",
+    "SETUP_CONST": "setup-const",
+    "SETUP_REACTIVE_CONST": "setup-reactive-const",
+    "SETUP_MAYBE_REF": "setup-maybe-ref",
+    "SETUP_REF": "setup-ref",
+    "OPTIONS": "options",
+    "LITERAL_CONST": "literal-const"
+};
+const noopDirectiveTransform = ()=>({
+        props: []
+    });
+
+},{"@vue/shared":"3SM3y","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"c18b3":[function(require,module,exports,__globalThis) {
+/*!
+  * vue-router v4.5.0
+  * (c) 2024 Eduardo San Martin Morote
+  * @license MIT
+  */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "NavigationFailureType", ()=>NavigationFailureType);
+parcelHelpers.export(exports, "RouterLink", ()=>RouterLink);
+parcelHelpers.export(exports, "RouterView", ()=>RouterView);
+parcelHelpers.export(exports, "START_LOCATION", ()=>START_LOCATION_NORMALIZED);
+parcelHelpers.export(exports, "createMemoryHistory", ()=>createMemoryHistory);
+parcelHelpers.export(exports, "createRouter", ()=>createRouter);
+parcelHelpers.export(exports, "createRouterMatcher", ()=>createRouterMatcher);
+parcelHelpers.export(exports, "createWebHashHistory", ()=>createWebHashHistory);
+parcelHelpers.export(exports, "createWebHistory", ()=>createWebHistory);
+parcelHelpers.export(exports, "isNavigationFailure", ()=>isNavigationFailure);
+parcelHelpers.export(exports, "loadRouteLocation", ()=>loadRouteLocation);
+parcelHelpers.export(exports, "matchedRouteKey", ()=>matchedRouteKey);
+parcelHelpers.export(exports, "onBeforeRouteLeave", ()=>onBeforeRouteLeave);
+parcelHelpers.export(exports, "onBeforeRouteUpdate", ()=>onBeforeRouteUpdate);
+parcelHelpers.export(exports, "parseQuery", ()=>parseQuery);
+parcelHelpers.export(exports, "routeLocationKey", ()=>routeLocationKey);
+parcelHelpers.export(exports, "routerKey", ()=>routerKey);
+parcelHelpers.export(exports, "routerViewLocationKey", ()=>routerViewLocationKey);
+parcelHelpers.export(exports, "stringifyQuery", ()=>stringifyQuery);
+parcelHelpers.export(exports, "useLink", ()=>useLink);
+parcelHelpers.export(exports, "useRoute", ()=>useRoute);
+parcelHelpers.export(exports, "useRouter", ()=>useRouter);
+parcelHelpers.export(exports, "viewDepthKey", ()=>viewDepthKey);
+var _vue = require("vue");
+var _devtoolsApi = require("@vue/devtools-api");
+const isBrowser = typeof document !== 'undefined';
+/**
+ * Allows differentiating lazy components from functional components and vue-class-component
+ * @internal
+ *
+ * @param component
+ */ function isRouteComponent(component) {
+    return typeof component === 'object' || 'displayName' in component || 'props' in component || '__vccOpts' in component;
+}
+function isESModule(obj) {
+    return obj.__esModule || obj[Symbol.toStringTag] === 'Module' || // support CF with dynamic imports that do not
+    // add the Module string tag
+    obj.default && isRouteComponent(obj.default);
+}
+const assign = Object.assign;
+function applyToParams(fn, params) {
+    const newParams = {};
+    for(const key in params){
+        const value = params[key];
+        newParams[key] = isArray(value) ? value.map(fn) : fn(value);
+    }
+    return newParams;
+}
+const noop = ()=>{};
+/**
+ * Typesafe alternative to Array.isArray
+ * https://github.com/microsoft/TypeScript/pull/48228
+ */ const isArray = Array.isArray;
+function warn(msg) {
+    // avoid using ...args as it breaks in older Edge builds
+    const args = Array.from(arguments).slice(1);
+    console.warn.apply(console, [
+        '[Vue Router warn]: ' + msg
+    ].concat(args));
+}
+/**
+ * Encoding Rules (␣ = Space)
+ * - Path: ␣ " < > # ? { }
+ * - Query: ␣ " < > # & =
+ * - Hash: ␣ " < > `
+ *
+ * On top of that, the RFC3986 (https://tools.ietf.org/html/rfc3986#section-2.2)
+ * defines some extra characters to be encoded. Most browsers do not encode them
+ * in encodeURI https://github.com/whatwg/url/issues/369, so it may be safer to
+ * also encode `!'()*`. Leaving un-encoded only ASCII alphanumeric(`a-zA-Z0-9`)
+ * plus `-._~`. This extra safety should be applied to query by patching the
+ * string returned by encodeURIComponent encodeURI also encodes `[\]^`. `\`
+ * should be encoded to avoid ambiguity. Browsers (IE, FF, C) transform a `\`
+ * into a `/` if directly typed in. The _backtick_ (`````) should also be
+ * encoded everywhere because some browsers like FF encode it when directly
+ * written while others don't. Safari and IE don't encode ``"<>{}``` in hash.
+ */ // const EXTRA_RESERVED_RE = /[!'()*]/g
+// const encodeReservedReplacer = (c: string) => '%' + c.charCodeAt(0).toString(16)
+const HASH_RE = /#/g; // %23
+const AMPERSAND_RE = /&/g; // %26
+const SLASH_RE = /\//g; // %2F
+const EQUAL_RE = /=/g; // %3D
+const IM_RE = /\?/g; // %3F
+const PLUS_RE = /\+/g; // %2B
+/**
+ * NOTE: It's not clear to me if we should encode the + symbol in queries, it
+ * seems to be less flexible than not doing so and I can't find out the legacy
+ * systems requiring this for regular requests like text/html. In the standard,
+ * the encoding of the plus character is only mentioned for
+ * application/x-www-form-urlencoded
+ * (https://url.spec.whatwg.org/#urlencoded-parsing) and most browsers seems lo
+ * leave the plus character as is in queries. To be more flexible, we allow the
+ * plus character on the query, but it can also be manually encoded by the user.
+ *
+ * Resources:
+ * - https://url.spec.whatwg.org/#urlencoded-parsing
+ * - https://stackoverflow.com/questions/1634271/url-encoding-the-space-character-or-20
+ */ const ENC_BRACKET_OPEN_RE = /%5B/g; // [
+const ENC_BRACKET_CLOSE_RE = /%5D/g; // ]
+const ENC_CARET_RE = /%5E/g; // ^
+const ENC_BACKTICK_RE = /%60/g; // `
+const ENC_CURLY_OPEN_RE = /%7B/g; // {
+const ENC_PIPE_RE = /%7C/g; // |
+const ENC_CURLY_CLOSE_RE = /%7D/g; // }
+const ENC_SPACE_RE = /%20/g; // }
+/**
+ * Encode characters that need to be encoded on the path, search and hash
+ * sections of the URL.
+ *
+ * @internal
+ * @param text - string to encode
+ * @returns encoded string
+ */ function commonEncode(text) {
+    return encodeURI('' + text).replace(ENC_PIPE_RE, '|').replace(ENC_BRACKET_OPEN_RE, '[').replace(ENC_BRACKET_CLOSE_RE, ']');
+}
+/**
+ * Encode characters that need to be encoded on the hash section of the URL.
+ *
+ * @param text - string to encode
+ * @returns encoded string
+ */ function encodeHash(text) {
+    return commonEncode(text).replace(ENC_CURLY_OPEN_RE, '{').replace(ENC_CURLY_CLOSE_RE, '}').replace(ENC_CARET_RE, '^');
+}
+/**
+ * Encode characters that need to be encoded query values on the query
+ * section of the URL.
+ *
+ * @param text - string to encode
+ * @returns encoded string
+ */ function encodeQueryValue(text) {
+    return commonEncode(text)// Encode the space as +, encode the + to differentiate it from the space
+    .replace(PLUS_RE, '%2B').replace(ENC_SPACE_RE, '+').replace(HASH_RE, '%23').replace(AMPERSAND_RE, '%26').replace(ENC_BACKTICK_RE, '`').replace(ENC_CURLY_OPEN_RE, '{').replace(ENC_CURLY_CLOSE_RE, '}').replace(ENC_CARET_RE, '^');
+}
+/**
+ * Like `encodeQueryValue` but also encodes the `=` character.
+ *
+ * @param text - string to encode
+ */ function encodeQueryKey(text) {
+    return encodeQueryValue(text).replace(EQUAL_RE, '%3D');
+}
+/**
+ * Encode characters that need to be encoded on the path section of the URL.
+ *
+ * @param text - string to encode
+ * @returns encoded string
+ */ function encodePath(text) {
+    return commonEncode(text).replace(HASH_RE, '%23').replace(IM_RE, '%3F');
+}
+/**
+ * Encode characters that need to be encoded on the path section of the URL as a
+ * param. This function encodes everything {@link encodePath} does plus the
+ * slash (`/`) character. If `text` is `null` or `undefined`, returns an empty
+ * string instead.
+ *
+ * @param text - string to encode
+ * @returns encoded string
+ */ function encodeParam(text) {
+    return text == null ? '' : encodePath(text).replace(SLASH_RE, '%2F');
+}
+/**
+ * Decode text using `decodeURIComponent`. Returns the original text if it
+ * fails.
+ *
+ * @param text - string to decode
+ * @returns decoded string
+ */ function decode(text) {
+    try {
+        return decodeURIComponent('' + text);
+    } catch (err) {
+        warn(`Error decoding "${text}". Using original value`);
+    }
+    return '' + text;
+}
+const TRAILING_SLASH_RE = /\/$/;
+const removeTrailingSlash = (path)=>path.replace(TRAILING_SLASH_RE, '');
+/**
+ * Transforms a URI into a normalized history location
+ *
+ * @param parseQuery
+ * @param location - URI to normalize
+ * @param currentLocation - current absolute location. Allows resolving relative
+ * paths. Must start with `/`. Defaults to `/`
+ * @returns a normalized history location
+ */ function parseURL(parseQuery, location1, currentLocation = '/') {
+    let path, query = {}, searchString = '', hash = '';
+    // Could use URL and URLSearchParams but IE 11 doesn't support it
+    // TODO: move to new URL()
+    const hashPos = location1.indexOf('#');
+    let searchPos = location1.indexOf('?');
+    // the hash appears before the search, so it's not part of the search string
+    if (hashPos < searchPos && hashPos >= 0) searchPos = -1;
+    if (searchPos > -1) {
+        path = location1.slice(0, searchPos);
+        searchString = location1.slice(searchPos + 1, hashPos > -1 ? hashPos : location1.length);
+        query = parseQuery(searchString);
+    }
+    if (hashPos > -1) {
+        path = path || location1.slice(0, hashPos);
+        // keep the # character
+        hash = location1.slice(hashPos, location1.length);
+    }
+    // no search and no query
+    path = resolveRelativePath(path != null ? path : location1, currentLocation);
+    // empty path means a relative query or hash `?foo=f`, `#thing`
+    return {
+        fullPath: path + (searchString && '?') + searchString + hash,
+        path,
+        query,
+        hash: decode(hash)
+    };
+}
+/**
+ * Stringifies a URL object
+ *
+ * @param stringifyQuery
+ * @param location
+ */ function stringifyURL(stringifyQuery, location1) {
+    const query = location1.query ? stringifyQuery(location1.query) : '';
+    return location1.path + (query && '?') + query + (location1.hash || '');
+}
+/**
+ * Strips off the base from the beginning of a location.pathname in a non-case-sensitive way.
+ *
+ * @param pathname - location.pathname
+ * @param base - base to strip off
+ */ function stripBase(pathname, base) {
+    // no base or base is not found at the beginning
+    if (!base || !pathname.toLowerCase().startsWith(base.toLowerCase())) return pathname;
+    return pathname.slice(base.length) || '/';
+}
+/**
+ * Checks if two RouteLocation are equal. This means that both locations are
+ * pointing towards the same {@link RouteRecord} and that all `params`, `query`
+ * parameters and `hash` are the same
+ *
+ * @param stringifyQuery - A function that takes a query object of type LocationQueryRaw and returns a string representation of it.
+ * @param a - first {@link RouteLocation}
+ * @param b - second {@link RouteLocation}
+ */ function isSameRouteLocation(stringifyQuery, a, b) {
+    const aLastIndex = a.matched.length - 1;
+    const bLastIndex = b.matched.length - 1;
+    return aLastIndex > -1 && aLastIndex === bLastIndex && isSameRouteRecord(a.matched[aLastIndex], b.matched[bLastIndex]) && isSameRouteLocationParams(a.params, b.params) && stringifyQuery(a.query) === stringifyQuery(b.query) && a.hash === b.hash;
+}
+/**
+ * Check if two `RouteRecords` are equal. Takes into account aliases: they are
+ * considered equal to the `RouteRecord` they are aliasing.
+ *
+ * @param a - first {@link RouteRecord}
+ * @param b - second {@link RouteRecord}
+ */ function isSameRouteRecord(a, b) {
+    // since the original record has an undefined value for aliasOf
+    // but all aliases point to the original record, this will always compare
+    // the original record
+    return (a.aliasOf || a) === (b.aliasOf || b);
+}
+function isSameRouteLocationParams(a, b) {
+    if (Object.keys(a).length !== Object.keys(b).length) return false;
+    for(const key in a){
+        if (!isSameRouteLocationParamsValue(a[key], b[key])) return false;
+    }
+    return true;
+}
+function isSameRouteLocationParamsValue(a, b) {
+    return isArray(a) ? isEquivalentArray(a, b) : isArray(b) ? isEquivalentArray(b, a) : a === b;
+}
+/**
+ * Check if two arrays are the same or if an array with one single entry is the
+ * same as another primitive value. Used to check query and parameters
+ *
+ * @param a - array of values
+ * @param b - array of values or a single value
+ */ function isEquivalentArray(a, b) {
+    return isArray(b) ? a.length === b.length && a.every((value, i)=>value === b[i]) : a.length === 1 && a[0] === b;
+}
+/**
+ * Resolves a relative path that starts with `.`.
+ *
+ * @param to - path location we are resolving
+ * @param from - currentLocation.path, should start with `/`
+ */ function resolveRelativePath(to, from) {
+    if (to.startsWith('/')) return to;
+    if (!from.startsWith('/')) {
+        warn(`Cannot resolve a relative location without an absolute path. Trying to resolve "${to}" from "${from}". It should look like "/${from}".`);
+        return to;
+    }
+    if (!to) return from;
+    const fromSegments = from.split('/');
+    const toSegments = to.split('/');
+    const lastToSegment = toSegments[toSegments.length - 1];
+    // make . and ./ the same (../ === .., ../../ === ../..)
+    // this is the same behavior as new URL()
+    if (lastToSegment === '..' || lastToSegment === '.') toSegments.push('');
+    let position = fromSegments.length - 1;
+    let toPosition;
+    let segment;
+    for(toPosition = 0; toPosition < toSegments.length; toPosition++){
+        segment = toSegments[toPosition];
+        // we stay on the same position
+        if (segment === '.') continue;
+        // go up in the from array
+        if (segment === '..') // we can't go below zero, but we still need to increment toPosition
+        {
+            if (position > 1) position--;
+        } else break;
+    }
+    return fromSegments.slice(0, position).join('/') + '/' + toSegments.slice(toPosition).join('/');
+}
+/**
+ * Initial route location where the router is. Can be used in navigation guards
+ * to differentiate the initial navigation.
+ *
+ * @example
+ * ```js
+ * import { START_LOCATION } from 'vue-router'
+ *
+ * router.beforeEach((to, from) => {
+ *   if (from === START_LOCATION) {
+ *     // initial navigation
+ *   }
+ * })
+ * ```
+ */ const START_LOCATION_NORMALIZED = {
+    path: '/',
+    // TODO: could we use a symbol in the future?
+    name: undefined,
+    params: {},
+    query: {},
+    hash: '',
+    fullPath: '/',
+    matched: [],
+    meta: {},
+    redirectedFrom: undefined
+};
+var NavigationType;
+(function(NavigationType) {
+    NavigationType["pop"] = "pop";
+    NavigationType["push"] = "push";
+})(NavigationType || (NavigationType = {}));
+var NavigationDirection;
+(function(NavigationDirection) {
+    NavigationDirection["back"] = "back";
+    NavigationDirection["forward"] = "forward";
+    NavigationDirection["unknown"] = "";
+})(NavigationDirection || (NavigationDirection = {}));
+/**
+ * Starting location for Histories
+ */ const START = '';
+// Generic utils
+/**
+ * Normalizes a base by removing any trailing slash and reading the base tag if
+ * present.
+ *
+ * @param base - base to normalize
+ */ function normalizeBase(base) {
+    if (!base) {
+        if (isBrowser) {
+            // respect <base> tag
+            const baseEl = document.querySelector('base');
+            base = baseEl && baseEl.getAttribute('href') || '/';
+            // strip full URL origin
+            base = base.replace(/^\w+:\/\/[^\/]+/, '');
+        } else base = '/';
+    }
+    // ensure leading slash when it was removed by the regex above avoid leading
+    // slash with hash because the file could be read from the disk like file://
+    // and the leading slash would cause problems
+    if (base[0] !== '/' && base[0] !== '#') base = '/' + base;
+    // remove the trailing slash so all other method can just do `base + fullPath`
+    // to build an href
+    return removeTrailingSlash(base);
+}
+// remove any character before the hash
+const BEFORE_HASH_RE = /^[^#]+#/;
+function createHref(base, location1) {
+    return base.replace(BEFORE_HASH_RE, '#') + location1;
+}
+function getElementPosition(el, offset) {
+    const docRect = document.documentElement.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    return {
+        behavior: offset.behavior,
+        left: elRect.left - docRect.left - (offset.left || 0),
+        top: elRect.top - docRect.top - (offset.top || 0)
+    };
+}
+const computeScrollPosition = ()=>({
+        left: window.scrollX,
+        top: window.scrollY
+    });
+function scrollToPosition(position) {
+    let scrollToOptions;
+    if ('el' in position) {
+        const positionEl = position.el;
+        const isIdSelector = typeof positionEl === 'string' && positionEl.startsWith('#');
+        /**
+         * `id`s can accept pretty much any characters, including CSS combinators
+         * like `>` or `~`. It's still possible to retrieve elements using
+         * `document.getElementById('~')` but it needs to be escaped when using
+         * `document.querySelector('#\\~')` for it to be valid. The only
+         * requirements for `id`s are them to be unique on the page and to not be
+         * empty (`id=""`). Because of that, when passing an id selector, it should
+         * be properly escaped for it to work with `querySelector`. We could check
+         * for the id selector to be simple (no CSS combinators `+ >~`) but that
+         * would make things inconsistent since they are valid characters for an
+         * `id` but would need to be escaped when using `querySelector`, breaking
+         * their usage and ending up in no selector returned. Selectors need to be
+         * escaped:
+         *
+         * - `#1-thing` becomes `#\31 -thing`
+         * - `#with~symbols` becomes `#with\\~symbols`
+         *
+         * - More information about  the topic can be found at
+         *   https://mathiasbynens.be/notes/html5-id-class.
+         * - Practical example: https://mathiasbynens.be/demo/html5-id
+         */ if (typeof position.el === 'string') {
+            if (!isIdSelector || !document.getElementById(position.el.slice(1))) try {
+                const foundEl = document.querySelector(position.el);
+                if (isIdSelector && foundEl) {
+                    warn(`The selector "${position.el}" should be passed as "el: document.querySelector('${position.el}')" because it starts with "#".`);
+                    // return to avoid other warnings
+                    return;
+                }
+            } catch (err) {
+                warn(`The selector "${position.el}" is invalid. If you are using an id selector, make sure to escape it. You can find more information about escaping characters in selectors at https://mathiasbynens.be/notes/css-escapes or use CSS.escape (https://developer.mozilla.org/en-US/docs/Web/API/CSS/escape).`);
+                // return to avoid other warnings
+                return;
+            }
+        }
+        const el = typeof positionEl === 'string' ? isIdSelector ? document.getElementById(positionEl.slice(1)) : document.querySelector(positionEl) : positionEl;
+        if (!el) {
+            warn(`Couldn't find element using selector "${position.el}" returned by scrollBehavior.`);
+            return;
+        }
+        scrollToOptions = getElementPosition(el, position);
+    } else scrollToOptions = position;
+    if ('scrollBehavior' in document.documentElement.style) window.scrollTo(scrollToOptions);
+    else window.scrollTo(scrollToOptions.left != null ? scrollToOptions.left : window.scrollX, scrollToOptions.top != null ? scrollToOptions.top : window.scrollY);
+}
+function getScrollKey(path, delta) {
+    const position = history.state ? history.state.position - delta : -1;
+    return position + path;
+}
+const scrollPositions = new Map();
+function saveScrollPosition(key, scrollPosition) {
+    scrollPositions.set(key, scrollPosition);
+}
+function getSavedScrollPosition(key) {
+    const scroll = scrollPositions.get(key);
+    // consume it so it's not used again
+    scrollPositions.delete(key);
+    return scroll;
+}
+// TODO: RFC about how to save scroll position
+/**
+ * ScrollBehavior instance used by the router to compute and restore the scroll
+ * position when navigating.
+ */ // export interface ScrollHandler<ScrollPositionEntry extends HistoryStateValue, ScrollPosition extends ScrollPositionEntry> {
+//   // returns a scroll position that can be saved in history
+//   compute(): ScrollPositionEntry
+//   // can take an extended ScrollPositionEntry
+//   scroll(position: ScrollPosition): void
+// }
+// export const scrollHandler: ScrollHandler<ScrollPosition> = {
+//   compute: computeScroll,
+//   scroll: scrollToPosition,
+// }
+let createBaseLocation = ()=>location.protocol + '//' + location.host;
+/**
+ * Creates a normalized history location from a window.location object
+ * @param base - The base path
+ * @param location - The window.location object
+ */ function createCurrentLocation(base, location1) {
+    const { pathname, search, hash } = location1;
+    // allows hash bases like #, /#, #/, #!, #!/, /#!/, or even /folder#end
+    const hashPos = base.indexOf('#');
+    if (hashPos > -1) {
+        let slicePos = hash.includes(base.slice(hashPos)) ? base.slice(hashPos).length : 1;
+        let pathFromHash = hash.slice(slicePos);
+        // prepend the starting slash to hash so the url starts with /#
+        if (pathFromHash[0] !== '/') pathFromHash = '/' + pathFromHash;
+        return stripBase(pathFromHash, '');
+    }
+    const path = stripBase(pathname, base);
+    return path + search + hash;
+}
+function useHistoryListeners(base, historyState, currentLocation, replace) {
+    let listeners = [];
+    let teardowns = [];
+    // TODO: should it be a stack? a Dict. Check if the popstate listener
+    // can trigger twice
+    let pauseState = null;
+    const popStateHandler = ({ state })=>{
+        const to = createCurrentLocation(base, location);
+        const from = currentLocation.value;
+        const fromState = historyState.value;
+        let delta = 0;
+        if (state) {
+            currentLocation.value = to;
+            historyState.value = state;
+            // ignore the popstate and reset the pauseState
+            if (pauseState && pauseState === from) {
+                pauseState = null;
+                return;
+            }
+            delta = fromState ? state.position - fromState.position : 0;
+        } else replace(to);
+        // Here we could also revert the navigation by calling history.go(-delta)
+        // this listener will have to be adapted to not trigger again and to wait for the url
+        // to be updated before triggering the listeners. Some kind of validation function would also
+        // need to be passed to the listeners so the navigation can be accepted
+        // call all listeners
+        listeners.forEach((listener)=>{
+            listener(currentLocation.value, from, {
+                delta,
+                type: NavigationType.pop,
+                direction: delta ? delta > 0 ? NavigationDirection.forward : NavigationDirection.back : NavigationDirection.unknown
+            });
+        });
+    };
+    function pauseListeners() {
+        pauseState = currentLocation.value;
+    }
+    function listen(callback) {
+        // set up the listener and prepare teardown callbacks
+        listeners.push(callback);
+        const teardown = ()=>{
+            const index = listeners.indexOf(callback);
+            if (index > -1) listeners.splice(index, 1);
+        };
+        teardowns.push(teardown);
+        return teardown;
+    }
+    function beforeUnloadListener() {
+        const { history: history1 } = window;
+        if (!history1.state) return;
+        history1.replaceState(assign({}, history1.state, {
+            scroll: computeScrollPosition()
+        }), '');
+    }
+    function destroy() {
+        for (const teardown of teardowns)teardown();
+        teardowns = [];
+        window.removeEventListener('popstate', popStateHandler);
+        window.removeEventListener('beforeunload', beforeUnloadListener);
+    }
+    // set up the listeners and prepare teardown callbacks
+    window.addEventListener('popstate', popStateHandler);
+    // TODO: could we use 'pagehide' or 'visibilitychange' instead?
+    // https://developer.chrome.com/blog/page-lifecycle-api/
+    window.addEventListener('beforeunload', beforeUnloadListener, {
+        passive: true
+    });
+    return {
+        pauseListeners,
+        listen,
+        destroy
+    };
+}
+/**
+ * Creates a state object
+ */ function buildState(back, current, forward, replaced = false, computeScroll = false) {
+    return {
+        back,
+        current,
+        forward,
+        replaced,
+        position: window.history.length,
+        scroll: computeScroll ? computeScrollPosition() : null
+    };
+}
+function useHistoryStateNavigation(base) {
+    const { history: history1, location: location1 } = window;
+    // private variables
+    const currentLocation = {
+        value: createCurrentLocation(base, location1)
+    };
+    const historyState = {
+        value: history1.state
+    };
+    // build current history entry as this is a fresh navigation
+    if (!historyState.value) changeLocation(currentLocation.value, {
+        back: null,
+        current: currentLocation.value,
+        forward: null,
+        // the length is off by one, we need to decrease it
+        position: history1.length - 1,
+        replaced: true,
+        // don't add a scroll as the user may have an anchor, and we want
+        // scrollBehavior to be triggered without a saved position
+        scroll: null
+    }, true);
+    function changeLocation(to, state, replace) {
+        /**
+         * if a base tag is provided, and we are on a normal domain, we have to
+         * respect the provided `base` attribute because pushState() will use it and
+         * potentially erase anything before the `#` like at
+         * https://github.com/vuejs/router/issues/685 where a base of
+         * `/folder/#` but a base of `/` would erase the `/folder/` section. If
+         * there is no host, the `<base>` tag makes no sense and if there isn't a
+         * base tag we can just use everything after the `#`.
+         */ const hashIndex = base.indexOf('#');
+        const url = hashIndex > -1 ? (location1.host && document.querySelector('base') ? base : base.slice(hashIndex)) + to : createBaseLocation() + base + to;
+        try {
+            // BROWSER QUIRK
+            // NOTE: Safari throws a SecurityError when calling this function 100 times in 30 seconds
+            history1[replace ? 'replaceState' : 'pushState'](state, '', url);
+            historyState.value = state;
+        } catch (err) {
+            warn('Error with push/replace State', err);
+            // Force the navigation, this also resets the call count
+            location1[replace ? 'replace' : 'assign'](url);
+        }
+    }
+    function replace(to, data) {
+        const state = assign({}, history1.state, buildState(historyState.value.back, // keep back and forward entries but override current position
+        to, historyState.value.forward, true), data, {
+            position: historyState.value.position
+        });
+        changeLocation(to, state, true);
+        currentLocation.value = to;
+    }
+    function push(to, data) {
+        // Add to current entry the information of where we are going
+        // as well as saving the current position
+        const currentState = assign({}, // use current history state to gracefully handle a wrong call to
+        // history.replaceState
+        // https://github.com/vuejs/router/issues/366
+        historyState.value, history1.state, {
+            forward: to,
+            scroll: computeScrollPosition()
+        });
+        if (!history1.state) warn(`history.state seems to have been manually replaced without preserving the necessary values. Make sure to preserve existing history state if you are manually calling history.replaceState:\n\n` + `history.replaceState(history.state, '', url)\n\n` + `You can find more information at https://router.vuejs.org/guide/migration/#Usage-of-history-state`);
+        changeLocation(currentState.current, currentState, true);
+        const state = assign({}, buildState(currentLocation.value, to, null), {
+            position: currentState.position + 1
+        }, data);
+        changeLocation(to, state, false);
+        currentLocation.value = to;
+    }
+    return {
+        location: currentLocation,
+        state: historyState,
+        push,
+        replace
+    };
+}
+/**
+ * Creates an HTML5 history. Most common history for single page applications.
+ *
+ * @param base -
+ */ function createWebHistory(base) {
+    base = normalizeBase(base);
+    const historyNavigation = useHistoryStateNavigation(base);
+    const historyListeners = useHistoryListeners(base, historyNavigation.state, historyNavigation.location, historyNavigation.replace);
+    function go(delta, triggerListeners = true) {
+        if (!triggerListeners) historyListeners.pauseListeners();
+        history.go(delta);
+    }
+    const routerHistory = assign({
+        // it's overridden right after
+        location: '',
+        base,
+        go,
+        createHref: createHref.bind(null, base)
+    }, historyNavigation, historyListeners);
+    Object.defineProperty(routerHistory, 'location', {
+        enumerable: true,
+        get: ()=>historyNavigation.location.value
+    });
+    Object.defineProperty(routerHistory, 'state', {
+        enumerable: true,
+        get: ()=>historyNavigation.state.value
+    });
+    return routerHistory;
+}
+/**
+ * Creates an in-memory based history. The main purpose of this history is to handle SSR. It starts in a special location that is nowhere.
+ * It's up to the user to replace that location with the starter location by either calling `router.push` or `router.replace`.
+ *
+ * @param base - Base applied to all urls, defaults to '/'
+ * @returns a history object that can be passed to the router constructor
+ */ function createMemoryHistory(base = '') {
+    let listeners = [];
+    let queue = [
+        START
+    ];
+    let position = 0;
+    base = normalizeBase(base);
+    function setLocation(location1) {
+        position++;
+        if (position !== queue.length) // we are in the middle, we remove everything from here in the queue
+        queue.splice(position);
+        queue.push(location1);
+    }
+    function triggerListeners(to, from, { direction, delta }) {
+        const info = {
+            direction,
+            delta,
+            type: NavigationType.pop
+        };
+        for (const callback of listeners)callback(to, from, info);
+    }
+    const routerHistory = {
+        // rewritten by Object.defineProperty
+        location: START,
+        // TODO: should be kept in queue
+        state: {},
+        base,
+        createHref: createHref.bind(null, base),
+        replace (to) {
+            // remove current entry and decrement position
+            queue.splice(position--, 1);
+            setLocation(to);
+        },
+        push (to, data) {
+            setLocation(to);
+        },
+        listen (callback) {
+            listeners.push(callback);
+            return ()=>{
+                const index = listeners.indexOf(callback);
+                if (index > -1) listeners.splice(index, 1);
+            };
+        },
+        destroy () {
+            listeners = [];
+            queue = [
+                START
+            ];
+            position = 0;
+        },
+        go (delta, shouldTrigger = true) {
+            const from = this.location;
+            const direction = // we are considering delta === 0 going forward, but in abstract mode
+            // using 0 for the delta doesn't make sense like it does in html5 where
+            // it reloads the page
+            delta < 0 ? NavigationDirection.back : NavigationDirection.forward;
+            position = Math.max(0, Math.min(position + delta, queue.length - 1));
+            if (shouldTrigger) triggerListeners(this.location, from, {
+                direction,
+                delta
+            });
+        }
+    };
+    Object.defineProperty(routerHistory, 'location', {
+        enumerable: true,
+        get: ()=>queue[position]
+    });
+    return routerHistory;
+}
+/**
+ * Creates a hash history. Useful for web applications with no host (e.g. `file://`) or when configuring a server to
+ * handle any URL is not possible.
+ *
+ * @param base - optional base to provide. Defaults to `location.pathname + location.search` If there is a `<base>` tag
+ * in the `head`, its value will be ignored in favor of this parameter **but note it affects all the history.pushState()
+ * calls**, meaning that if you use a `<base>` tag, it's `href` value **has to match this parameter** (ignoring anything
+ * after the `#`).
+ *
+ * @example
+ * ```js
+ * // at https://example.com/folder
+ * createWebHashHistory() // gives a url of `https://example.com/folder#`
+ * createWebHashHistory('/folder/') // gives a url of `https://example.com/folder/#`
+ * // if the `#` is provided in the base, it won't be added by `createWebHashHistory`
+ * createWebHashHistory('/folder/#/app/') // gives a url of `https://example.com/folder/#/app/`
+ * // you should avoid doing this because it changes the original url and breaks copying urls
+ * createWebHashHistory('/other-folder/') // gives a url of `https://example.com/other-folder/#`
+ *
+ * // at file:///usr/etc/folder/index.html
+ * // for locations with no `host`, the base is ignored
+ * createWebHashHistory('/iAmIgnored') // gives a url of `file:///usr/etc/folder/index.html#`
+ * ```
+ */ function createWebHashHistory(base) {
+    // Make sure this implementation is fine in terms of encoding, specially for IE11
+    // for `file://`, directly use the pathname and ignore the base
+    // location.pathname contains an initial `/` even at the root: `https://example.com`
+    base = location.host ? base || location.pathname + location.search : '';
+    // allow the user to provide a `#` in the middle: `/base/#/app`
+    if (!base.includes('#')) base += '#';
+    if (!base.endsWith('#/') && !base.endsWith('#')) warn(`A hash base must end with a "#":\n"${base}" should be "${base.replace(/#.*$/, '#')}".`);
+    return createWebHistory(base);
+}
+function isRouteLocation(route) {
+    return typeof route === 'string' || route && typeof route === 'object';
+}
+function isRouteName(name) {
+    return typeof name === 'string' || typeof name === 'symbol';
+}
+const NavigationFailureSymbol = Symbol('navigation failure');
+/**
+ * Enumeration with all possible types for navigation failures. Can be passed to
+ * {@link isNavigationFailure} to check for specific failures.
+ */ var NavigationFailureType;
+(function(NavigationFailureType) {
+    /**
+     * An aborted navigation is a navigation that failed because a navigation
+     * guard returned `false` or called `next(false)`
+     */ NavigationFailureType[NavigationFailureType["aborted"] = 4] = "aborted";
+    /**
+     * A cancelled navigation is a navigation that failed because a more recent
+     * navigation finished started (not necessarily finished).
+     */ NavigationFailureType[NavigationFailureType["cancelled"] = 8] = "cancelled";
+    /**
+     * A duplicated navigation is a navigation that failed because it was
+     * initiated while already being at the exact same location.
+     */ NavigationFailureType[NavigationFailureType["duplicated"] = 16] = "duplicated";
+})(NavigationFailureType || (NavigationFailureType = {}));
+// DEV only debug messages
+const ErrorTypeMessages = {
+    [1 /* ErrorTypes.MATCHER_NOT_FOUND */ ] ({ location: location1, currentLocation }) {
+        return `No match for\n ${JSON.stringify(location1)}${currentLocation ? '\nwhile being at\n' + JSON.stringify(currentLocation) : ''}`;
+    },
+    [2 /* ErrorTypes.NAVIGATION_GUARD_REDIRECT */ ] ({ from, to }) {
+        return `Redirected from "${from.fullPath}" to "${stringifyRoute(to)}" via a navigation guard.`;
+    },
+    [4 /* ErrorTypes.NAVIGATION_ABORTED */ ] ({ from, to }) {
+        return `Navigation aborted from "${from.fullPath}" to "${to.fullPath}" via a navigation guard.`;
+    },
+    [8 /* ErrorTypes.NAVIGATION_CANCELLED */ ] ({ from, to }) {
+        return `Navigation cancelled from "${from.fullPath}" to "${to.fullPath}" with a new navigation.`;
+    },
+    [16 /* ErrorTypes.NAVIGATION_DUPLICATED */ ] ({ from, to }) {
+        return `Avoided redundant navigation to current location: "${from.fullPath}".`;
+    }
+};
+/**
+ * Creates a typed NavigationFailure object.
+ * @internal
+ * @param type - NavigationFailureType
+ * @param params - { from, to }
+ */ function createRouterError(type, params) {
+    return assign(new Error(ErrorTypeMessages[type](params)), {
+        type,
+        [NavigationFailureSymbol]: true
+    }, params);
+}
+function isNavigationFailure(error, type) {
+    return error instanceof Error && NavigationFailureSymbol in error && (type == null || !!(error.type & type));
+}
+const propertiesToLog = [
+    'params',
+    'query',
+    'hash'
+];
+function stringifyRoute(to) {
+    if (typeof to === 'string') return to;
+    if (to.path != null) return to.path;
+    const location1 = {};
+    for (const key of propertiesToLog)if (key in to) location1[key] = to[key];
+    return JSON.stringify(location1, null, 2);
+}
+// default pattern for a param: non-greedy everything but /
+const BASE_PARAM_PATTERN = '[^/]+?';
+const BASE_PATH_PARSER_OPTIONS = {
+    sensitive: false,
+    strict: false,
+    start: true,
+    end: true
+};
+// Special Regex characters that must be escaped in static tokens
+const REGEX_CHARS_RE = /[.+*?^${}()[\]/\\]/g;
+/**
+ * Creates a path parser from an array of Segments (a segment is an array of Tokens)
+ *
+ * @param segments - array of segments returned by tokenizePath
+ * @param extraOptions - optional options for the regexp
+ * @returns a PathParser
+ */ function tokensToParser(segments, extraOptions) {
+    const options = assign({}, BASE_PATH_PARSER_OPTIONS, extraOptions);
+    // the amount of scores is the same as the length of segments except for the root segment "/"
+    const score = [];
+    // the regexp as a string
+    let pattern = options.start ? '^' : '';
+    // extracted keys
+    const keys = [];
+    for (const segment of segments){
+        // the root segment needs special treatment
+        const segmentScores = segment.length ? [] : [
+            90 /* PathScore.Root */ 
+        ];
+        // allow trailing slash
+        if (options.strict && !segment.length) pattern += '/';
+        for(let tokenIndex = 0; tokenIndex < segment.length; tokenIndex++){
+            const token = segment[tokenIndex];
+            // resets the score if we are inside a sub-segment /:a-other-:b
+            let subSegmentScore = 40 /* PathScore.Segment */  + (options.sensitive ? 0.25 /* PathScore.BonusCaseSensitive */  : 0);
+            if (token.type === 0 /* TokenType.Static */ ) {
+                // prepend the slash if we are starting a new segment
+                if (!tokenIndex) pattern += '/';
+                pattern += token.value.replace(REGEX_CHARS_RE, '\\$&');
+                subSegmentScore += 40 /* PathScore.Static */ ;
+            } else if (token.type === 1 /* TokenType.Param */ ) {
+                const { value, repeatable, optional, regexp } = token;
+                keys.push({
+                    name: value,
+                    repeatable,
+                    optional
+                });
+                const re = regexp ? regexp : BASE_PARAM_PATTERN;
+                // the user provided a custom regexp /:id(\\d+)
+                if (re !== BASE_PARAM_PATTERN) {
+                    subSegmentScore += 10 /* PathScore.BonusCustomRegExp */ ;
+                    // make sure the regexp is valid before using it
+                    try {
+                        new RegExp(`(${re})`);
+                    } catch (err) {
+                        throw new Error(`Invalid custom RegExp for param "${value}" (${re}): ` + err.message);
+                    }
+                }
+                // when we repeat we must take care of the repeating leading slash
+                let subPattern = repeatable ? `((?:${re})(?:/(?:${re}))*)` : `(${re})`;
+                // prepend the slash if we are starting a new segment
+                if (!tokenIndex) subPattern = // avoid an optional / if there are more segments e.g. /:p?-static
+                // or /:p?-:p2
+                optional && segment.length < 2 ? `(?:/${subPattern})` : '/' + subPattern;
+                if (optional) subPattern += '?';
+                pattern += subPattern;
+                subSegmentScore += 20 /* PathScore.Dynamic */ ;
+                if (optional) subSegmentScore += -8 /* PathScore.BonusOptional */ ;
+                if (repeatable) subSegmentScore += -20 /* PathScore.BonusRepeatable */ ;
+                if (re === '.*') subSegmentScore += -50 /* PathScore.BonusWildcard */ ;
+            }
+            segmentScores.push(subSegmentScore);
+        }
+        // an empty array like /home/ -> [[{home}], []]
+        // if (!segment.length) pattern += '/'
+        score.push(segmentScores);
+    }
+    // only apply the strict bonus to the last score
+    if (options.strict && options.end) {
+        const i = score.length - 1;
+        score[i][score[i].length - 1] += 0.7000000000000001 /* PathScore.BonusStrict */ ;
+    }
+    // TODO: dev only warn double trailing slash
+    if (!options.strict) pattern += '/?';
+    if (options.end) pattern += '$';
+    else if (options.strict && !pattern.endsWith('/')) pattern += '(?:/|$)';
+    const re = new RegExp(pattern, options.sensitive ? '' : 'i');
+    function parse(path) {
+        const match = path.match(re);
+        const params = {};
+        if (!match) return null;
+        for(let i = 1; i < match.length; i++){
+            const value = match[i] || '';
+            const key = keys[i - 1];
+            params[key.name] = value && key.repeatable ? value.split('/') : value;
+        }
+        return params;
+    }
+    function stringify(params) {
+        let path = '';
+        // for optional parameters to allow to be empty
+        let avoidDuplicatedSlash = false;
+        for (const segment of segments){
+            if (!avoidDuplicatedSlash || !path.endsWith('/')) path += '/';
+            avoidDuplicatedSlash = false;
+            for (const token of segment){
+                if (token.type === 0 /* TokenType.Static */ ) path += token.value;
+                else if (token.type === 1 /* TokenType.Param */ ) {
+                    const { value, repeatable, optional } = token;
+                    const param = value in params ? params[value] : '';
+                    if (isArray(param) && !repeatable) throw new Error(`Provided param "${value}" is an array but it is not repeatable (* or + modifiers)`);
+                    const text = isArray(param) ? param.join('/') : param;
+                    if (!text) {
+                        if (optional) // if we have more than one optional param like /:a?-static we don't need to care about the optional param
+                        {
+                            if (segment.length < 2) {
+                                // remove the last slash as we could be at the end
+                                if (path.endsWith('/')) path = path.slice(0, -1);
+                                else avoidDuplicatedSlash = true;
+                            }
+                        } else throw new Error(`Missing required param "${value}"`);
+                    }
+                    path += text;
+                }
+            }
+        }
+        // avoid empty path when we have multiple optional params
+        return path || '/';
+    }
+    return {
+        re,
+        score,
+        keys,
+        parse,
+        stringify
+    };
+}
+/**
+ * Compares an array of numbers as used in PathParser.score and returns a
+ * number. This function can be used to `sort` an array
+ *
+ * @param a - first array of numbers
+ * @param b - second array of numbers
+ * @returns 0 if both are equal, < 0 if a should be sorted first, > 0 if b
+ * should be sorted first
+ */ function compareScoreArray(a, b) {
+    let i = 0;
+    while(i < a.length && i < b.length){
+        const diff = b[i] - a[i];
+        // only keep going if diff === 0
+        if (diff) return diff;
+        i++;
+    }
+    // if the last subsegment was Static, the shorter segments should be sorted first
+    // otherwise sort the longest segment first
+    if (a.length < b.length) return a.length === 1 && a[0] === 80 /* PathScore.Segment */  ? -1 : 1;
+    else if (a.length > b.length) return b.length === 1 && b[0] === 80 /* PathScore.Segment */  ? 1 : -1;
+    return 0;
+}
+/**
+ * Compare function that can be used with `sort` to sort an array of PathParser
+ *
+ * @param a - first PathParser
+ * @param b - second PathParser
+ * @returns 0 if both are equal, < 0 if a should be sorted first, > 0 if b
+ */ function comparePathParserScore(a, b) {
+    let i = 0;
+    const aScore = a.score;
+    const bScore = b.score;
+    while(i < aScore.length && i < bScore.length){
+        const comp = compareScoreArray(aScore[i], bScore[i]);
+        // do not return if both are equal
+        if (comp) return comp;
+        i++;
+    }
+    if (Math.abs(bScore.length - aScore.length) === 1) {
+        if (isLastScoreNegative(aScore)) return 1;
+        if (isLastScoreNegative(bScore)) return -1;
+    }
+    // if a and b share the same score entries but b has more, sort b first
+    return bScore.length - aScore.length;
+// this is the ternary version
+// return aScore.length < bScore.length
+//   ? 1
+//   : aScore.length > bScore.length
+//   ? -1
+//   : 0
+}
+/**
+ * This allows detecting splats at the end of a path: /home/:id(.*)*
+ *
+ * @param score - score to check
+ * @returns true if the last entry is negative
+ */ function isLastScoreNegative(score) {
+    const last = score[score.length - 1];
+    return score.length > 0 && last[last.length - 1] < 0;
+}
+const ROOT_TOKEN = {
+    type: 0 /* TokenType.Static */ ,
+    value: ''
+};
+const VALID_PARAM_RE = /[a-zA-Z0-9_]/;
+// After some profiling, the cache seems to be unnecessary because tokenizePath
+// (the slowest part of adding a route) is very fast
+// const tokenCache = new Map<string, Token[][]>()
+function tokenizePath(path) {
+    if (!path) return [
+        []
+    ];
+    if (path === '/') return [
+        [
+            ROOT_TOKEN
+        ]
+    ];
+    if (!path.startsWith('/')) throw new Error(`Route paths should start with a "/": "${path}" should be "/${path}".`);
+    // if (tokenCache.has(path)) return tokenCache.get(path)!
+    function crash(message) {
+        throw new Error(`ERR (${state})/"${buffer}": ${message}`);
+    }
+    let state = 0 /* TokenizerState.Static */ ;
+    let previousState = state;
+    const tokens = [];
+    // the segment will always be valid because we get into the initial state
+    // with the leading /
+    let segment;
+    function finalizeSegment() {
+        if (segment) tokens.push(segment);
+        segment = [];
+    }
+    // index on the path
+    let i = 0;
+    // char at index
+    let char;
+    // buffer of the value read
+    let buffer = '';
+    // custom regexp for a param
+    let customRe = '';
+    function consumeBuffer() {
+        if (!buffer) return;
+        if (state === 0 /* TokenizerState.Static */ ) segment.push({
+            type: 0 /* TokenType.Static */ ,
+            value: buffer
+        });
+        else if (state === 1 /* TokenizerState.Param */  || state === 2 /* TokenizerState.ParamRegExp */  || state === 3 /* TokenizerState.ParamRegExpEnd */ ) {
+            if (segment.length > 1 && (char === '*' || char === '+')) crash(`A repeatable param (${buffer}) must be alone in its segment. eg: '/:ids+.`);
+            segment.push({
+                type: 1 /* TokenType.Param */ ,
+                value: buffer,
+                regexp: customRe,
+                repeatable: char === '*' || char === '+',
+                optional: char === '*' || char === '?'
+            });
+        } else crash('Invalid state to consume buffer');
+        buffer = '';
+    }
+    function addCharToBuffer() {
+        buffer += char;
+    }
+    while(i < path.length){
+        char = path[i++];
+        if (char === '\\' && state !== 2 /* TokenizerState.ParamRegExp */ ) {
+            previousState = state;
+            state = 4 /* TokenizerState.EscapeNext */ ;
+            continue;
+        }
+        switch(state){
+            case 0 /* TokenizerState.Static */ :
+                if (char === '/') {
+                    if (buffer) consumeBuffer();
+                    finalizeSegment();
+                } else if (char === ':') {
+                    consumeBuffer();
+                    state = 1 /* TokenizerState.Param */ ;
+                } else addCharToBuffer();
+                break;
+            case 4 /* TokenizerState.EscapeNext */ :
+                addCharToBuffer();
+                state = previousState;
+                break;
+            case 1 /* TokenizerState.Param */ :
+                if (char === '(') state = 2 /* TokenizerState.ParamRegExp */ ;
+                else if (VALID_PARAM_RE.test(char)) addCharToBuffer();
+                else {
+                    consumeBuffer();
+                    state = 0 /* TokenizerState.Static */ ;
+                    // go back one character if we were not modifying
+                    if (char !== '*' && char !== '?' && char !== '+') i--;
+                }
+                break;
+            case 2 /* TokenizerState.ParamRegExp */ :
+                // TODO: is it worth handling nested regexp? like :p(?:prefix_([^/]+)_suffix)
+                // it already works by escaping the closing )
+                // https://paths.esm.dev/?p=AAMeJbiAwQEcDKbAoAAkP60PG2R6QAvgNaA6AFACM2ABuQBB#
+                // is this really something people need since you can also write
+                // /prefix_:p()_suffix
+                if (char === ')') {
+                    // handle the escaped )
+                    if (customRe[customRe.length - 1] == '\\') customRe = customRe.slice(0, -1) + char;
+                    else state = 3 /* TokenizerState.ParamRegExpEnd */ ;
+                } else customRe += char;
+                break;
+            case 3 /* TokenizerState.ParamRegExpEnd */ :
+                // same as finalizing a param
+                consumeBuffer();
+                state = 0 /* TokenizerState.Static */ ;
+                // go back one character if we were not modifying
+                if (char !== '*' && char !== '?' && char !== '+') i--;
+                customRe = '';
+                break;
+            default:
+                crash('Unknown state');
+                break;
+        }
+    }
+    if (state === 2 /* TokenizerState.ParamRegExp */ ) crash(`Unfinished custom RegExp for param "${buffer}"`);
+    consumeBuffer();
+    finalizeSegment();
+    // tokenCache.set(path, tokens)
+    return tokens;
+}
+function createRouteRecordMatcher(record, parent, options) {
+    const parser = tokensToParser(tokenizePath(record.path), options);
+    {
+        const existingKeys = new Set();
+        for (const key of parser.keys){
+            if (existingKeys.has(key.name)) warn(`Found duplicated params with name "${key.name}" for path "${record.path}". Only the last one will be available on "$route.params".`);
+            existingKeys.add(key.name);
+        }
+    }
+    const matcher = assign(parser, {
+        record,
+        parent,
+        // these needs to be populated by the parent
+        children: [],
+        alias: []
+    });
+    if (parent) // both are aliases or both are not aliases
+    // we don't want to mix them because the order is used when
+    // passing originalRecord in Matcher.addRoute
+    {
+        if (!matcher.record.aliasOf === !parent.record.aliasOf) parent.children.push(matcher);
+    }
+    return matcher;
+}
+/**
+ * Creates a Router Matcher.
+ *
+ * @internal
+ * @param routes - array of initial routes
+ * @param globalOptions - global route options
+ */ function createRouterMatcher(routes, globalOptions) {
+    // normalized ordered array of matchers
+    const matchers = [];
+    const matcherMap = new Map();
+    globalOptions = mergeOptions({
+        strict: false,
+        end: true,
+        sensitive: false
+    }, globalOptions);
+    function getRecordMatcher(name) {
+        return matcherMap.get(name);
+    }
+    function addRoute(record, parent, originalRecord) {
+        // used later on to remove by name
+        const isRootAdd = !originalRecord;
+        const mainNormalizedRecord = normalizeRouteRecord(record);
+        checkChildMissingNameWithEmptyPath(mainNormalizedRecord, parent);
+        // we might be the child of an alias
+        mainNormalizedRecord.aliasOf = originalRecord && originalRecord.record;
+        const options = mergeOptions(globalOptions, record);
+        // generate an array of records to correctly handle aliases
+        const normalizedRecords = [
+            mainNormalizedRecord
+        ];
+        if ('alias' in record) {
+            const aliases = typeof record.alias === 'string' ? [
+                record.alias
+            ] : record.alias;
+            for (const alias of aliases)normalizedRecords.push(// we need to normalize again to ensure the `mods` property
+            // being non enumerable
+            normalizeRouteRecord(assign({}, mainNormalizedRecord, {
+                // this allows us to hold a copy of the `components` option
+                // so that async components cache is hold on the original record
+                components: originalRecord ? originalRecord.record.components : mainNormalizedRecord.components,
+                path: alias,
+                // we might be the child of an alias
+                aliasOf: originalRecord ? originalRecord.record : mainNormalizedRecord
+            })));
+        }
+        let matcher;
+        let originalMatcher;
+        for (const normalizedRecord of normalizedRecords){
+            const { path } = normalizedRecord;
+            // Build up the path for nested routes if the child isn't an absolute
+            // route. Only add the / delimiter if the child path isn't empty and if the
+            // parent path doesn't have a trailing slash
+            if (parent && path[0] !== '/') {
+                const parentPath = parent.record.path;
+                const connectingSlash = parentPath[parentPath.length - 1] === '/' ? '' : '/';
+                normalizedRecord.path = parent.record.path + (path && connectingSlash + path);
+            }
+            if (normalizedRecord.path === '*') throw new Error('Catch all routes ("*") must now be defined using a param with a custom regexp.\nSee more at https://router.vuejs.org/guide/migration/#Removed-star-or-catch-all-routes.');
+            // create the object beforehand, so it can be passed to children
+            matcher = createRouteRecordMatcher(normalizedRecord, parent, options);
+            if (parent && path[0] === '/') checkMissingParamsInAbsolutePath(matcher, parent);
+            // if we are an alias we must tell the original record that we exist,
+            // so we can be removed
+            if (originalRecord) {
+                originalRecord.alias.push(matcher);
+                checkSameParams(originalRecord, matcher);
+            } else {
+                // otherwise, the first record is the original and others are aliases
+                originalMatcher = originalMatcher || matcher;
+                if (originalMatcher !== matcher) originalMatcher.alias.push(matcher);
+                // remove the route if named and only for the top record (avoid in nested calls)
+                // this works because the original record is the first one
+                if (isRootAdd && record.name && !isAliasRecord(matcher)) {
+                    checkSameNameAsAncestor(record, parent);
+                    removeRoute(record.name);
+                }
+            }
+            // Avoid adding a record that doesn't display anything. This allows passing through records without a component to
+            // not be reached and pass through the catch all route
+            if (isMatchable(matcher)) insertMatcher(matcher);
+            if (mainNormalizedRecord.children) {
+                const children = mainNormalizedRecord.children;
+                for(let i = 0; i < children.length; i++)addRoute(children[i], matcher, originalRecord && originalRecord.children[i]);
+            }
+            // if there was no original record, then the first one was not an alias and all
+            // other aliases (if any) need to reference this record when adding children
+            originalRecord = originalRecord || matcher;
+        // TODO: add normalized records for more flexibility
+        // if (parent && isAliasRecord(originalRecord)) {
+        //   parent.children.push(originalRecord)
+        // }
+        }
+        return originalMatcher ? ()=>{
+            // since other matchers are aliases, they should be removed by the original matcher
+            removeRoute(originalMatcher);
+        } : noop;
+    }
+    function removeRoute(matcherRef) {
+        if (isRouteName(matcherRef)) {
+            const matcher = matcherMap.get(matcherRef);
+            if (matcher) {
+                matcherMap.delete(matcherRef);
+                matchers.splice(matchers.indexOf(matcher), 1);
+                matcher.children.forEach(removeRoute);
+                matcher.alias.forEach(removeRoute);
+            }
+        } else {
+            const index = matchers.indexOf(matcherRef);
+            if (index > -1) {
+                matchers.splice(index, 1);
+                if (matcherRef.record.name) matcherMap.delete(matcherRef.record.name);
+                matcherRef.children.forEach(removeRoute);
+                matcherRef.alias.forEach(removeRoute);
+            }
+        }
+    }
+    function getRoutes() {
+        return matchers;
+    }
+    function insertMatcher(matcher) {
+        const index = findInsertionIndex(matcher, matchers);
+        matchers.splice(index, 0, matcher);
+        // only add the original record to the name map
+        if (matcher.record.name && !isAliasRecord(matcher)) matcherMap.set(matcher.record.name, matcher);
+    }
+    function resolve(location1, currentLocation) {
+        let matcher;
+        let params = {};
+        let path;
+        let name;
+        if ('name' in location1 && location1.name) {
+            matcher = matcherMap.get(location1.name);
+            if (!matcher) throw createRouterError(1 /* ErrorTypes.MATCHER_NOT_FOUND */ , {
+                location: location1
+            });
+            {
+                const invalidParams = Object.keys(location1.params || {}).filter((paramName)=>!matcher.keys.find((k)=>k.name === paramName));
+                if (invalidParams.length) warn(`Discarded invalid param(s) "${invalidParams.join('", "')}" when navigating. See https://github.com/vuejs/router/blob/main/packages/router/CHANGELOG.md#414-2022-08-22 for more details.`);
+            }
+            name = matcher.record.name;
+            params = assign(// paramsFromLocation is a new object
+            paramsFromLocation(currentLocation.params, // only keep params that exist in the resolved location
+            // only keep optional params coming from a parent record
+            matcher.keys.filter((k)=>!k.optional).concat(matcher.parent ? matcher.parent.keys.filter((k)=>k.optional) : []).map((k)=>k.name)), // discard any existing params in the current location that do not exist here
+            // #1497 this ensures better active/exact matching
+            location1.params && paramsFromLocation(location1.params, matcher.keys.map((k)=>k.name)));
+            // throws if cannot be stringified
+            path = matcher.stringify(params);
+        } else if (location1.path != null) {
+            // no need to resolve the path with the matcher as it was provided
+            // this also allows the user to control the encoding
+            path = location1.path;
+            if (!path.startsWith('/')) warn(`The Matcher cannot resolve relative paths but received "${path}". Unless you directly called \`matcher.resolve("${path}")\`, this is probably a bug in vue-router. Please open an issue at https://github.com/vuejs/router/issues/new/choose.`);
+            matcher = matchers.find((m)=>m.re.test(path));
+            // matcher should have a value after the loop
+            if (matcher) {
+                // we know the matcher works because we tested the regexp
+                params = matcher.parse(path);
+                name = matcher.record.name;
+            }
+        // location is a relative path
+        } else {
+            // match by name or path of current route
+            matcher = currentLocation.name ? matcherMap.get(currentLocation.name) : matchers.find((m)=>m.re.test(currentLocation.path));
+            if (!matcher) throw createRouterError(1 /* ErrorTypes.MATCHER_NOT_FOUND */ , {
+                location: location1,
+                currentLocation
+            });
+            name = matcher.record.name;
+            // since we are navigating to the same location, we don't need to pick the
+            // params like when `name` is provided
+            params = assign({}, currentLocation.params, location1.params);
+            path = matcher.stringify(params);
+        }
+        const matched = [];
+        let parentMatcher = matcher;
+        while(parentMatcher){
+            // reversed order so parents are at the beginning
+            matched.unshift(parentMatcher.record);
+            parentMatcher = parentMatcher.parent;
+        }
+        return {
+            name,
+            path,
+            params,
+            matched,
+            meta: mergeMetaFields(matched)
+        };
+    }
+    // add initial routes
+    routes.forEach((route)=>addRoute(route));
+    function clearRoutes() {
+        matchers.length = 0;
+        matcherMap.clear();
+    }
+    return {
+        addRoute,
+        resolve,
+        removeRoute,
+        clearRoutes,
+        getRoutes,
+        getRecordMatcher
+    };
+}
+function paramsFromLocation(params, keys) {
+    const newParams = {};
+    for (const key of keys)if (key in params) newParams[key] = params[key];
+    return newParams;
+}
+/**
+ * Normalizes a RouteRecordRaw. Creates a copy
+ *
+ * @param record
+ * @returns the normalized version
+ */ function normalizeRouteRecord(record) {
+    const normalized = {
+        path: record.path,
+        redirect: record.redirect,
+        name: record.name,
+        meta: record.meta || {},
+        aliasOf: record.aliasOf,
+        beforeEnter: record.beforeEnter,
+        props: normalizeRecordProps(record),
+        children: record.children || [],
+        instances: {},
+        leaveGuards: new Set(),
+        updateGuards: new Set(),
+        enterCallbacks: {},
+        // must be declared afterwards
+        // mods: {},
+        components: 'components' in record ? record.components || null : record.component && {
+            default: record.component
+        }
+    };
+    // mods contain modules and shouldn't be copied,
+    // logged or anything. It's just used for internal
+    // advanced use cases like data loaders
+    Object.defineProperty(normalized, 'mods', {
+        value: {}
+    });
+    return normalized;
+}
+/**
+ * Normalize the optional `props` in a record to always be an object similar to
+ * components. Also accept a boolean for components.
+ * @param record
+ */ function normalizeRecordProps(record) {
+    const propsObject = {};
+    // props does not exist on redirect records, but we can set false directly
+    const props = record.props || false;
+    if ('component' in record) propsObject.default = props;
+    else // NOTE: we could also allow a function to be applied to every component.
+    // Would need user feedback for use cases
+    for(const name in record.components)propsObject[name] = typeof props === 'object' ? props[name] : props;
+    return propsObject;
+}
+/**
+ * Checks if a record or any of its parent is an alias
+ * @param record
+ */ function isAliasRecord(record) {
+    while(record){
+        if (record.record.aliasOf) return true;
+        record = record.parent;
+    }
+    return false;
+}
+/**
+ * Merge meta fields of an array of records
+ *
+ * @param matched - array of matched records
+ */ function mergeMetaFields(matched) {
+    return matched.reduce((meta, record)=>assign(meta, record.meta), {});
+}
+function mergeOptions(defaults, partialOptions) {
+    const options = {};
+    for(const key in defaults)options[key] = key in partialOptions ? partialOptions[key] : defaults[key];
+    return options;
+}
+function isSameParam(a, b) {
+    return a.name === b.name && a.optional === b.optional && a.repeatable === b.repeatable;
+}
+/**
+ * Check if a path and its alias have the same required params
+ *
+ * @param a - original record
+ * @param b - alias record
+ */ function checkSameParams(a, b) {
+    for (const key of a.keys){
+        if (!key.optional && !b.keys.find(isSameParam.bind(null, key))) return warn(`Alias "${b.record.path}" and the original record: "${a.record.path}" must have the exact same param named "${key.name}"`);
+    }
+    for (const key of b.keys){
+        if (!key.optional && !a.keys.find(isSameParam.bind(null, key))) return warn(`Alias "${b.record.path}" and the original record: "${a.record.path}" must have the exact same param named "${key.name}"`);
+    }
+}
+/**
+ * A route with a name and a child with an empty path without a name should warn when adding the route
+ *
+ * @param mainNormalizedRecord - RouteRecordNormalized
+ * @param parent - RouteRecordMatcher
+ */ function checkChildMissingNameWithEmptyPath(mainNormalizedRecord, parent) {
+    if (parent && parent.record.name && !mainNormalizedRecord.name && !mainNormalizedRecord.path) warn(`The route named "${String(parent.record.name)}" has a child without a name and an empty path. Using that name won't render the empty path child so you probably want to move the name to the child instead. If this is intentional, add a name to the child route to remove the warning.`);
+}
+function checkSameNameAsAncestor(record, parent) {
+    for(let ancestor = parent; ancestor; ancestor = ancestor.parent){
+        if (ancestor.record.name === record.name) throw new Error(`A route named "${String(record.name)}" has been added as a ${parent === ancestor ? 'child' : 'descendant'} of a route with the same name. Route names must be unique and a nested route cannot use the same name as an ancestor.`);
+    }
+}
+function checkMissingParamsInAbsolutePath(record, parent) {
+    for (const key of parent.keys){
+        if (!record.keys.find(isSameParam.bind(null, key))) return warn(`Absolute path "${record.record.path}" must have the exact same param named "${key.name}" as its parent "${parent.record.path}".`);
+    }
+}
+/**
+ * Performs a binary search to find the correct insertion index for a new matcher.
+ *
+ * Matchers are primarily sorted by their score. If scores are tied then we also consider parent/child relationships,
+ * with descendants coming before ancestors. If there's still a tie, new routes are inserted after existing routes.
+ *
+ * @param matcher - new matcher to be inserted
+ * @param matchers - existing matchers
+ */ function findInsertionIndex(matcher, matchers) {
+    // First phase: binary search based on score
+    let lower = 0;
+    let upper = matchers.length;
+    while(lower !== upper){
+        const mid = lower + upper >> 1;
+        const sortOrder = comparePathParserScore(matcher, matchers[mid]);
+        if (sortOrder < 0) upper = mid;
+        else lower = mid + 1;
+    }
+    // Second phase: check for an ancestor with the same score
+    const insertionAncestor = getInsertionAncestor(matcher);
+    if (insertionAncestor) {
+        upper = matchers.lastIndexOf(insertionAncestor, upper - 1);
+        if (upper < 0) // This should never happen
+        warn(`Finding ancestor route "${insertionAncestor.record.path}" failed for "${matcher.record.path}"`);
+    }
+    return upper;
+}
+function getInsertionAncestor(matcher) {
+    let ancestor = matcher;
+    while(ancestor = ancestor.parent){
+        if (isMatchable(ancestor) && comparePathParserScore(matcher, ancestor) === 0) return ancestor;
+    }
+    return;
+}
+/**
+ * Checks if a matcher can be reachable. This means if it's possible to reach it as a route. For example, routes without
+ * a component, or name, or redirect, are just used to group other routes.
+ * @param matcher
+ * @param matcher.record record of the matcher
+ * @returns
+ */ function isMatchable({ record }) {
+    return !!(record.name || record.components && Object.keys(record.components).length || record.redirect);
+}
+/**
+ * Transforms a queryString into a {@link LocationQuery} object. Accept both, a
+ * version with the leading `?` and without Should work as URLSearchParams
+
+ * @internal
+ *
+ * @param search - search string to parse
+ * @returns a query object
+ */ function parseQuery(search) {
+    const query = {};
+    // avoid creating an object with an empty key and empty value
+    // because of split('&')
+    if (search === '' || search === '?') return query;
+    const hasLeadingIM = search[0] === '?';
+    const searchParams = (hasLeadingIM ? search.slice(1) : search).split('&');
+    for(let i = 0; i < searchParams.length; ++i){
+        // pre decode the + into space
+        const searchParam = searchParams[i].replace(PLUS_RE, ' ');
+        // allow the = character
+        const eqPos = searchParam.indexOf('=');
+        const key = decode(eqPos < 0 ? searchParam : searchParam.slice(0, eqPos));
+        const value = eqPos < 0 ? null : decode(searchParam.slice(eqPos + 1));
+        if (key in query) {
+            // an extra variable for ts types
+            let currentValue = query[key];
+            if (!isArray(currentValue)) currentValue = query[key] = [
+                currentValue
+            ];
+            currentValue.push(value);
+        } else query[key] = value;
+    }
+    return query;
+}
+/**
+ * Stringifies a {@link LocationQueryRaw} object. Like `URLSearchParams`, it
+ * doesn't prepend a `?`
+ *
+ * @internal
+ *
+ * @param query - query object to stringify
+ * @returns string version of the query without the leading `?`
+ */ function stringifyQuery(query) {
+    let search = '';
+    for(let key in query){
+        const value = query[key];
+        key = encodeQueryKey(key);
+        if (value == null) {
+            // only null adds the value
+            if (value !== undefined) search += (search.length ? '&' : '') + key;
+            continue;
+        }
+        // keep null values
+        const values = isArray(value) ? value.map((v)=>v && encodeQueryValue(v)) : [
+            value && encodeQueryValue(value)
+        ];
+        values.forEach((value)=>{
+            // skip undefined values in arrays as if they were not present
+            // smaller code than using filter
+            if (value !== undefined) {
+                // only append & with non-empty search
+                search += (search.length ? '&' : '') + key;
+                if (value != null) search += '=' + value;
+            }
+        });
+    }
+    return search;
+}
+/**
+ * Transforms a {@link LocationQueryRaw} into a {@link LocationQuery} by casting
+ * numbers into strings, removing keys with an undefined value and replacing
+ * undefined with null in arrays
+ *
+ * @param query - query object to normalize
+ * @returns a normalized query object
+ */ function normalizeQuery(query) {
+    const normalizedQuery = {};
+    for(const key in query){
+        const value = query[key];
+        if (value !== undefined) normalizedQuery[key] = isArray(value) ? value.map((v)=>v == null ? null : '' + v) : value == null ? value : '' + value;
+    }
+    return normalizedQuery;
+}
+/**
+ * RouteRecord being rendered by the closest ancestor Router View. Used for
+ * `onBeforeRouteUpdate` and `onBeforeRouteLeave`. rvlm stands for Router View
+ * Location Matched
+ *
+ * @internal
+ */ const matchedRouteKey = Symbol('router view location matched');
+/**
+ * Allows overriding the router view depth to control which component in
+ * `matched` is rendered. rvd stands for Router View Depth
+ *
+ * @internal
+ */ const viewDepthKey = Symbol('router view depth');
+/**
+ * Allows overriding the router instance returned by `useRouter` in tests. r
+ * stands for router
+ *
+ * @internal
+ */ const routerKey = Symbol('router');
+/**
+ * Allows overriding the current route returned by `useRoute` in tests. rl
+ * stands for route location
+ *
+ * @internal
+ */ const routeLocationKey = Symbol('route location');
+/**
+ * Allows overriding the current route used by router-view. Internally this is
+ * used when the `route` prop is passed.
+ *
+ * @internal
+ */ const routerViewLocationKey = Symbol('router view location');
+/**
+ * Create a list of callbacks that can be reset. Used to create before and after navigation guards list
+ */ function useCallbacks() {
+    let handlers = [];
+    function add(handler) {
+        handlers.push(handler);
+        return ()=>{
+            const i = handlers.indexOf(handler);
+            if (i > -1) handlers.splice(i, 1);
+        };
+    }
+    function reset() {
+        handlers = [];
+    }
+    return {
+        add,
+        list: ()=>handlers.slice(),
+        reset
+    };
+}
+function registerGuard(record, name, guard) {
+    const removeFromList = ()=>{
+        record[name].delete(guard);
+    };
+    (0, _vue.onUnmounted)(removeFromList);
+    (0, _vue.onDeactivated)(removeFromList);
+    (0, _vue.onActivated)(()=>{
+        record[name].add(guard);
+    });
+    record[name].add(guard);
+}
+/**
+ * Add a navigation guard that triggers whenever the component for the current
+ * location is about to be left. Similar to {@link beforeRouteLeave} but can be
+ * used in any component. The guard is removed when the component is unmounted.
+ *
+ * @param leaveGuard - {@link NavigationGuard}
+ */ function onBeforeRouteLeave(leaveGuard) {
+    if (!(0, _vue.getCurrentInstance)()) {
+        warn('getCurrentInstance() returned null. onBeforeRouteLeave() must be called at the top of a setup function');
+        return;
+    }
+    const activeRecord = (0, _vue.inject)(matchedRouteKey, // to avoid warning
+    {}).value;
+    if (!activeRecord) {
+        warn('No active route record was found when calling `onBeforeRouteLeave()`. Make sure you call this function inside a component child of <router-view>. Maybe you called it inside of App.vue?');
+        return;
+    }
+    registerGuard(activeRecord, 'leaveGuards', leaveGuard);
+}
+/**
+ * Add a navigation guard that triggers whenever the current location is about
+ * to be updated. Similar to {@link beforeRouteUpdate} but can be used in any
+ * component. The guard is removed when the component is unmounted.
+ *
+ * @param updateGuard - {@link NavigationGuard}
+ */ function onBeforeRouteUpdate(updateGuard) {
+    if (!(0, _vue.getCurrentInstance)()) {
+        warn('getCurrentInstance() returned null. onBeforeRouteUpdate() must be called at the top of a setup function');
+        return;
+    }
+    const activeRecord = (0, _vue.inject)(matchedRouteKey, // to avoid warning
+    {}).value;
+    if (!activeRecord) {
+        warn('No active route record was found when calling `onBeforeRouteUpdate()`. Make sure you call this function inside a component child of <router-view>. Maybe you called it inside of App.vue?');
+        return;
+    }
+    registerGuard(activeRecord, 'updateGuards', updateGuard);
+}
+function guardToPromiseFn(guard, to, from, record, name, runWithContext = (fn)=>fn()) {
+    // keep a reference to the enterCallbackArray to prevent pushing callbacks if a new navigation took place
+    const enterCallbackArray = record && // name is defined if record is because of the function overload
+    (record.enterCallbacks[name] = record.enterCallbacks[name] || []);
+    return ()=>new Promise((resolve, reject)=>{
+            const next = (valid)=>{
+                if (valid === false) reject(createRouterError(4 /* ErrorTypes.NAVIGATION_ABORTED */ , {
+                    from,
+                    to
+                }));
+                else if (valid instanceof Error) reject(valid);
+                else if (isRouteLocation(valid)) reject(createRouterError(2 /* ErrorTypes.NAVIGATION_GUARD_REDIRECT */ , {
+                    from: to,
+                    to: valid
+                }));
+                else {
+                    if (enterCallbackArray && // since enterCallbackArray is truthy, both record and name also are
+                    record.enterCallbacks[name] === enterCallbackArray && typeof valid === 'function') enterCallbackArray.push(valid);
+                    resolve();
+                }
+            };
+            // wrapping with Promise.resolve allows it to work with both async and sync guards
+            const guardReturn = runWithContext(()=>guard.call(record && record.instances[name], to, from, canOnlyBeCalledOnce(next, to, from)));
+            let guardCall = Promise.resolve(guardReturn);
+            if (guard.length < 3) guardCall = guardCall.then(next);
+            if (guard.length > 2) {
+                const message = `The "next" callback was never called inside of ${guard.name ? '"' + guard.name + '"' : ''}:\n${guard.toString()}\n. If you are returning a value instead of calling "next", make sure to remove the "next" parameter from your function.`;
+                if (typeof guardReturn === 'object' && 'then' in guardReturn) guardCall = guardCall.then((resolvedValue)=>{
+                    // @ts-expect-error: _called is added at canOnlyBeCalledOnce
+                    if (!next._called) {
+                        warn(message);
+                        return Promise.reject(new Error('Invalid navigation guard'));
+                    }
+                    return resolvedValue;
+                });
+                else if (guardReturn !== undefined) // @ts-expect-error: _called is added at canOnlyBeCalledOnce
+                {
+                    if (!next._called) {
+                        warn(message);
+                        reject(new Error('Invalid navigation guard'));
+                        return;
+                    }
+                }
+            }
+            guardCall.catch((err)=>reject(err));
+        });
+}
+function canOnlyBeCalledOnce(next, to, from) {
+    let called = 0;
+    return function() {
+        if (called++ === 1) warn(`The "next" callback was called more than once in one navigation guard when going from "${from.fullPath}" to "${to.fullPath}". It should be called exactly one time in each navigation guard. This will fail in production.`);
+        // @ts-expect-error: we put it in the original one because it's easier to check
+        next._called = true;
+        if (called === 1) next.apply(null, arguments);
+    };
+}
+function extractComponentsGuards(matched, guardType, to, from, runWithContext = (fn)=>fn()) {
+    const guards = [];
+    for (const record of matched){
+        if (!record.components && !record.children.length) warn(`Record with path "${record.path}" is either missing a "component(s)"` + ` or "children" property.`);
+        for(const name in record.components){
+            let rawComponent = record.components[name];
+            if (!rawComponent || typeof rawComponent !== 'object' && typeof rawComponent !== 'function') {
+                warn(`Component "${name}" in record with path "${record.path}" is not` + ` a valid component. Received "${String(rawComponent)}".`);
+                // throw to ensure we stop here but warn to ensure the message isn't
+                // missed by the user
+                throw new Error('Invalid route component');
+            } else if ('then' in rawComponent) {
+                // warn if user wrote import('/component.vue') instead of () =>
+                // import('./component.vue')
+                warn(`Component "${name}" in record with path "${record.path}" is a ` + `Promise instead of a function that returns a Promise. Did you ` + `write "import('./MyPage.vue')" instead of ` + `"() => import('./MyPage.vue')" ? This will break in ` + `production if not fixed.`);
+                const promise = rawComponent;
+                rawComponent = ()=>promise;
+            } else if (rawComponent.__asyncLoader && // warn only once per component
+            !rawComponent.__warnedDefineAsync) {
+                rawComponent.__warnedDefineAsync = true;
+                warn(`Component "${name}" in record with path "${record.path}" is defined ` + `using "defineAsyncComponent()". ` + `Write "() => import('./MyPage.vue')" instead of ` + `"defineAsyncComponent(() => import('./MyPage.vue'))".`);
+            }
+            // skip update and leave guards if the route component is not mounted
+            if (guardType !== 'beforeRouteEnter' && !record.instances[name]) continue;
+            if (isRouteComponent(rawComponent)) {
+                // __vccOpts is added by vue-class-component and contain the regular options
+                const options = rawComponent.__vccOpts || rawComponent;
+                const guard = options[guardType];
+                guard && guards.push(guardToPromiseFn(guard, to, from, record, name, runWithContext));
+            } else {
+                // start requesting the chunk already
+                let componentPromise = rawComponent();
+                if (!('catch' in componentPromise)) {
+                    warn(`Component "${name}" in record with path "${record.path}" is a function that does not return a Promise. If you were passing a functional component, make sure to add a "displayName" to the component. This will break in production if not fixed.`);
+                    componentPromise = Promise.resolve(componentPromise);
+                }
+                guards.push(()=>componentPromise.then((resolved)=>{
+                        if (!resolved) throw new Error(`Couldn't resolve component "${name}" at "${record.path}"`);
+                        const resolvedComponent = isESModule(resolved) ? resolved.default : resolved;
+                        // keep the resolved module for plugins like data loaders
+                        record.mods[name] = resolved;
+                        // replace the function with the resolved component
+                        // cannot be null or undefined because we went into the for loop
+                        record.components[name] = resolvedComponent;
+                        // __vccOpts is added by vue-class-component and contain the regular options
+                        const options = resolvedComponent.__vccOpts || resolvedComponent;
+                        const guard = options[guardType];
+                        return guard && guardToPromiseFn(guard, to, from, record, name, runWithContext)();
+                    }));
+            }
+        }
+    }
+    return guards;
+}
+/**
+ * Ensures a route is loaded, so it can be passed as o prop to `<RouterView>`.
+ *
+ * @param route - resolved route to load
+ */ function loadRouteLocation(route) {
+    return route.matched.every((record)=>record.redirect) ? Promise.reject(new Error('Cannot load a route that redirects.')) : Promise.all(route.matched.map((record)=>record.components && Promise.all(Object.keys(record.components).reduce((promises, name)=>{
+            const rawComponent = record.components[name];
+            if (typeof rawComponent === 'function' && !('displayName' in rawComponent)) promises.push(rawComponent().then((resolved)=>{
+                if (!resolved) return Promise.reject(new Error(`Couldn't resolve component "${name}" at "${record.path}". Ensure you passed a function that returns a promise.`));
+                const resolvedComponent = isESModule(resolved) ? resolved.default : resolved;
+                // keep the resolved module for plugins like data loaders
+                record.mods[name] = resolved;
+                // replace the function with the resolved component
+                // cannot be null or undefined because we went into the for loop
+                record.components[name] = resolvedComponent;
+                return;
+            }));
+            return promises;
+        }, [])))).then(()=>route);
+}
+// TODO: we could allow currentRoute as a prop to expose `isActive` and
+// `isExactActive` behavior should go through an RFC
+/**
+ * Returns the internal behavior of a {@link RouterLink} without the rendering part.
+ *
+ * @param props - a `to` location and an optional `replace` flag
+ */ function useLink(props) {
+    const router = (0, _vue.inject)(routerKey);
+    const currentRoute = (0, _vue.inject)(routeLocationKey);
+    let hasPrevious = false;
+    let previousTo = null;
+    const route = (0, _vue.computed)(()=>{
+        const to = (0, _vue.unref)(props.to);
+        if (!hasPrevious || to !== previousTo) {
+            if (!isRouteLocation(to)) {
+                if (hasPrevious) warn(`Invalid value for prop "to" in useLink()\n- to:`, to, `\n- previous to:`, previousTo, `\n- props:`, props);
+                else warn(`Invalid value for prop "to" in useLink()\n- to:`, to, `\n- props:`, props);
+            }
+            previousTo = to;
+            hasPrevious = true;
+        }
+        return router.resolve(to);
+    });
+    const activeRecordIndex = (0, _vue.computed)(()=>{
+        const { matched } = route.value;
+        const { length } = matched;
+        const routeMatched = matched[length - 1];
+        const currentMatched = currentRoute.matched;
+        if (!routeMatched || !currentMatched.length) return -1;
+        const index = currentMatched.findIndex(isSameRouteRecord.bind(null, routeMatched));
+        if (index > -1) return index;
+        // possible parent record
+        const parentRecordPath = getOriginalPath(matched[length - 2]);
+        return(// we are dealing with nested routes
+        length > 1 && // if the parent and matched route have the same path, this link is
+        // referring to the empty child. Or we currently are on a different
+        // child of the same parent
+        getOriginalPath(routeMatched) === parentRecordPath && // avoid comparing the child with its parent
+        currentMatched[currentMatched.length - 1].path !== parentRecordPath ? currentMatched.findIndex(isSameRouteRecord.bind(null, matched[length - 2])) : index);
+    });
+    const isActive = (0, _vue.computed)(()=>activeRecordIndex.value > -1 && includesParams(currentRoute.params, route.value.params));
+    const isExactActive = (0, _vue.computed)(()=>activeRecordIndex.value > -1 && activeRecordIndex.value === currentRoute.matched.length - 1 && isSameRouteLocationParams(currentRoute.params, route.value.params));
+    function navigate(e = {}) {
+        if (guardEvent(e)) {
+            const p = router[(0, _vue.unref)(props.replace) ? 'replace' : 'push']((0, _vue.unref)(props.to)).catch(noop);
+            if (props.viewTransition && typeof document !== 'undefined' && 'startViewTransition' in document) document.startViewTransition(()=>p);
+            return p;
+        }
+        return Promise.resolve();
+    }
+    // devtools only
+    if (isBrowser) {
+        const instance = (0, _vue.getCurrentInstance)();
+        if (instance) {
+            const linkContextDevtools = {
+                route: route.value,
+                isActive: isActive.value,
+                isExactActive: isExactActive.value,
+                error: null
+            };
+            // @ts-expect-error: this is internal
+            instance.__vrl_devtools = instance.__vrl_devtools || [];
+            // @ts-expect-error: this is internal
+            instance.__vrl_devtools.push(linkContextDevtools);
+            (0, _vue.watchEffect)(()=>{
+                linkContextDevtools.route = route.value;
+                linkContextDevtools.isActive = isActive.value;
+                linkContextDevtools.isExactActive = isExactActive.value;
+                linkContextDevtools.error = isRouteLocation((0, _vue.unref)(props.to)) ? null : 'Invalid "to" value';
+            }, {
+                flush: 'post'
+            });
+        }
+    }
+    /**
+     * NOTE: update {@link _RouterLinkI}'s `$slots` type when updating this
+     */ return {
+        route,
+        href: (0, _vue.computed)(()=>route.value.href),
+        isActive,
+        isExactActive,
+        navigate
+    };
+}
+function preferSingleVNode(vnodes) {
+    return vnodes.length === 1 ? vnodes[0] : vnodes;
+}
+const RouterLinkImpl = /*#__PURE__*/ (0, _vue.defineComponent)({
+    name: 'RouterLink',
+    compatConfig: {
+        MODE: 3
+    },
+    props: {
+        to: {
+            type: [
+                String,
+                Object
+            ],
+            required: true
+        },
+        replace: Boolean,
+        activeClass: String,
+        // inactiveClass: String,
+        exactActiveClass: String,
+        custom: Boolean,
+        ariaCurrentValue: {
+            type: String,
+            default: 'page'
+        }
+    },
+    useLink,
+    setup (props, { slots }) {
+        const link = (0, _vue.reactive)(useLink(props));
+        const { options } = (0, _vue.inject)(routerKey);
+        const elClass = (0, _vue.computed)(()=>({
+                [getLinkClass(props.activeClass, options.linkActiveClass, 'router-link-active')]: link.isActive,
+                // [getLinkClass(
+                //   props.inactiveClass,
+                //   options.linkInactiveClass,
+                //   'router-link-inactive'
+                // )]: !link.isExactActive,
+                [getLinkClass(props.exactActiveClass, options.linkExactActiveClass, 'router-link-exact-active')]: link.isExactActive
+            }));
+        return ()=>{
+            const children = slots.default && preferSingleVNode(slots.default(link));
+            return props.custom ? children : (0, _vue.h)('a', {
+                'aria-current': link.isExactActive ? props.ariaCurrentValue : null,
+                href: link.href,
+                // this would override user added attrs but Vue will still add
+                // the listener, so we end up triggering both
+                onClick: link.navigate,
+                class: elClass.value
+            }, children);
+        };
+    }
+});
+// export the public type for h/tsx inference
+// also to avoid inline import() in generated d.ts files
+/**
+ * Component to render a link that triggers a navigation on click.
+ */ const RouterLink = RouterLinkImpl;
+function guardEvent(e) {
+    // don't redirect with control keys
+    if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) return;
+    // don't redirect when preventDefault called
+    if (e.defaultPrevented) return;
+    // don't redirect on right click
+    if (e.button !== undefined && e.button !== 0) return;
+    // don't redirect if `target="_blank"`
+    // @ts-expect-error getAttribute does exist
+    if (e.currentTarget && e.currentTarget.getAttribute) {
+        // @ts-expect-error getAttribute exists
+        const target = e.currentTarget.getAttribute('target');
+        if (/\b_blank\b/i.test(target)) return;
+    }
+    // this may be a Weex event which doesn't have this method
+    if (e.preventDefault) e.preventDefault();
+    return true;
+}
+function includesParams(outer, inner) {
+    for(const key in inner){
+        const innerValue = inner[key];
+        const outerValue = outer[key];
+        if (typeof innerValue === 'string') {
+            if (innerValue !== outerValue) return false;
+        } else {
+            if (!isArray(outerValue) || outerValue.length !== innerValue.length || innerValue.some((value, i)=>value !== outerValue[i])) return false;
+        }
+    }
+    return true;
+}
+/**
+ * Get the original path value of a record by following its aliasOf
+ * @param record
+ */ function getOriginalPath(record) {
+    return record ? record.aliasOf ? record.aliasOf.path : record.path : '';
+}
+/**
+ * Utility class to get the active class based on defaults.
+ * @param propClass
+ * @param globalClass
+ * @param defaultClass
+ */ const getLinkClass = (propClass, globalClass, defaultClass)=>propClass != null ? propClass : globalClass != null ? globalClass : defaultClass;
+const RouterViewImpl = /*#__PURE__*/ (0, _vue.defineComponent)({
+    name: 'RouterView',
+    // #674 we manually inherit them
+    inheritAttrs: false,
+    props: {
+        name: {
+            type: String,
+            default: 'default'
+        },
+        route: Object
+    },
+    // Better compat for @vue/compat users
+    // https://github.com/vuejs/router/issues/1315
+    compatConfig: {
+        MODE: 3
+    },
+    setup (props, { attrs, slots }) {
+        warnDeprecatedUsage();
+        const injectedRoute = (0, _vue.inject)(routerViewLocationKey);
+        const routeToDisplay = (0, _vue.computed)(()=>props.route || injectedRoute.value);
+        const injectedDepth = (0, _vue.inject)(viewDepthKey, 0);
+        // The depth changes based on empty components option, which allows passthrough routes e.g. routes with children
+        // that are used to reuse the `path` property
+        const depth = (0, _vue.computed)(()=>{
+            let initialDepth = (0, _vue.unref)(injectedDepth);
+            const { matched } = routeToDisplay.value;
+            let matchedRoute;
+            while((matchedRoute = matched[initialDepth]) && !matchedRoute.components)initialDepth++;
+            return initialDepth;
+        });
+        const matchedRouteRef = (0, _vue.computed)(()=>routeToDisplay.value.matched[depth.value]);
+        (0, _vue.provide)(viewDepthKey, (0, _vue.computed)(()=>depth.value + 1));
+        (0, _vue.provide)(matchedRouteKey, matchedRouteRef);
+        (0, _vue.provide)(routerViewLocationKey, routeToDisplay);
+        const viewRef = (0, _vue.ref)();
+        // watch at the same time the component instance, the route record we are
+        // rendering, and the name
+        (0, _vue.watch)(()=>[
+                viewRef.value,
+                matchedRouteRef.value,
+                props.name
+            ], ([instance, to, name], [oldInstance, from, oldName])=>{
+            // copy reused instances
+            if (to) {
+                // this will update the instance for new instances as well as reused
+                // instances when navigating to a new route
+                to.instances[name] = instance;
+                // the component instance is reused for a different route or name, so
+                // we copy any saved update or leave guards. With async setup, the
+                // mounting component will mount before the matchedRoute changes,
+                // making instance === oldInstance, so we check if guards have been
+                // added before. This works because we remove guards when
+                // unmounting/deactivating components
+                if (from && from !== to && instance && instance === oldInstance) {
+                    if (!to.leaveGuards.size) to.leaveGuards = from.leaveGuards;
+                    if (!to.updateGuards.size) to.updateGuards = from.updateGuards;
+                }
+            }
+            // trigger beforeRouteEnter next callbacks
+            if (instance && to && // if there is no instance but to and from are the same this might be
+            // the first visit
+            (!from || !isSameRouteRecord(to, from) || !oldInstance)) (to.enterCallbacks[name] || []).forEach((callback)=>callback(instance));
+        }, {
+            flush: 'post'
+        });
+        return ()=>{
+            const route = routeToDisplay.value;
+            // we need the value at the time we render because when we unmount, we
+            // navigated to a different location so the value is different
+            const currentName = props.name;
+            const matchedRoute = matchedRouteRef.value;
+            const ViewComponent = matchedRoute && matchedRoute.components[currentName];
+            if (!ViewComponent) return normalizeSlot(slots.default, {
+                Component: ViewComponent,
+                route
+            });
+            // props from route configuration
+            const routePropsOption = matchedRoute.props[currentName];
+            const routeProps = routePropsOption ? routePropsOption === true ? route.params : typeof routePropsOption === 'function' ? routePropsOption(route) : routePropsOption : null;
+            const onVnodeUnmounted = (vnode)=>{
+                // remove the instance reference to prevent leak
+                if (vnode.component.isUnmounted) matchedRoute.instances[currentName] = null;
+            };
+            const component = (0, _vue.h)(ViewComponent, assign({}, routeProps, attrs, {
+                onVnodeUnmounted,
+                ref: viewRef
+            }));
+            if (isBrowser && component.ref) {
+                // TODO: can display if it's an alias, its props
+                const info = {
+                    depth: depth.value,
+                    name: matchedRoute.name,
+                    path: matchedRoute.path,
+                    meta: matchedRoute.meta
+                };
+                const internalInstances = isArray(component.ref) ? component.ref.map((r)=>r.i) : [
+                    component.ref.i
+                ];
+                internalInstances.forEach((instance)=>{
+                    // @ts-expect-error
+                    instance.__vrv_devtools = info;
+                });
+            }
+            return(// pass the vnode to the slot as a prop.
+            // h and <component :is="..."> both accept vnodes
+            normalizeSlot(slots.default, {
+                Component: component,
+                route
+            }) || component);
+        };
+    }
+});
+function normalizeSlot(slot, data) {
+    if (!slot) return null;
+    const slotContent = slot(data);
+    return slotContent.length === 1 ? slotContent[0] : slotContent;
+}
+// export the public type for h/tsx inference
+// also to avoid inline import() in generated d.ts files
+/**
+ * Component to display the current route the user is at.
+ */ const RouterView = RouterViewImpl;
+// warn against deprecated usage with <transition> & <keep-alive>
+// due to functional component being no longer eager in Vue 3
+function warnDeprecatedUsage() {
+    const instance = (0, _vue.getCurrentInstance)();
+    const parentName = instance.parent && instance.parent.type.name;
+    const parentSubTreeType = instance.parent && instance.parent.subTree && instance.parent.subTree.type;
+    if (parentName && (parentName === 'KeepAlive' || parentName.includes('Transition')) && typeof parentSubTreeType === 'object' && parentSubTreeType.name === 'RouterView') {
+        const comp = parentName === 'KeepAlive' ? 'keep-alive' : 'transition';
+        warn(`<router-view> can no longer be used directly inside <transition> or <keep-alive>.\n` + `Use slot props instead:\n\n` + `<router-view v-slot="{ Component }">\n` + `  <${comp}>\n` + `    <component :is="Component" />\n` + `  </${comp}>\n` + `</router-view>`);
+    }
+}
+/**
+ * Copies a route location and removes any problematic properties that cannot be shown in devtools (e.g. Vue instances).
+ *
+ * @param routeLocation - routeLocation to format
+ * @param tooltip - optional tooltip
+ * @returns a copy of the routeLocation
+ */ function formatRouteLocation(routeLocation, tooltip) {
+    const copy = assign({}, routeLocation, {
+        // remove variables that can contain vue instances
+        matched: routeLocation.matched.map((matched)=>omit(matched, [
+                'instances',
+                'children',
+                'aliasOf'
+            ]))
+    });
+    return {
+        _custom: {
+            type: null,
+            readOnly: true,
+            display: routeLocation.fullPath,
+            tooltip,
+            value: copy
+        }
+    };
+}
+function formatDisplay(display) {
+    return {
+        _custom: {
+            display
+        }
+    };
+}
+// to support multiple router instances
+let routerId = 0;
+function addDevtools(app, router, matcher) {
+    // Take over router.beforeEach and afterEach
+    // make sure we are not registering the devtool twice
+    if (router.__hasDevtools) return;
+    router.__hasDevtools = true;
+    // increment to support multiple router instances
+    const id = routerId++;
+    (0, _devtoolsApi.setupDevtoolsPlugin)({
+        id: 'org.vuejs.router' + (id ? '.' + id : ''),
+        label: 'Vue Router',
+        packageName: 'vue-router',
+        homepage: 'https://router.vuejs.org',
+        logo: 'https://router.vuejs.org/logo.png',
+        componentStateTypes: [
+            'Routing'
+        ],
+        app
+    }, (api)=>{
+        if (typeof api.now !== 'function') console.warn('[Vue Router]: You seem to be using an outdated version of Vue Devtools. Are you still using the Beta release instead of the stable one? You can find the links at https://devtools.vuejs.org/guide/installation.html.');
+        // display state added by the router
+        api.on.inspectComponent((payload, ctx)=>{
+            if (payload.instanceData) payload.instanceData.state.push({
+                type: 'Routing',
+                key: '$route',
+                editable: false,
+                value: formatRouteLocation(router.currentRoute.value, 'Current Route')
+            });
+        });
+        // mark router-link as active and display tags on router views
+        api.on.visitComponentTree(({ treeNode: node, componentInstance })=>{
+            if (componentInstance.__vrv_devtools) {
+                const info = componentInstance.__vrv_devtools;
+                node.tags.push({
+                    label: (info.name ? `${info.name.toString()}: ` : '') + info.path,
+                    textColor: 0,
+                    tooltip: 'This component is rendered by &lt;router-view&gt;',
+                    backgroundColor: PINK_500
+                });
+            }
+            // if multiple useLink are used
+            if (isArray(componentInstance.__vrl_devtools)) {
+                componentInstance.__devtoolsApi = api;
+                componentInstance.__vrl_devtools.forEach((devtoolsData)=>{
+                    let label = devtoolsData.route.path;
+                    let backgroundColor = ORANGE_400;
+                    let tooltip = '';
+                    let textColor = 0;
+                    if (devtoolsData.error) {
+                        label = devtoolsData.error;
+                        backgroundColor = RED_100;
+                        textColor = RED_700;
+                    } else if (devtoolsData.isExactActive) {
+                        backgroundColor = LIME_500;
+                        tooltip = 'This is exactly active';
+                    } else if (devtoolsData.isActive) {
+                        backgroundColor = BLUE_600;
+                        tooltip = 'This link is active';
+                    }
+                    node.tags.push({
+                        label,
+                        textColor,
+                        tooltip,
+                        backgroundColor
+                    });
+                });
+            }
+        });
+        (0, _vue.watch)(router.currentRoute, ()=>{
+            // refresh active state
+            refreshRoutesView();
+            api.notifyComponentUpdate();
+            api.sendInspectorTree(routerInspectorId);
+            api.sendInspectorState(routerInspectorId);
+        });
+        const navigationsLayerId = 'router:navigations:' + id;
+        api.addTimelineLayer({
+            id: navigationsLayerId,
+            label: `Router${id ? ' ' + id : ''} Navigations`,
+            color: 0x40a8c4
+        });
+        // const errorsLayerId = 'router:errors'
+        // api.addTimelineLayer({
+        //   id: errorsLayerId,
+        //   label: 'Router Errors',
+        //   color: 0xea5455,
+        // })
+        router.onError((error, to)=>{
+            api.addTimelineEvent({
+                layerId: navigationsLayerId,
+                event: {
+                    title: 'Error during Navigation',
+                    subtitle: to.fullPath,
+                    logType: 'error',
+                    time: api.now(),
+                    data: {
+                        error
+                    },
+                    groupId: to.meta.__navigationId
+                }
+            });
+        });
+        // attached to `meta` and used to group events
+        let navigationId = 0;
+        router.beforeEach((to, from)=>{
+            const data = {
+                guard: formatDisplay('beforeEach'),
+                from: formatRouteLocation(from, 'Current Location during this navigation'),
+                to: formatRouteLocation(to, 'Target location')
+            };
+            // Used to group navigations together, hide from devtools
+            Object.defineProperty(to.meta, '__navigationId', {
+                value: navigationId++
+            });
+            api.addTimelineEvent({
+                layerId: navigationsLayerId,
+                event: {
+                    time: api.now(),
+                    title: 'Start of navigation',
+                    subtitle: to.fullPath,
+                    data,
+                    groupId: to.meta.__navigationId
+                }
+            });
+        });
+        router.afterEach((to, from, failure)=>{
+            const data = {
+                guard: formatDisplay('afterEach')
+            };
+            if (failure) {
+                data.failure = {
+                    _custom: {
+                        type: Error,
+                        readOnly: true,
+                        display: failure ? failure.message : '',
+                        tooltip: 'Navigation Failure',
+                        value: failure
+                    }
+                };
+                data.status = formatDisplay("\u274C");
+            } else data.status = formatDisplay("\u2705");
+            // we set here to have the right order
+            data.from = formatRouteLocation(from, 'Current Location during this navigation');
+            data.to = formatRouteLocation(to, 'Target location');
+            api.addTimelineEvent({
+                layerId: navigationsLayerId,
+                event: {
+                    title: 'End of navigation',
+                    subtitle: to.fullPath,
+                    time: api.now(),
+                    data,
+                    logType: failure ? 'warning' : 'default',
+                    groupId: to.meta.__navigationId
+                }
+            });
+        });
+        /**
+         * Inspector of Existing routes
+         */ const routerInspectorId = 'router-inspector:' + id;
+        api.addInspector({
+            id: routerInspectorId,
+            label: 'Routes' + (id ? ' ' + id : ''),
+            icon: 'book',
+            treeFilterPlaceholder: 'Search routes'
+        });
+        function refreshRoutesView() {
+            // the routes view isn't active
+            if (!activeRoutesPayload) return;
+            const payload = activeRoutesPayload;
+            // children routes will appear as nested
+            let routes = matcher.getRoutes().filter((route)=>!route.parent || // these routes have a parent with no component which will not appear in the view
+                // therefore we still need to include them
+                !route.parent.record.components);
+            // reset match state to false
+            routes.forEach(resetMatchStateOnRouteRecord);
+            // apply a match state if there is a payload
+            if (payload.filter) routes = routes.filter((route)=>// save matches state based on the payload
+                isRouteMatching(route, payload.filter.toLowerCase()));
+            // mark active routes
+            routes.forEach((route)=>markRouteRecordActive(route, router.currentRoute.value));
+            payload.rootNodes = routes.map(formatRouteRecordForInspector);
+        }
+        let activeRoutesPayload;
+        api.on.getInspectorTree((payload)=>{
+            activeRoutesPayload = payload;
+            if (payload.app === app && payload.inspectorId === routerInspectorId) refreshRoutesView();
+        });
+        /**
+         * Display information about the currently selected route record
+         */ api.on.getInspectorState((payload)=>{
+            if (payload.app === app && payload.inspectorId === routerInspectorId) {
+                const routes = matcher.getRoutes();
+                const route = routes.find((route)=>route.record.__vd_id === payload.nodeId);
+                if (route) payload.state = {
+                    options: formatRouteRecordMatcherForStateInspector(route)
+                };
+            }
+        });
+        api.sendInspectorTree(routerInspectorId);
+        api.sendInspectorState(routerInspectorId);
+    });
+}
+function modifierForKey(key) {
+    if (key.optional) return key.repeatable ? '*' : '?';
+    else return key.repeatable ? '+' : '';
+}
+function formatRouteRecordMatcherForStateInspector(route) {
+    const { record } = route;
+    const fields = [
+        {
+            editable: false,
+            key: 'path',
+            value: record.path
+        }
+    ];
+    if (record.name != null) fields.push({
+        editable: false,
+        key: 'name',
+        value: record.name
+    });
+    fields.push({
+        editable: false,
+        key: 'regexp',
+        value: route.re
+    });
+    if (route.keys.length) fields.push({
+        editable: false,
+        key: 'keys',
+        value: {
+            _custom: {
+                type: null,
+                readOnly: true,
+                display: route.keys.map((key)=>`${key.name}${modifierForKey(key)}`).join(' '),
+                tooltip: 'Param keys',
+                value: route.keys
+            }
+        }
+    });
+    if (record.redirect != null) fields.push({
+        editable: false,
+        key: 'redirect',
+        value: record.redirect
+    });
+    if (route.alias.length) fields.push({
+        editable: false,
+        key: 'aliases',
+        value: route.alias.map((alias)=>alias.record.path)
+    });
+    if (Object.keys(route.record.meta).length) fields.push({
+        editable: false,
+        key: 'meta',
+        value: route.record.meta
+    });
+    fields.push({
+        key: 'score',
+        editable: false,
+        value: {
+            _custom: {
+                type: null,
+                readOnly: true,
+                display: route.score.map((score)=>score.join(', ')).join(' | '),
+                tooltip: 'Score used to sort routes',
+                value: route.score
+            }
+        }
+    });
+    return fields;
+}
+/**
+ * Extracted from tailwind palette
+ */ const PINK_500 = 0xec4899;
+const BLUE_600 = 0x2563eb;
+const LIME_500 = 0x84cc16;
+const CYAN_400 = 0x22d3ee;
+const ORANGE_400 = 0xfb923c;
+// const GRAY_100 = 0xf4f4f5
+const DARK = 0x666666;
+const RED_100 = 0xfee2e2;
+const RED_700 = 0xb91c1c;
+function formatRouteRecordForInspector(route) {
+    const tags = [];
+    const { record } = route;
+    if (record.name != null) tags.push({
+        label: String(record.name),
+        textColor: 0,
+        backgroundColor: CYAN_400
+    });
+    if (record.aliasOf) tags.push({
+        label: 'alias',
+        textColor: 0,
+        backgroundColor: ORANGE_400
+    });
+    if (route.__vd_match) tags.push({
+        label: 'matches',
+        textColor: 0,
+        backgroundColor: PINK_500
+    });
+    if (route.__vd_exactActive) tags.push({
+        label: 'exact',
+        textColor: 0,
+        backgroundColor: LIME_500
+    });
+    if (route.__vd_active) tags.push({
+        label: 'active',
+        textColor: 0,
+        backgroundColor: BLUE_600
+    });
+    if (record.redirect) tags.push({
+        label: typeof record.redirect === 'string' ? `redirect: ${record.redirect}` : 'redirects',
+        textColor: 0xffffff,
+        backgroundColor: DARK
+    });
+    // add an id to be able to select it. Using the `path` is not possible because
+    // empty path children would collide with their parents
+    let id = record.__vd_id;
+    if (id == null) {
+        id = String(routeRecordId++);
+        record.__vd_id = id;
+    }
+    return {
+        id,
+        label: record.path,
+        tags,
+        children: route.children.map(formatRouteRecordForInspector)
+    };
+}
+//  incremental id for route records and inspector state
+let routeRecordId = 0;
+const EXTRACT_REGEXP_RE = /^\/(.*)\/([a-z]*)$/;
+function markRouteRecordActive(route, currentRoute) {
+    // no route will be active if matched is empty
+    // reset the matching state
+    const isExactActive = currentRoute.matched.length && isSameRouteRecord(currentRoute.matched[currentRoute.matched.length - 1], route.record);
+    route.__vd_exactActive = route.__vd_active = isExactActive;
+    if (!isExactActive) route.__vd_active = currentRoute.matched.some((match)=>isSameRouteRecord(match, route.record));
+    route.children.forEach((childRoute)=>markRouteRecordActive(childRoute, currentRoute));
+}
+function resetMatchStateOnRouteRecord(route) {
+    route.__vd_match = false;
+    route.children.forEach(resetMatchStateOnRouteRecord);
+}
+function isRouteMatching(route, filter) {
+    const found = String(route.re).match(EXTRACT_REGEXP_RE);
+    route.__vd_match = false;
+    if (!found || found.length < 3) return false;
+    // use a regexp without $ at the end to match nested routes better
+    const nonEndingRE = new RegExp(found[1].replace(/\$$/, ''), found[2]);
+    if (nonEndingRE.test(filter)) {
+        // mark children as matches
+        route.children.forEach((child)=>isRouteMatching(child, filter));
+        // exception case: `/`
+        if (route.record.path !== '/' || filter === '/') {
+            route.__vd_match = route.re.test(filter);
+            return true;
+        }
+        // hide the / route
+        return false;
+    }
+    const path = route.record.path.toLowerCase();
+    const decodedPath = decode(path);
+    // also allow partial matching on the path
+    if (!filter.startsWith('/') && (decodedPath.includes(filter) || path.includes(filter))) return true;
+    if (decodedPath.startsWith(filter) || path.startsWith(filter)) return true;
+    if (route.record.name && String(route.record.name).includes(filter)) return true;
+    return route.children.some((child)=>isRouteMatching(child, filter));
+}
+function omit(obj, keys) {
+    const ret = {};
+    for(const key in obj)if (!keys.includes(key)) // @ts-expect-error
+    ret[key] = obj[key];
+    return ret;
+}
+/**
+ * Creates a Router instance that can be used by a Vue app.
+ *
+ * @param options - {@link RouterOptions}
+ */ function createRouter(options) {
+    const matcher = createRouterMatcher(options.routes, options);
+    const parseQuery$1 = options.parseQuery || parseQuery;
+    const stringifyQuery$1 = options.stringifyQuery || stringifyQuery;
+    const routerHistory = options.history;
+    if (!routerHistory) throw new Error('Provide the "history" option when calling "createRouter()": https://router.vuejs.org/api/interfaces/RouterOptions.html#history');
+    const beforeGuards = useCallbacks();
+    const beforeResolveGuards = useCallbacks();
+    const afterGuards = useCallbacks();
+    const currentRoute = (0, _vue.shallowRef)(START_LOCATION_NORMALIZED);
+    let pendingLocation = START_LOCATION_NORMALIZED;
+    // leave the scrollRestoration if no scrollBehavior is provided
+    if (isBrowser && options.scrollBehavior && 'scrollRestoration' in history) history.scrollRestoration = 'manual';
+    const normalizeParams = applyToParams.bind(null, (paramValue)=>'' + paramValue);
+    const encodeParams = applyToParams.bind(null, encodeParam);
+    const decodeParams = // @ts-expect-error: intentionally avoid the type check
+    applyToParams.bind(null, decode);
+    function addRoute(parentOrRoute, route) {
+        let parent;
+        let record;
+        if (isRouteName(parentOrRoute)) {
+            parent = matcher.getRecordMatcher(parentOrRoute);
+            if (!parent) warn(`Parent route "${String(parentOrRoute)}" not found when adding child route`, route);
+            record = route;
+        } else record = parentOrRoute;
+        return matcher.addRoute(record, parent);
+    }
+    function removeRoute(name) {
+        const recordMatcher = matcher.getRecordMatcher(name);
+        if (recordMatcher) matcher.removeRoute(recordMatcher);
+        else warn(`Cannot remove non-existent route "${String(name)}"`);
+    }
+    function getRoutes() {
+        return matcher.getRoutes().map((routeMatcher)=>routeMatcher.record);
+    }
+    function hasRoute(name) {
+        return !!matcher.getRecordMatcher(name);
+    }
+    function resolve(rawLocation, currentLocation) {
+        // const resolve: Router['resolve'] = (rawLocation: RouteLocationRaw, currentLocation) => {
+        // const objectLocation = routerLocationAsObject(rawLocation)
+        // we create a copy to modify it later
+        currentLocation = assign({}, currentLocation || currentRoute.value);
+        if (typeof rawLocation === 'string') {
+            const locationNormalized = parseURL(parseQuery$1, rawLocation, currentLocation.path);
+            const matchedRoute = matcher.resolve({
+                path: locationNormalized.path
+            }, currentLocation);
+            const href = routerHistory.createHref(locationNormalized.fullPath);
+            if (href.startsWith('//')) warn(`Location "${rawLocation}" resolved to "${href}". A resolved location cannot start with multiple slashes.`);
+            else if (!matchedRoute.matched.length) warn(`No match found for location with path "${rawLocation}"`);
+            // locationNormalized is always a new object
+            return assign(locationNormalized, matchedRoute, {
+                params: decodeParams(matchedRoute.params),
+                hash: decode(locationNormalized.hash),
+                redirectedFrom: undefined,
+                href
+            });
+        }
+        if (!isRouteLocation(rawLocation)) {
+            warn(`router.resolve() was passed an invalid location. This will fail in production.\n- Location:`, rawLocation);
+            return resolve({});
+        }
+        let matcherLocation;
+        // path could be relative in object as well
+        if (rawLocation.path != null) {
+            if ('params' in rawLocation && !('name' in rawLocation) && // @ts-expect-error: the type is never
+            Object.keys(rawLocation.params).length) warn(`Path "${rawLocation.path}" was passed with params but they will be ignored. Use a named route alongside params instead.`);
+            matcherLocation = assign({}, rawLocation, {
+                path: parseURL(parseQuery$1, rawLocation.path, currentLocation.path).path
+            });
+        } else {
+            // remove any nullish param
+            const targetParams = assign({}, rawLocation.params);
+            for(const key in targetParams)if (targetParams[key] == null) delete targetParams[key];
+            // pass encoded values to the matcher, so it can produce encoded path and fullPath
+            matcherLocation = assign({}, rawLocation, {
+                params: encodeParams(targetParams)
+            });
+            // current location params are decoded, we need to encode them in case the
+            // matcher merges the params
+            currentLocation.params = encodeParams(currentLocation.params);
+        }
+        const matchedRoute = matcher.resolve(matcherLocation, currentLocation);
+        const hash = rawLocation.hash || '';
+        if (hash && !hash.startsWith('#')) warn(`A \`hash\` should always start with the character "#". Replace "${hash}" with "#${hash}".`);
+        // the matcher might have merged current location params, so
+        // we need to run the decoding again
+        matchedRoute.params = normalizeParams(decodeParams(matchedRoute.params));
+        const fullPath = stringifyURL(stringifyQuery$1, assign({}, rawLocation, {
+            hash: encodeHash(hash),
+            path: matchedRoute.path
+        }));
+        const href = routerHistory.createHref(fullPath);
+        if (href.startsWith('//')) warn(`Location "${rawLocation}" resolved to "${href}". A resolved location cannot start with multiple slashes.`);
+        else if (!matchedRoute.matched.length) warn(`No match found for location with path "${rawLocation.path != null ? rawLocation.path : rawLocation}"`);
+        return assign({
+            fullPath,
+            // keep the hash encoded so fullPath is effectively path + encodedQuery +
+            // hash
+            hash,
+            query: // if the user is using a custom query lib like qs, we might have
+            // nested objects, so we keep the query as is, meaning it can contain
+            // numbers at `$route.query`, but at the point, the user will have to
+            // use their own type anyway.
+            // https://github.com/vuejs/router/issues/328#issuecomment-649481567
+            stringifyQuery$1 === stringifyQuery ? normalizeQuery(rawLocation.query) : rawLocation.query || {}
+        }, matchedRoute, {
+            redirectedFrom: undefined,
+            href
+        });
+    }
+    function locationAsObject(to) {
+        return typeof to === 'string' ? parseURL(parseQuery$1, to, currentRoute.value.path) : assign({}, to);
+    }
+    function checkCanceledNavigation(to, from) {
+        if (pendingLocation !== to) return createRouterError(8 /* ErrorTypes.NAVIGATION_CANCELLED */ , {
+            from,
+            to
+        });
+    }
+    function push(to) {
+        return pushWithRedirect(to);
+    }
+    function replace(to) {
+        return push(assign(locationAsObject(to), {
+            replace: true
+        }));
+    }
+    function handleRedirectRecord(to) {
+        const lastMatched = to.matched[to.matched.length - 1];
+        if (lastMatched && lastMatched.redirect) {
+            const { redirect } = lastMatched;
+            let newTargetLocation = typeof redirect === 'function' ? redirect(to) : redirect;
+            if (typeof newTargetLocation === 'string') {
+                newTargetLocation = newTargetLocation.includes('?') || newTargetLocation.includes('#') ? newTargetLocation = locationAsObject(newTargetLocation) : {
+                    path: newTargetLocation
+                };
+                // @ts-expect-error: force empty params when a string is passed to let
+                // the router parse them again
+                newTargetLocation.params = {};
+            }
+            if (newTargetLocation.path == null && !('name' in newTargetLocation)) {
+                warn(`Invalid redirect found:\n${JSON.stringify(newTargetLocation, null, 2)}\n when navigating to "${to.fullPath}". A redirect must contain a name or path. This will break in production.`);
+                throw new Error('Invalid redirect');
+            }
+            return assign({
+                query: to.query,
+                hash: to.hash,
+                // avoid transferring params if the redirect has a path
+                params: newTargetLocation.path != null ? {} : to.params
+            }, newTargetLocation);
+        }
+    }
+    function pushWithRedirect(to, redirectedFrom) {
+        const targetLocation = pendingLocation = resolve(to);
+        const from = currentRoute.value;
+        const data = to.state;
+        const force = to.force;
+        // to could be a string where `replace` is a function
+        const replace = to.replace === true;
+        const shouldRedirect = handleRedirectRecord(targetLocation);
+        if (shouldRedirect) return pushWithRedirect(assign(locationAsObject(shouldRedirect), {
+            state: typeof shouldRedirect === 'object' ? assign({}, data, shouldRedirect.state) : data,
+            force,
+            replace
+        }), // keep original redirectedFrom if it exists
+        redirectedFrom || targetLocation);
+        // if it was a redirect we already called `pushWithRedirect` above
+        const toLocation = targetLocation;
+        toLocation.redirectedFrom = redirectedFrom;
+        let failure;
+        if (!force && isSameRouteLocation(stringifyQuery$1, from, targetLocation)) {
+            failure = createRouterError(16 /* ErrorTypes.NAVIGATION_DUPLICATED */ , {
+                to: toLocation,
+                from
+            });
+            // trigger scroll to allow scrolling to the same anchor
+            handleScroll(from, from, // this is a push, the only way for it to be triggered from a
+            // history.listen is with a redirect, which makes it become a push
+            true, // This cannot be the first navigation because the initial location
+            // cannot be manually navigated to
+            false);
+        }
+        return (failure ? Promise.resolve(failure) : navigate(toLocation, from)).catch((error)=>isNavigationFailure(error) ? isNavigationFailure(error, 2 /* ErrorTypes.NAVIGATION_GUARD_REDIRECT */ ) ? error : markAsReady(error) // also returns the error
+             : triggerError(error, toLocation, from)).then((failure)=>{
+            if (failure) {
+                if (isNavigationFailure(failure, 2 /* ErrorTypes.NAVIGATION_GUARD_REDIRECT */ )) {
+                    if (// we are redirecting to the same location we were already at
+                    isSameRouteLocation(stringifyQuery$1, resolve(failure.to), toLocation) && // and we have done it a couple of times
+                    redirectedFrom && // @ts-expect-error: added only in dev
+                    (redirectedFrom._count = redirectedFrom._count ? redirectedFrom._count + 1 : 1) > 30) {
+                        warn(`Detected a possibly infinite redirection in a navigation guard when going from "${from.fullPath}" to "${toLocation.fullPath}". Aborting to avoid a Stack Overflow.\n Are you always returning a new location within a navigation guard? That would lead to this error. Only return when redirecting or aborting, that should fix this. This might break in production if not fixed.`);
+                        return Promise.reject(new Error('Infinite redirect in navigation guard'));
+                    }
+                    return pushWithRedirect(// keep options
+                    assign({
+                        // preserve an existing replacement but allow the redirect to override it
+                        replace
+                    }, locationAsObject(failure.to), {
+                        state: typeof failure.to === 'object' ? assign({}, data, failure.to.state) : data,
+                        force
+                    }), // preserve the original redirectedFrom if any
+                    redirectedFrom || toLocation);
+                }
+            } else // if we fail we don't finalize the navigation
+            failure = finalizeNavigation(toLocation, from, true, replace, data);
+            triggerAfterEach(toLocation, from, failure);
+            return failure;
+        });
+    }
+    /**
+     * Helper to reject and skip all navigation guards if a new navigation happened
+     * @param to
+     * @param from
+     */ function checkCanceledNavigationAndReject(to, from) {
+        const error = checkCanceledNavigation(to, from);
+        return error ? Promise.reject(error) : Promise.resolve();
+    }
+    function runWithContext(fn) {
+        const app = installedApps.values().next().value;
+        // support Vue < 3.3
+        return app && typeof app.runWithContext === 'function' ? app.runWithContext(fn) : fn();
+    }
+    // TODO: refactor the whole before guards by internally using router.beforeEach
+    function navigate(to, from) {
+        let guards;
+        const [leavingRecords, updatingRecords, enteringRecords] = extractChangingRecords(to, from);
+        // all components here have been resolved once because we are leaving
+        guards = extractComponentsGuards(leavingRecords.reverse(), 'beforeRouteLeave', to, from);
+        // leavingRecords is already reversed
+        for (const record of leavingRecords)record.leaveGuards.forEach((guard)=>{
+            guards.push(guardToPromiseFn(guard, to, from));
+        });
+        const canceledNavigationCheck = checkCanceledNavigationAndReject.bind(null, to, from);
+        guards.push(canceledNavigationCheck);
+        // run the queue of per route beforeRouteLeave guards
+        return runGuardQueue(guards).then(()=>{
+            // check global guards beforeEach
+            guards = [];
+            for (const guard of beforeGuards.list())guards.push(guardToPromiseFn(guard, to, from));
+            guards.push(canceledNavigationCheck);
+            return runGuardQueue(guards);
+        }).then(()=>{
+            // check in components beforeRouteUpdate
+            guards = extractComponentsGuards(updatingRecords, 'beforeRouteUpdate', to, from);
+            for (const record of updatingRecords)record.updateGuards.forEach((guard)=>{
+                guards.push(guardToPromiseFn(guard, to, from));
+            });
+            guards.push(canceledNavigationCheck);
+            // run the queue of per route beforeEnter guards
+            return runGuardQueue(guards);
+        }).then(()=>{
+            // check the route beforeEnter
+            guards = [];
+            for (const record of enteringRecords)// do not trigger beforeEnter on reused views
+            if (record.beforeEnter) {
+                if (isArray(record.beforeEnter)) for (const beforeEnter of record.beforeEnter)guards.push(guardToPromiseFn(beforeEnter, to, from));
+                else guards.push(guardToPromiseFn(record.beforeEnter, to, from));
+            }
+            guards.push(canceledNavigationCheck);
+            // run the queue of per route beforeEnter guards
+            return runGuardQueue(guards);
+        }).then(()=>{
+            // NOTE: at this point to.matched is normalized and does not contain any () => Promise<Component>
+            // clear existing enterCallbacks, these are added by extractComponentsGuards
+            to.matched.forEach((record)=>record.enterCallbacks = {});
+            // check in-component beforeRouteEnter
+            guards = extractComponentsGuards(enteringRecords, 'beforeRouteEnter', to, from, runWithContext);
+            guards.push(canceledNavigationCheck);
+            // run the queue of per route beforeEnter guards
+            return runGuardQueue(guards);
+        }).then(()=>{
+            // check global guards beforeResolve
+            guards = [];
+            for (const guard of beforeResolveGuards.list())guards.push(guardToPromiseFn(guard, to, from));
+            guards.push(canceledNavigationCheck);
+            return runGuardQueue(guards);
+        })// catch any navigation canceled
+        .catch((err)=>isNavigationFailure(err, 8 /* ErrorTypes.NAVIGATION_CANCELLED */ ) ? err : Promise.reject(err));
+    }
+    function triggerAfterEach(to, from, failure) {
+        // navigation is confirmed, call afterGuards
+        // TODO: wrap with error handlers
+        afterGuards.list().forEach((guard)=>runWithContext(()=>guard(to, from, failure)));
+    }
+    /**
+     * - Cleans up any navigation guards
+     * - Changes the url if necessary
+     * - Calls the scrollBehavior
+     */ function finalizeNavigation(toLocation, from, isPush, replace, data) {
+        // a more recent navigation took place
+        const error = checkCanceledNavigation(toLocation, from);
+        if (error) return error;
+        // only consider as push if it's not the first navigation
+        const isFirstNavigation = from === START_LOCATION_NORMALIZED;
+        const state = !isBrowser ? {} : history.state;
+        // change URL only if the user did a push/replace and if it's not the initial navigation because
+        // it's just reflecting the url
+        if (isPush) {
+            // on the initial navigation, we want to reuse the scroll position from
+            // history state if it exists
+            if (replace || isFirstNavigation) routerHistory.replace(toLocation.fullPath, assign({
+                scroll: isFirstNavigation && state && state.scroll
+            }, data));
+            else routerHistory.push(toLocation.fullPath, data);
+        }
+        // accept current navigation
+        currentRoute.value = toLocation;
+        handleScroll(toLocation, from, isPush, isFirstNavigation);
+        markAsReady();
+    }
+    let removeHistoryListener;
+    // attach listener to history to trigger navigations
+    function setupListeners() {
+        // avoid setting up listeners twice due to an invalid first navigation
+        if (removeHistoryListener) return;
+        removeHistoryListener = routerHistory.listen((to, _from, info)=>{
+            if (!router.listening) return;
+            // cannot be a redirect route because it was in history
+            const toLocation = resolve(to);
+            // due to dynamic routing, and to hash history with manual navigation
+            // (manually changing the url or calling history.hash = '#/somewhere'),
+            // there could be a redirect record in history
+            const shouldRedirect = handleRedirectRecord(toLocation);
+            if (shouldRedirect) {
+                pushWithRedirect(assign(shouldRedirect, {
+                    replace: true,
+                    force: true
+                }), toLocation).catch(noop);
+                return;
+            }
+            pendingLocation = toLocation;
+            const from = currentRoute.value;
+            // TODO: should be moved to web history?
+            if (isBrowser) saveScrollPosition(getScrollKey(from.fullPath, info.delta), computeScrollPosition());
+            navigate(toLocation, from).catch((error)=>{
+                if (isNavigationFailure(error, 12 /* ErrorTypes.NAVIGATION_CANCELLED */ )) return error;
+                if (isNavigationFailure(error, 2 /* ErrorTypes.NAVIGATION_GUARD_REDIRECT */ )) {
+                    // Here we could call if (info.delta) routerHistory.go(-info.delta,
+                    // false) but this is bug prone as we have no way to wait the
+                    // navigation to be finished before calling pushWithRedirect. Using
+                    // a setTimeout of 16ms seems to work but there is no guarantee for
+                    // it to work on every browser. So instead we do not restore the
+                    // history entry and trigger a new navigation as requested by the
+                    // navigation guard.
+                    // the error is already handled by router.push we just want to avoid
+                    // logging the error
+                    pushWithRedirect(assign(locationAsObject(error.to), {
+                        force: true
+                    }), toLocation).then((failure)=>{
+                        // manual change in hash history #916 ending up in the URL not
+                        // changing, but it was changed by the manual url change, so we
+                        // need to manually change it ourselves
+                        if (isNavigationFailure(failure, 20 /* ErrorTypes.NAVIGATION_DUPLICATED */ ) && !info.delta && info.type === NavigationType.pop) routerHistory.go(-1, false);
+                    }).catch(noop);
+                    // avoid the then branch
+                    return Promise.reject();
+                }
+                // do not restore history on unknown direction
+                if (info.delta) routerHistory.go(-info.delta, false);
+                // unrecognized error, transfer to the global handler
+                return triggerError(error, toLocation, from);
+            }).then((failure)=>{
+                failure = failure || finalizeNavigation(// after navigation, all matched components are resolved
+                toLocation, from, false);
+                // revert the navigation
+                if (failure) {
+                    if (info.delta && // a new navigation has been triggered, so we do not want to revert, that will change the current history
+                    // entry while a different route is displayed
+                    !isNavigationFailure(failure, 8 /* ErrorTypes.NAVIGATION_CANCELLED */ )) routerHistory.go(-info.delta, false);
+                    else if (info.type === NavigationType.pop && isNavigationFailure(failure, 20 /* ErrorTypes.NAVIGATION_DUPLICATED */ )) // manual change in hash history #916
+                    // it's like a push but lacks the information of the direction
+                    routerHistory.go(-1, false);
+                }
+                triggerAfterEach(toLocation, from, failure);
+            })// avoid warnings in the console about uncaught rejections, they are logged by triggerErrors
+            .catch(noop);
+        });
+    }
+    // Initialization and Errors
+    let readyHandlers = useCallbacks();
+    let errorListeners = useCallbacks();
+    let ready;
+    /**
+     * Trigger errorListeners added via onError and throws the error as well
+     *
+     * @param error - error to throw
+     * @param to - location we were navigating to when the error happened
+     * @param from - location we were navigating from when the error happened
+     * @returns the error as a rejected promise
+     */ function triggerError(error, to, from) {
+        markAsReady(error);
+        const list = errorListeners.list();
+        if (list.length) list.forEach((handler)=>handler(error, to, from));
+        else {
+            warn('uncaught error during route navigation:');
+            console.error(error);
+        }
+        // reject the error no matter there were error listeners or not
+        return Promise.reject(error);
+    }
+    function isReady() {
+        if (ready && currentRoute.value !== START_LOCATION_NORMALIZED) return Promise.resolve();
+        return new Promise((resolve, reject)=>{
+            readyHandlers.add([
+                resolve,
+                reject
+            ]);
+        });
+    }
+    function markAsReady(err) {
+        if (!ready) {
+            // still not ready if an error happened
+            ready = !err;
+            setupListeners();
+            readyHandlers.list().forEach(([resolve, reject])=>err ? reject(err) : resolve());
+            readyHandlers.reset();
+        }
+        return err;
+    }
+    // Scroll behavior
+    function handleScroll(to, from, isPush, isFirstNavigation) {
+        const { scrollBehavior } = options;
+        if (!isBrowser || !scrollBehavior) return Promise.resolve();
+        const scrollPosition = !isPush && getSavedScrollPosition(getScrollKey(to.fullPath, 0)) || (isFirstNavigation || !isPush) && history.state && history.state.scroll || null;
+        return (0, _vue.nextTick)().then(()=>scrollBehavior(to, from, scrollPosition)).then((position)=>position && scrollToPosition(position)).catch((err)=>triggerError(err, to, from));
+    }
+    const go = (delta)=>routerHistory.go(delta);
+    let started;
+    const installedApps = new Set();
+    const router = {
+        currentRoute,
+        listening: true,
+        addRoute,
+        removeRoute,
+        clearRoutes: matcher.clearRoutes,
+        hasRoute,
+        getRoutes,
+        resolve,
+        options,
+        push,
+        replace,
+        go,
+        back: ()=>go(-1),
+        forward: ()=>go(1),
+        beforeEach: beforeGuards.add,
+        beforeResolve: beforeResolveGuards.add,
+        afterEach: afterGuards.add,
+        onError: errorListeners.add,
+        isReady,
+        install (app) {
+            const router = this;
+            app.component('RouterLink', RouterLink);
+            app.component('RouterView', RouterView);
+            app.config.globalProperties.$router = router;
+            Object.defineProperty(app.config.globalProperties, '$route', {
+                enumerable: true,
+                get: ()=>(0, _vue.unref)(currentRoute)
+            });
+            // this initial navigation is only necessary on client, on server it doesn't
+            // make sense because it will create an extra unnecessary navigation and could
+            // lead to problems
+            if (isBrowser && // used for the initial navigation client side to avoid pushing
+            // multiple times when the router is used in multiple apps
+            !started && currentRoute.value === START_LOCATION_NORMALIZED) {
+                // see above
+                started = true;
+                push(routerHistory.location).catch((err)=>{
+                    warn('Unexpected error when starting the router:', err);
+                });
+            }
+            const reactiveRoute = {};
+            for(const key in START_LOCATION_NORMALIZED)Object.defineProperty(reactiveRoute, key, {
+                get: ()=>currentRoute.value[key],
+                enumerable: true
+            });
+            app.provide(routerKey, router);
+            app.provide(routeLocationKey, (0, _vue.shallowReactive)(reactiveRoute));
+            app.provide(routerViewLocationKey, currentRoute);
+            const unmountApp = app.unmount;
+            installedApps.add(app);
+            app.unmount = function() {
+                installedApps.delete(app);
+                // the router is not attached to an app anymore
+                if (installedApps.size < 1) {
+                    // invalidate the current navigation
+                    pendingLocation = START_LOCATION_NORMALIZED;
+                    removeHistoryListener && removeHistoryListener();
+                    removeHistoryListener = null;
+                    currentRoute.value = START_LOCATION_NORMALIZED;
+                    started = false;
+                    ready = false;
+                }
+                unmountApp();
+            };
+            // TODO: this probably needs to be updated so it can be used by vue-termui
+            if (isBrowser) addDevtools(app, router, matcher);
+        }
+    };
+    // TODO: type this as NavigationGuardReturn or similar instead of any
+    function runGuardQueue(guards) {
+        return guards.reduce((promise, guard)=>promise.then(()=>runWithContext(guard)), Promise.resolve());
+    }
+    return router;
+}
+function extractChangingRecords(to, from) {
+    const leavingRecords = [];
+    const updatingRecords = [];
+    const enteringRecords = [];
+    const len = Math.max(from.matched.length, to.matched.length);
+    for(let i = 0; i < len; i++){
+        const recordFrom = from.matched[i];
+        if (recordFrom) {
+            if (to.matched.find((record)=>isSameRouteRecord(record, recordFrom))) updatingRecords.push(recordFrom);
+            else leavingRecords.push(recordFrom);
+        }
+        const recordTo = to.matched[i];
+        if (recordTo) // the type doesn't matter because we are comparing per reference
+        {
+            if (!from.matched.find((record)=>isSameRouteRecord(record, recordTo))) enteringRecords.push(recordTo);
+        }
+    }
+    return [
+        leavingRecords,
+        updatingRecords,
+        enteringRecords
+    ];
+}
+/**
+ * Returns the router instance. Equivalent to using `$router` inside
+ * templates.
+ */ function useRouter() {
+    return (0, _vue.inject)(routerKey);
+}
+/**
+ * Returns the current route location. Equivalent to using `$route` inside
+ * templates.
+ */ function useRoute(_name) {
+    return (0, _vue.inject)(routeLocationKey);
+}
+
+},{"vue":"gzxs9","@vue/devtools-api":"dc7MH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gzxs9":[function(require,module,exports,__globalThis) {
+/**
+* vue v3.5.13
+* (c) 2018-present Yuxi (Evan) You and Vue contributors
+* @license MIT
+**/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "compile", ()=>compile);
+var _runtimeDom = require("@vue/runtime-dom");
+parcelHelpers.exportAll(_runtimeDom, exports);
+function initDev() {
+    (0, _runtimeDom.initCustomFormatter)();
+}
+initDev();
+const compile = ()=>{
+    (0, _runtimeDom.warn)(`Runtime compilation is not supported in this build of Vue.` + ` Configure your bundler to alias "vue" to "vue/dist/vue.esm-bundler.js".`);
+};
+
+},{"@vue/runtime-dom":"9wNvI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dc7MH":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "setupDevtoolsPlugin", ()=>setupDevtoolsPlugin);
@@ -13315,7 +18526,7 @@ exports.default = {
             f.sending && event.preventDefault();
         };
         const f = (0, _vue.reactive)({
-            email: "admin@gmail.com",
+            email: "",
             password: "12345554",
             sending: false
         });
@@ -31244,26 +36455,15 @@ const _hoisted_8 = [
 const _hoisted_9 = {
     class: "icon is-small is-left"
 };
-const _hoisted_10 = {
-    class: "field"
-};
-const _hoisted_11 = {
-    class: "control has-icons-left"
-};
-const _hoisted_12 = [
-    "disabled"
-];
-const _hoisted_13 = {
-    class: "icon is-small is-left"
-};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_pp_email = (0, _vue.resolveComponent)("pp-email");
     const _component_pp_button = (0, _vue.resolveComponent)("pp-button");
     return (0, _vue.openBlock)(), (0, _vue.createElementBlock)("section", _hoisted_1, [
         (0, _vue.createElementVNode)("div", _hoisted_2, [
             (0, _vue.createElementVNode)("div", _hoisted_3, [
                 (0, _vue.createElementVNode)("div", _hoisted_4, [
                     (0, _vue.createElementVNode)("div", _hoisted_5, [
-                        _cache[4] || (_cache[4] = (0, _vue.createElementVNode)("h1", {
+                        _cache[3] || (_cache[3] = (0, _vue.createElementVNode)("h1", {
                             class: "title tracking-wide text-blue-700"
                         }, "Acceso", -1 /* HOISTED */ )),
                         (0, _vue.createElementVNode)("form", {
@@ -31271,40 +36471,19 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                                 "prevent"
                             ])
                         }, [
+                            (0, _vue.createVNode)(_component_pp_email, {
+                                label: "Correo Electr\xf3nico",
+                                modelValue: $setup.f.email,
+                                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event)=>$setup.f.email = $event)
+                            }, null, 8 /* PROPS */ , [
+                                "modelValue"
+                            ]),
                             (0, _vue.createElementVNode)("div", _hoisted_6, [
                                 _cache[2] || (_cache[2] = (0, _vue.createElementVNode)("label", {
-                                    for: "email",
-                                    class: "label tracking-wide"
-                                }, "Correo Electronico", -1 /* HOISTED */ )),
-                                (0, _vue.createElementVNode)("div", _hoisted_7, [
-                                    (0, _vue.withDirectives)((0, _vue.createElementVNode)("input", {
-                                        disabled: $setup.f.sending,
-                                        id: "email",
-                                        name: "email",
-                                        class: "input",
-                                        type: "text",
-                                        autocomplete: "off",
-                                        autocapitalize: "off",
-                                        "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event)=>$setup.f.email = $event)
-                                    }, null, 8 /* PROPS */ , _hoisted_8), [
-                                        [
-                                            (0, _vue.vModelText),
-                                            $setup.f.email
-                                        ]
-                                    ]),
-                                    (0, _vue.createElementVNode)("span", _hoisted_9, [
-                                        (0, _vue.createVNode)($setup["Mail"], {
-                                            size: 20
-                                        })
-                                    ])
-                                ])
-                            ]),
-                            (0, _vue.createElementVNode)("div", _hoisted_10, [
-                                _cache[3] || (_cache[3] = (0, _vue.createElementVNode)("label", {
                                     for: "password",
                                     class: "label tracking-wide"
                                 }, "Contrase\xf1a", -1 /* HOISTED */ )),
-                                (0, _vue.createElementVNode)("div", _hoisted_11, [
+                                (0, _vue.createElementVNode)("div", _hoisted_7, [
                                     (0, _vue.withDirectives)((0, _vue.createElementVNode)("input", {
                                         disabled: $setup.f.sending,
                                         id: "password",
@@ -31314,13 +36493,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                                         autocomplete: "off",
                                         autocapitalize: "off",
                                         "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event)=>$setup.f.password = $event)
-                                    }, null, 8 /* PROPS */ , _hoisted_12), [
+                                    }, null, 8 /* PROPS */ , _hoisted_8), [
                                         [
                                             (0, _vue.vModelText),
                                             $setup.f.password
                                         ]
                                     ]),
-                                    (0, _vue.createElementVNode)("span", _hoisted_13, [
+                                    (0, _vue.createElementVNode)("span", _hoisted_9, [
                                         (0, _vue.createVNode)($setup["Lock"], {
                                             size: 20
                                         })
@@ -31524,26 +36703,15 @@ const _hoisted_4 = {
 const _hoisted_5 = {
     class: "box"
 };
-const _hoisted_6 = {
-    class: "field"
-};
-const _hoisted_7 = {
-    class: "control has-icons-left"
-};
-const _hoisted_8 = [
-    "disabled"
-];
-const _hoisted_9 = {
-    class: "icon is-small is-left"
-};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_pp_email = (0, _vue.resolveComponent)("pp-email");
     const _component_pp_button = (0, _vue.resolveComponent)("pp-button");
     return (0, _vue.openBlock)(), (0, _vue.createElementBlock)("section", _hoisted_1, [
         (0, _vue.createElementVNode)("div", _hoisted_2, [
             (0, _vue.createElementVNode)("div", _hoisted_3, [
                 (0, _vue.createElementVNode)("div", _hoisted_4, [
                     (0, _vue.createElementVNode)("div", _hoisted_5, [
-                        _cache[2] || (_cache[2] = (0, _vue.createElementVNode)("h1", {
+                        _cache[1] || (_cache[1] = (0, _vue.createElementVNode)("h1", {
                             class: "title tracking-wide text-blue-700"
                         }, "Recuperar", -1 /* HOISTED */ )),
                         (0, _vue.createElementVNode)("form", {
@@ -31551,33 +36719,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                                 "prevent"
                             ])
                         }, [
-                            (0, _vue.createElementVNode)("div", _hoisted_6, [
-                                _cache[1] || (_cache[1] = (0, _vue.createElementVNode)("label", {
-                                    for: "email",
-                                    class: "label tracking-wide"
-                                }, "Correo Electronico", -1 /* HOISTED */ )),
-                                (0, _vue.createElementVNode)("div", _hoisted_7, [
-                                    (0, _vue.withDirectives)((0, _vue.createElementVNode)("input", {
-                                        disabled: $setup.f.sending,
-                                        id: "email",
-                                        name: "email",
-                                        class: "input",
-                                        type: "text",
-                                        autocomplete: "off",
-                                        autocapitalize: "off",
-                                        "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event)=>$setup.f.email = $event)
-                                    }, null, 8 /* PROPS */ , _hoisted_8), [
-                                        [
-                                            (0, _vue.vModelText),
-                                            $setup.f.email
-                                        ]
-                                    ]),
-                                    (0, _vue.createElementVNode)("span", _hoisted_9, [
-                                        (0, _vue.createVNode)($setup["Mail"], {
-                                            size: 20
-                                        })
-                                    ])
-                                ])
+                            (0, _vue.createVNode)(_component_pp_email, {
+                                label: "Correo Electr\xf3nico",
+                                modelValue: $setup.f.email,
+                                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event)=>$setup.f.email = $event)
+                            }, null, 8 /* PROPS */ , [
+                                "modelValue"
                             ]),
                             (0, _vue.createVNode)(_component_pp_button, {
                                 sending: $setup.f.sending,
@@ -32019,5215 +37166,7 @@ parcelHelpers.defineInteropFlag(exports);
 let NOOP = ()=>{};
 exports.default = (script)=>{};
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gs3Mk":[function(require,module,exports,__globalThis) {
-/**
-* vue v3.5.13
-* (c) 2018-present Yuxi (Evan) You and Vue contributors
-* @license MIT
-**/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "compile", ()=>compileToFunction);
-var _runtimeDom = require("@vue/runtime-dom");
-parcelHelpers.exportAll(_runtimeDom, exports);
-var _compilerDom = require("@vue/compiler-dom");
-var _shared = require("@vue/shared");
-function initDev() {
-    (0, _runtimeDom.initCustomFormatter)();
-}
-initDev();
-const compileCache = /* @__PURE__ */ Object.create(null);
-function compileToFunction(template, options) {
-    if (!(0, _shared.isString)(template)) {
-        if (template.nodeType) template = template.innerHTML;
-        else {
-            (0, _runtimeDom.warn)(`invalid template option: `, template);
-            return 0, _shared.NOOP;
-        }
-    }
-    const key = (0, _shared.genCacheKey)(template, options);
-    const cached = compileCache[key];
-    if (cached) return cached;
-    if (template[0] === "#") {
-        const el = document.querySelector(template);
-        if (!el) (0, _runtimeDom.warn)(`Template element not found or is empty: ${template}`);
-        template = el ? el.innerHTML : ``;
-    }
-    const opts = (0, _shared.extend)({
-        hoistStatic: true,
-        onError: onError,
-        onWarn: (e)=>onError(e, true)
-    }, options);
-    if (!opts.isCustomElement && typeof customElements !== "undefined") opts.isCustomElement = (tag)=>!!customElements.get(tag);
-    const { code } = (0, _compilerDom.compile)(template, opts);
-    function onError(err, asWarning = false) {
-        const message = asWarning ? err.message : `Template compilation error: ${err.message}`;
-        const codeFrame = err.loc && (0, _shared.generateCodeFrame)(template, err.loc.start.offset, err.loc.end.offset);
-        (0, _runtimeDom.warn)(codeFrame ? `${message}
-${codeFrame}` : message);
-    }
-    const render = new Function("Vue", code)(_runtimeDom);
-    render._rc = true;
-    return compileCache[key] = render;
-}
-(0, _runtimeDom.registerRuntimeCompiler)(compileToFunction);
-
-},{"@vue/runtime-dom":"9wNvI","@vue/compiler-dom":"fRGyM","@vue/shared":"3SM3y","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fRGyM":[function(require,module,exports,__globalThis) {
-/**
-* @vue/compiler-dom v3.5.13
-* (c) 2018-present Yuxi (Evan) You and Vue contributors
-* @license MIT
-**/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "DOMDirectiveTransforms", ()=>DOMDirectiveTransforms);
-parcelHelpers.export(exports, "DOMErrorCodes", ()=>DOMErrorCodes);
-parcelHelpers.export(exports, "DOMErrorMessages", ()=>DOMErrorMessages);
-parcelHelpers.export(exports, "DOMNodeTransforms", ()=>DOMNodeTransforms);
-parcelHelpers.export(exports, "TRANSITION", ()=>TRANSITION);
-parcelHelpers.export(exports, "TRANSITION_GROUP", ()=>TRANSITION_GROUP);
-parcelHelpers.export(exports, "V_MODEL_CHECKBOX", ()=>V_MODEL_CHECKBOX);
-parcelHelpers.export(exports, "V_MODEL_DYNAMIC", ()=>V_MODEL_DYNAMIC);
-parcelHelpers.export(exports, "V_MODEL_RADIO", ()=>V_MODEL_RADIO);
-parcelHelpers.export(exports, "V_MODEL_SELECT", ()=>V_MODEL_SELECT);
-parcelHelpers.export(exports, "V_MODEL_TEXT", ()=>V_MODEL_TEXT);
-parcelHelpers.export(exports, "V_ON_WITH_KEYS", ()=>V_ON_WITH_KEYS);
-parcelHelpers.export(exports, "V_ON_WITH_MODIFIERS", ()=>V_ON_WITH_MODIFIERS);
-parcelHelpers.export(exports, "V_SHOW", ()=>V_SHOW);
-parcelHelpers.export(exports, "compile", ()=>compile);
-parcelHelpers.export(exports, "createDOMCompilerError", ()=>createDOMCompilerError);
-parcelHelpers.export(exports, "parse", ()=>parse);
-parcelHelpers.export(exports, "parserOptions", ()=>parserOptions);
-parcelHelpers.export(exports, "transformStyle", ()=>transformStyle);
-var _compilerCore = require("@vue/compiler-core");
-parcelHelpers.exportAll(_compilerCore, exports);
-var _shared = require("@vue/shared");
-const V_MODEL_RADIO = Symbol(`vModelRadio`);
-const V_MODEL_CHECKBOX = Symbol(`vModelCheckbox`);
-const V_MODEL_TEXT = Symbol(`vModelText`);
-const V_MODEL_SELECT = Symbol(`vModelSelect`);
-const V_MODEL_DYNAMIC = Symbol(`vModelDynamic`);
-const V_ON_WITH_MODIFIERS = Symbol(`vOnModifiersGuard`);
-const V_ON_WITH_KEYS = Symbol(`vOnKeysGuard`);
-const V_SHOW = Symbol(`vShow`);
-const TRANSITION = Symbol(`Transition`);
-const TRANSITION_GROUP = Symbol(`TransitionGroup`);
-(0, _compilerCore.registerRuntimeHelpers)({
-    [V_MODEL_RADIO]: `vModelRadio`,
-    [V_MODEL_CHECKBOX]: `vModelCheckbox`,
-    [V_MODEL_TEXT]: `vModelText`,
-    [V_MODEL_SELECT]: `vModelSelect`,
-    [V_MODEL_DYNAMIC]: `vModelDynamic`,
-    [V_ON_WITH_MODIFIERS]: `withModifiers`,
-    [V_ON_WITH_KEYS]: `withKeys`,
-    [V_SHOW]: `vShow`,
-    [TRANSITION]: `Transition`,
-    [TRANSITION_GROUP]: `TransitionGroup`
-});
-let decoder;
-function decodeHtmlBrowser(raw, asAttr = false) {
-    if (!decoder) decoder = document.createElement("div");
-    if (asAttr) {
-        decoder.innerHTML = `<div foo="${raw.replace(/"/g, "&quot;")}">`;
-        return decoder.children[0].getAttribute("foo");
-    } else {
-        decoder.innerHTML = raw;
-        return decoder.textContent;
-    }
-}
-const parserOptions = {
-    parseMode: "html",
-    isVoidTag: (0, _shared.isVoidTag),
-    isNativeTag: (tag)=>(0, _shared.isHTMLTag)(tag) || (0, _shared.isSVGTag)(tag) || (0, _shared.isMathMLTag)(tag),
-    isPreTag: (tag)=>tag === "pre",
-    isIgnoreNewlineTag: (tag)=>tag === "pre" || tag === "textarea",
-    decodeEntities: decodeHtmlBrowser,
-    isBuiltInComponent: (tag)=>{
-        if (tag === "Transition" || tag === "transition") return TRANSITION;
-        else if (tag === "TransitionGroup" || tag === "transition-group") return TRANSITION_GROUP;
-    },
-    // https://html.spec.whatwg.org/multipage/parsing.html#tree-construction-dispatcher
-    getNamespace (tag, parent, rootNamespace) {
-        let ns = parent ? parent.ns : rootNamespace;
-        if (parent && ns === 2) {
-            if (parent.tag === "annotation-xml") {
-                if (tag === "svg") return 1;
-                if (parent.props.some((a)=>a.type === 6 && a.name === "encoding" && a.value != null && (a.value.content === "text/html" || a.value.content === "application/xhtml+xml"))) ns = 0;
-            } else if (/^m(?:[ions]|text)$/.test(parent.tag) && tag !== "mglyph" && tag !== "malignmark") ns = 0;
-        } else if (parent && ns === 1) {
-            if (parent.tag === "foreignObject" || parent.tag === "desc" || parent.tag === "title") ns = 0;
-        }
-        if (ns === 0) {
-            if (tag === "svg") return 1;
-            if (tag === "math") return 2;
-        }
-        return ns;
-    }
-};
-const transformStyle = (node)=>{
-    if (node.type === 1) node.props.forEach((p, i)=>{
-        if (p.type === 6 && p.name === "style" && p.value) node.props[i] = {
-            type: 7,
-            name: `bind`,
-            arg: (0, _compilerCore.createSimpleExpression)(`style`, true, p.loc),
-            exp: parseInlineCSS(p.value.content, p.loc),
-            modifiers: [],
-            loc: p.loc
-        };
-    });
-};
-const parseInlineCSS = (cssText, loc)=>{
-    const normalized = (0, _shared.parseStringStyle)(cssText);
-    return (0, _compilerCore.createSimpleExpression)(JSON.stringify(normalized), false, loc, 3);
-};
-function createDOMCompilerError(code, loc) {
-    return (0, _compilerCore.createCompilerError)(code, loc, DOMErrorMessages);
-}
-const DOMErrorCodes = {
-    "X_V_HTML_NO_EXPRESSION": 53,
-    "53": "X_V_HTML_NO_EXPRESSION",
-    "X_V_HTML_WITH_CHILDREN": 54,
-    "54": "X_V_HTML_WITH_CHILDREN",
-    "X_V_TEXT_NO_EXPRESSION": 55,
-    "55": "X_V_TEXT_NO_EXPRESSION",
-    "X_V_TEXT_WITH_CHILDREN": 56,
-    "56": "X_V_TEXT_WITH_CHILDREN",
-    "X_V_MODEL_ON_INVALID_ELEMENT": 57,
-    "57": "X_V_MODEL_ON_INVALID_ELEMENT",
-    "X_V_MODEL_ARG_ON_ELEMENT": 58,
-    "58": "X_V_MODEL_ARG_ON_ELEMENT",
-    "X_V_MODEL_ON_FILE_INPUT_ELEMENT": 59,
-    "59": "X_V_MODEL_ON_FILE_INPUT_ELEMENT",
-    "X_V_MODEL_UNNECESSARY_VALUE": 60,
-    "60": "X_V_MODEL_UNNECESSARY_VALUE",
-    "X_V_SHOW_NO_EXPRESSION": 61,
-    "61": "X_V_SHOW_NO_EXPRESSION",
-    "X_TRANSITION_INVALID_CHILDREN": 62,
-    "62": "X_TRANSITION_INVALID_CHILDREN",
-    "X_IGNORED_SIDE_EFFECT_TAG": 63,
-    "63": "X_IGNORED_SIDE_EFFECT_TAG",
-    "__EXTEND_POINT__": 64,
-    "64": "__EXTEND_POINT__"
-};
-const DOMErrorMessages = {
-    [53]: `v-html is missing expression.`,
-    [54]: `v-html will override element children.`,
-    [55]: `v-text is missing expression.`,
-    [56]: `v-text will override element children.`,
-    [57]: `v-model can only be used on <input>, <textarea> and <select> elements.`,
-    [58]: `v-model argument is not supported on plain elements.`,
-    [59]: `v-model cannot be used on file inputs since they are read-only. Use a v-on:change listener instead.`,
-    [60]: `Unnecessary value binding used alongside v-model. It will interfere with v-model's behavior.`,
-    [61]: `v-show is missing expression.`,
-    [62]: `<Transition> expects exactly one child element or component.`,
-    [63]: `Tags with side effect (<script> and <style>) are ignored in client component templates.`
-};
-const transformVHtml = (dir, node, context)=>{
-    const { exp, loc } = dir;
-    if (!exp) context.onError(createDOMCompilerError(53, loc));
-    if (node.children.length) {
-        context.onError(createDOMCompilerError(54, loc));
-        node.children.length = 0;
-    }
-    return {
-        props: [
-            (0, _compilerCore.createObjectProperty)((0, _compilerCore.createSimpleExpression)(`innerHTML`, true, loc), exp || (0, _compilerCore.createSimpleExpression)("", true))
-        ]
-    };
-};
-const transformVText = (dir, node, context)=>{
-    const { exp, loc } = dir;
-    if (!exp) context.onError(createDOMCompilerError(55, loc));
-    if (node.children.length) {
-        context.onError(createDOMCompilerError(56, loc));
-        node.children.length = 0;
-    }
-    return {
-        props: [
-            (0, _compilerCore.createObjectProperty)((0, _compilerCore.createSimpleExpression)(`textContent`, true), exp ? (0, _compilerCore.getConstantType)(exp, context) > 0 ? exp : (0, _compilerCore.createCallExpression)(context.helperString((0, _compilerCore.TO_DISPLAY_STRING)), [
-                exp
-            ], loc) : (0, _compilerCore.createSimpleExpression)("", true))
-        ]
-    };
-};
-const transformModel = (dir, node, context)=>{
-    const baseResult = (0, _compilerCore.transformModel)(dir, node, context);
-    if (!baseResult.props.length || node.tagType === 1) return baseResult;
-    if (dir.arg) context.onError(createDOMCompilerError(58, dir.arg.loc));
-    function checkDuplicatedValue() {
-        const value = (0, _compilerCore.findDir)(node, "bind");
-        if (value && (0, _compilerCore.isStaticArgOf)(value.arg, "value")) context.onError(createDOMCompilerError(60, value.loc));
-    }
-    const { tag } = node;
-    const isCustomElement = context.isCustomElement(tag);
-    if (tag === "input" || tag === "textarea" || tag === "select" || isCustomElement) {
-        let directiveToUse = V_MODEL_TEXT;
-        let isInvalidType = false;
-        if (tag === "input" || isCustomElement) {
-            const type = (0, _compilerCore.findProp)(node, `type`);
-            if (type) {
-                if (type.type === 7) directiveToUse = V_MODEL_DYNAMIC;
-                else if (type.value) switch(type.value.content){
-                    case "radio":
-                        directiveToUse = V_MODEL_RADIO;
-                        break;
-                    case "checkbox":
-                        directiveToUse = V_MODEL_CHECKBOX;
-                        break;
-                    case "file":
-                        isInvalidType = true;
-                        context.onError(createDOMCompilerError(59, dir.loc));
-                        break;
-                    default:
-                        checkDuplicatedValue();
-                        break;
-                }
-            } else if ((0, _compilerCore.hasDynamicKeyVBind)(node)) directiveToUse = V_MODEL_DYNAMIC;
-            else checkDuplicatedValue();
-        } else if (tag === "select") directiveToUse = V_MODEL_SELECT;
-        else checkDuplicatedValue();
-        if (!isInvalidType) baseResult.needRuntime = context.helper(directiveToUse);
-    } else context.onError(createDOMCompilerError(57, dir.loc));
-    baseResult.props = baseResult.props.filter((p)=>!(p.key.type === 4 && p.key.content === "modelValue"));
-    return baseResult;
-};
-const isEventOptionModifier = /* @__PURE__ */ (0, _shared.makeMap)(`passive,once,capture`);
-const isNonKeyModifier = /* @__PURE__ */ (0, _shared.makeMap)(// event propagation management
-`stop,prevent,self,ctrl,shift,alt,meta,exact,middle`);
-const maybeKeyModifier = /* @__PURE__ */ (0, _shared.makeMap)("left,right");
-const isKeyboardEvent = /* @__PURE__ */ (0, _shared.makeMap)(`onkeyup,onkeydown,onkeypress`);
-const resolveModifiers = (key, modifiers, context, loc)=>{
-    const keyModifiers = [];
-    const nonKeyModifiers = [];
-    const eventOptionModifiers = [];
-    for(let i = 0; i < modifiers.length; i++){
-        const modifier = modifiers[i].content;
-        if (modifier === "native" && (0, _compilerCore.checkCompatEnabled)("COMPILER_V_ON_NATIVE", context, loc)) eventOptionModifiers.push(modifier);
-        else if (isEventOptionModifier(modifier)) eventOptionModifiers.push(modifier);
-        else {
-            if (maybeKeyModifier(modifier)) {
-                if ((0, _compilerCore.isStaticExp)(key)) {
-                    if (isKeyboardEvent(key.content.toLowerCase())) keyModifiers.push(modifier);
-                    else nonKeyModifiers.push(modifier);
-                } else {
-                    keyModifiers.push(modifier);
-                    nonKeyModifiers.push(modifier);
-                }
-            } else if (isNonKeyModifier(modifier)) nonKeyModifiers.push(modifier);
-            else keyModifiers.push(modifier);
-        }
-    }
-    return {
-        keyModifiers,
-        nonKeyModifiers,
-        eventOptionModifiers
-    };
-};
-const transformClick = (key, event)=>{
-    const isStaticClick = (0, _compilerCore.isStaticExp)(key) && key.content.toLowerCase() === "onclick";
-    return isStaticClick ? (0, _compilerCore.createSimpleExpression)(event, true) : key.type !== 4 ? (0, _compilerCore.createCompoundExpression)([
-        `(`,
-        key,
-        `) === "onClick" ? "${event}" : (`,
-        key,
-        `)`
-    ]) : key;
-};
-const transformOn = (dir, node, context)=>{
-    return (0, _compilerCore.transformOn)(dir, node, context, (baseResult)=>{
-        const { modifiers } = dir;
-        if (!modifiers.length) return baseResult;
-        let { key, value: handlerExp } = baseResult.props[0];
-        const { keyModifiers, nonKeyModifiers, eventOptionModifiers } = resolveModifiers(key, modifiers, context, dir.loc);
-        if (nonKeyModifiers.includes("right")) key = transformClick(key, `onContextmenu`);
-        if (nonKeyModifiers.includes("middle")) key = transformClick(key, `onMouseup`);
-        if (nonKeyModifiers.length) handlerExp = (0, _compilerCore.createCallExpression)(context.helper(V_ON_WITH_MODIFIERS), [
-            handlerExp,
-            JSON.stringify(nonKeyModifiers)
-        ]);
-        if (keyModifiers.length && // if event name is dynamic, always wrap with keys guard
-        (!(0, _compilerCore.isStaticExp)(key) || isKeyboardEvent(key.content.toLowerCase()))) handlerExp = (0, _compilerCore.createCallExpression)(context.helper(V_ON_WITH_KEYS), [
-            handlerExp,
-            JSON.stringify(keyModifiers)
-        ]);
-        if (eventOptionModifiers.length) {
-            const modifierPostfix = eventOptionModifiers.map((0, _shared.capitalize)).join("");
-            key = (0, _compilerCore.isStaticExp)(key) ? (0, _compilerCore.createSimpleExpression)(`${key.content}${modifierPostfix}`, true) : (0, _compilerCore.createCompoundExpression)([
-                `(`,
-                key,
-                `) + "${modifierPostfix}"`
-            ]);
-        }
-        return {
-            props: [
-                (0, _compilerCore.createObjectProperty)(key, handlerExp)
-            ]
-        };
-    });
-};
-const transformShow = (dir, node, context)=>{
-    const { exp, loc } = dir;
-    if (!exp) context.onError(createDOMCompilerError(61, loc));
-    return {
-        props: [],
-        needRuntime: context.helper(V_SHOW)
-    };
-};
-const transformTransition = (node, context)=>{
-    if (node.type === 1 && node.tagType === 1) {
-        const component = context.isBuiltInComponent(node.tag);
-        if (component === TRANSITION) return ()=>{
-            if (!node.children.length) return;
-            if (hasMultipleChildren(node)) context.onError(createDOMCompilerError(62, {
-                start: node.children[0].loc.start,
-                end: node.children[node.children.length - 1].loc.end,
-                source: ""
-            }));
-            const child = node.children[0];
-            if (child.type === 1) {
-                for (const p of child.props)if (p.type === 7 && p.name === "show") node.props.push({
-                    type: 6,
-                    name: "persisted",
-                    nameLoc: node.loc,
-                    value: void 0,
-                    loc: node.loc
-                });
-            }
-        };
-    }
-};
-function hasMultipleChildren(node) {
-    const children = node.children = node.children.filter((c)=>c.type !== 3 && !(c.type === 2 && !c.content.trim()));
-    const child = children[0];
-    return children.length !== 1 || child.type === 11 || child.type === 9 && child.branches.some(hasMultipleChildren);
-}
-const ignoreSideEffectTags = (node, context)=>{
-    if (node.type === 1 && node.tagType === 0 && (node.tag === "script" || node.tag === "style")) {
-        context.onError(createDOMCompilerError(63, node.loc));
-        context.removeNode();
-    }
-};
-function isValidHTMLNesting(parent, child) {
-    if (parent in onlyValidChildren) return onlyValidChildren[parent].has(child);
-    if (child in onlyValidParents) return onlyValidParents[child].has(parent);
-    if (parent in knownInvalidChildren) {
-        if (knownInvalidChildren[parent].has(child)) return false;
-    }
-    if (child in knownInvalidParents) {
-        if (knownInvalidParents[child].has(parent)) return false;
-    }
-    return true;
-}
-const headings = /* @__PURE__ */ new Set([
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "h5",
-    "h6"
-]);
-const emptySet = /* @__PURE__ */ new Set([]);
-const onlyValidChildren = {
-    head: /* @__PURE__ */ new Set([
-        "base",
-        "basefront",
-        "bgsound",
-        "link",
-        "meta",
-        "title",
-        "noscript",
-        "noframes",
-        "style",
-        "script",
-        "template"
-    ]),
-    optgroup: /* @__PURE__ */ new Set([
-        "option"
-    ]),
-    select: /* @__PURE__ */ new Set([
-        "optgroup",
-        "option",
-        "hr"
-    ]),
-    // table
-    table: /* @__PURE__ */ new Set([
-        "caption",
-        "colgroup",
-        "tbody",
-        "tfoot",
-        "thead"
-    ]),
-    tr: /* @__PURE__ */ new Set([
-        "td",
-        "th"
-    ]),
-    colgroup: /* @__PURE__ */ new Set([
-        "col"
-    ]),
-    tbody: /* @__PURE__ */ new Set([
-        "tr"
-    ]),
-    thead: /* @__PURE__ */ new Set([
-        "tr"
-    ]),
-    tfoot: /* @__PURE__ */ new Set([
-        "tr"
-    ]),
-    // these elements can not have any children elements
-    script: emptySet,
-    iframe: emptySet,
-    option: emptySet,
-    textarea: emptySet,
-    style: emptySet,
-    title: emptySet
-};
-const onlyValidParents = {
-    // sections
-    html: emptySet,
-    body: /* @__PURE__ */ new Set([
-        "html"
-    ]),
-    head: /* @__PURE__ */ new Set([
-        "html"
-    ]),
-    // table
-    td: /* @__PURE__ */ new Set([
-        "tr"
-    ]),
-    colgroup: /* @__PURE__ */ new Set([
-        "table"
-    ]),
-    caption: /* @__PURE__ */ new Set([
-        "table"
-    ]),
-    tbody: /* @__PURE__ */ new Set([
-        "table"
-    ]),
-    tfoot: /* @__PURE__ */ new Set([
-        "table"
-    ]),
-    col: /* @__PURE__ */ new Set([
-        "colgroup"
-    ]),
-    th: /* @__PURE__ */ new Set([
-        "tr"
-    ]),
-    thead: /* @__PURE__ */ new Set([
-        "table"
-    ]),
-    tr: /* @__PURE__ */ new Set([
-        "tbody",
-        "thead",
-        "tfoot"
-    ]),
-    // data list
-    dd: /* @__PURE__ */ new Set([
-        "dl",
-        "div"
-    ]),
-    dt: /* @__PURE__ */ new Set([
-        "dl",
-        "div"
-    ]),
-    // other
-    figcaption: /* @__PURE__ */ new Set([
-        "figure"
-    ]),
-    // li: new Set(["ul", "ol"]),
-    summary: /* @__PURE__ */ new Set([
-        "details"
-    ]),
-    area: /* @__PURE__ */ new Set([
-        "map"
-    ])
-};
-const knownInvalidChildren = {
-    p: /* @__PURE__ */ new Set([
-        "address",
-        "article",
-        "aside",
-        "blockquote",
-        "center",
-        "details",
-        "dialog",
-        "dir",
-        "div",
-        "dl",
-        "fieldset",
-        "figure",
-        "footer",
-        "form",
-        "h1",
-        "h2",
-        "h3",
-        "h4",
-        "h5",
-        "h6",
-        "header",
-        "hgroup",
-        "hr",
-        "li",
-        "main",
-        "nav",
-        "menu",
-        "ol",
-        "p",
-        "pre",
-        "section",
-        "table",
-        "ul"
-    ]),
-    svg: /* @__PURE__ */ new Set([
-        "b",
-        "blockquote",
-        "br",
-        "code",
-        "dd",
-        "div",
-        "dl",
-        "dt",
-        "em",
-        "embed",
-        "h1",
-        "h2",
-        "h3",
-        "h4",
-        "h5",
-        "h6",
-        "hr",
-        "i",
-        "img",
-        "li",
-        "menu",
-        "meta",
-        "ol",
-        "p",
-        "pre",
-        "ruby",
-        "s",
-        "small",
-        "span",
-        "strong",
-        "sub",
-        "sup",
-        "table",
-        "u",
-        "ul",
-        "var"
-    ])
-};
-const knownInvalidParents = {
-    a: /* @__PURE__ */ new Set([
-        "a"
-    ]),
-    button: /* @__PURE__ */ new Set([
-        "button"
-    ]),
-    dd: /* @__PURE__ */ new Set([
-        "dd",
-        "dt"
-    ]),
-    dt: /* @__PURE__ */ new Set([
-        "dd",
-        "dt"
-    ]),
-    form: /* @__PURE__ */ new Set([
-        "form"
-    ]),
-    li: /* @__PURE__ */ new Set([
-        "li"
-    ]),
-    h1: headings,
-    h2: headings,
-    h3: headings,
-    h4: headings,
-    h5: headings,
-    h6: headings
-};
-const validateHtmlNesting = (node, context)=>{
-    if (node.type === 1 && node.tagType === 0 && context.parent && context.parent.type === 1 && context.parent.tagType === 0 && !isValidHTMLNesting(context.parent.tag, node.tag)) {
-        const error = new SyntaxError(`<${node.tag}> cannot be child of <${context.parent.tag}>, according to HTML specifications. This can cause hydration errors or potentially disrupt future functionality.`);
-        error.loc = node.loc;
-        context.onWarn(error);
-    }
-};
-const DOMNodeTransforms = [
-    transformStyle,
-    transformTransition,
-    validateHtmlNesting
-];
-const DOMDirectiveTransforms = {
-    cloak: (0, _compilerCore.noopDirectiveTransform),
-    html: transformVHtml,
-    text: transformVText,
-    model: transformModel,
-    // override compiler-core
-    on: transformOn,
-    // override compiler-core
-    show: transformShow
-};
-function compile(src, options = {}) {
-    return (0, _compilerCore.baseCompile)(src, (0, _shared.extend)({}, parserOptions, options, {
-        nodeTransforms: [
-            // ignore <script> and <tag>
-            // this is not put inside DOMNodeTransforms because that list is used
-            // by compiler-ssr to generate vnode fallback branches
-            ignoreSideEffectTags,
-            ...DOMNodeTransforms,
-            ...options.nodeTransforms || []
-        ],
-        directiveTransforms: (0, _shared.extend)({}, DOMDirectiveTransforms, options.directiveTransforms || {}),
-        transformHoist: null
-    }));
-}
-function parse(template, options = {}) {
-    return (0, _compilerCore.baseParse)(template, (0, _shared.extend)({}, parserOptions, options));
-}
-
-},{"@vue/compiler-core":"1V3uj","@vue/shared":"3SM3y","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1V3uj":[function(require,module,exports,__globalThis) {
-/**
-* @vue/compiler-core v3.5.13
-* (c) 2018-present Yuxi (Evan) You and Vue contributors
-* @license MIT
-**/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "generateCodeFrame", ()=>(0, _shared.generateCodeFrame));
-parcelHelpers.export(exports, "BASE_TRANSITION", ()=>BASE_TRANSITION);
-parcelHelpers.export(exports, "BindingTypes", ()=>BindingTypes);
-parcelHelpers.export(exports, "CAMELIZE", ()=>CAMELIZE);
-parcelHelpers.export(exports, "CAPITALIZE", ()=>CAPITALIZE);
-parcelHelpers.export(exports, "CREATE_BLOCK", ()=>CREATE_BLOCK);
-parcelHelpers.export(exports, "CREATE_COMMENT", ()=>CREATE_COMMENT);
-parcelHelpers.export(exports, "CREATE_ELEMENT_BLOCK", ()=>CREATE_ELEMENT_BLOCK);
-parcelHelpers.export(exports, "CREATE_ELEMENT_VNODE", ()=>CREATE_ELEMENT_VNODE);
-parcelHelpers.export(exports, "CREATE_SLOTS", ()=>CREATE_SLOTS);
-parcelHelpers.export(exports, "CREATE_STATIC", ()=>CREATE_STATIC);
-parcelHelpers.export(exports, "CREATE_TEXT", ()=>CREATE_TEXT);
-parcelHelpers.export(exports, "CREATE_VNODE", ()=>CREATE_VNODE);
-parcelHelpers.export(exports, "CompilerDeprecationTypes", ()=>CompilerDeprecationTypes);
-parcelHelpers.export(exports, "ConstantTypes", ()=>ConstantTypes);
-parcelHelpers.export(exports, "ElementTypes", ()=>ElementTypes);
-parcelHelpers.export(exports, "ErrorCodes", ()=>ErrorCodes);
-parcelHelpers.export(exports, "FRAGMENT", ()=>FRAGMENT);
-parcelHelpers.export(exports, "GUARD_REACTIVE_PROPS", ()=>GUARD_REACTIVE_PROPS);
-parcelHelpers.export(exports, "IS_MEMO_SAME", ()=>IS_MEMO_SAME);
-parcelHelpers.export(exports, "IS_REF", ()=>IS_REF);
-parcelHelpers.export(exports, "KEEP_ALIVE", ()=>KEEP_ALIVE);
-parcelHelpers.export(exports, "MERGE_PROPS", ()=>MERGE_PROPS);
-parcelHelpers.export(exports, "NORMALIZE_CLASS", ()=>NORMALIZE_CLASS);
-parcelHelpers.export(exports, "NORMALIZE_PROPS", ()=>NORMALIZE_PROPS);
-parcelHelpers.export(exports, "NORMALIZE_STYLE", ()=>NORMALIZE_STYLE);
-parcelHelpers.export(exports, "Namespaces", ()=>Namespaces);
-parcelHelpers.export(exports, "NodeTypes", ()=>NodeTypes);
-parcelHelpers.export(exports, "OPEN_BLOCK", ()=>OPEN_BLOCK);
-parcelHelpers.export(exports, "POP_SCOPE_ID", ()=>POP_SCOPE_ID);
-parcelHelpers.export(exports, "PUSH_SCOPE_ID", ()=>PUSH_SCOPE_ID);
-parcelHelpers.export(exports, "RENDER_LIST", ()=>RENDER_LIST);
-parcelHelpers.export(exports, "RENDER_SLOT", ()=>RENDER_SLOT);
-parcelHelpers.export(exports, "RESOLVE_COMPONENT", ()=>RESOLVE_COMPONENT);
-parcelHelpers.export(exports, "RESOLVE_DIRECTIVE", ()=>RESOLVE_DIRECTIVE);
-parcelHelpers.export(exports, "RESOLVE_DYNAMIC_COMPONENT", ()=>RESOLVE_DYNAMIC_COMPONENT);
-parcelHelpers.export(exports, "RESOLVE_FILTER", ()=>RESOLVE_FILTER);
-parcelHelpers.export(exports, "SET_BLOCK_TRACKING", ()=>SET_BLOCK_TRACKING);
-parcelHelpers.export(exports, "SUSPENSE", ()=>SUSPENSE);
-parcelHelpers.export(exports, "TELEPORT", ()=>TELEPORT);
-parcelHelpers.export(exports, "TO_DISPLAY_STRING", ()=>TO_DISPLAY_STRING);
-parcelHelpers.export(exports, "TO_HANDLERS", ()=>TO_HANDLERS);
-parcelHelpers.export(exports, "TO_HANDLER_KEY", ()=>TO_HANDLER_KEY);
-parcelHelpers.export(exports, "TS_NODE_TYPES", ()=>TS_NODE_TYPES);
-parcelHelpers.export(exports, "UNREF", ()=>UNREF);
-parcelHelpers.export(exports, "WITH_CTX", ()=>WITH_CTX);
-parcelHelpers.export(exports, "WITH_DIRECTIVES", ()=>WITH_DIRECTIVES);
-parcelHelpers.export(exports, "WITH_MEMO", ()=>WITH_MEMO);
-parcelHelpers.export(exports, "advancePositionWithClone", ()=>advancePositionWithClone);
-parcelHelpers.export(exports, "advancePositionWithMutation", ()=>advancePositionWithMutation);
-parcelHelpers.export(exports, "assert", ()=>assert);
-parcelHelpers.export(exports, "baseCompile", ()=>baseCompile);
-parcelHelpers.export(exports, "baseParse", ()=>baseParse);
-parcelHelpers.export(exports, "buildDirectiveArgs", ()=>buildDirectiveArgs);
-parcelHelpers.export(exports, "buildProps", ()=>buildProps);
-parcelHelpers.export(exports, "buildSlots", ()=>buildSlots);
-parcelHelpers.export(exports, "checkCompatEnabled", ()=>checkCompatEnabled);
-parcelHelpers.export(exports, "convertToBlock", ()=>convertToBlock);
-parcelHelpers.export(exports, "createArrayExpression", ()=>createArrayExpression);
-parcelHelpers.export(exports, "createAssignmentExpression", ()=>createAssignmentExpression);
-parcelHelpers.export(exports, "createBlockStatement", ()=>createBlockStatement);
-parcelHelpers.export(exports, "createCacheExpression", ()=>createCacheExpression);
-parcelHelpers.export(exports, "createCallExpression", ()=>createCallExpression);
-parcelHelpers.export(exports, "createCompilerError", ()=>createCompilerError);
-parcelHelpers.export(exports, "createCompoundExpression", ()=>createCompoundExpression);
-parcelHelpers.export(exports, "createConditionalExpression", ()=>createConditionalExpression);
-parcelHelpers.export(exports, "createForLoopParams", ()=>createForLoopParams);
-parcelHelpers.export(exports, "createFunctionExpression", ()=>createFunctionExpression);
-parcelHelpers.export(exports, "createIfStatement", ()=>createIfStatement);
-parcelHelpers.export(exports, "createInterpolation", ()=>createInterpolation);
-parcelHelpers.export(exports, "createObjectExpression", ()=>createObjectExpression);
-parcelHelpers.export(exports, "createObjectProperty", ()=>createObjectProperty);
-parcelHelpers.export(exports, "createReturnStatement", ()=>createReturnStatement);
-parcelHelpers.export(exports, "createRoot", ()=>createRoot);
-parcelHelpers.export(exports, "createSequenceExpression", ()=>createSequenceExpression);
-parcelHelpers.export(exports, "createSimpleExpression", ()=>createSimpleExpression);
-parcelHelpers.export(exports, "createStructuralDirectiveTransform", ()=>createStructuralDirectiveTransform);
-parcelHelpers.export(exports, "createTemplateLiteral", ()=>createTemplateLiteral);
-parcelHelpers.export(exports, "createTransformContext", ()=>createTransformContext);
-parcelHelpers.export(exports, "createVNodeCall", ()=>createVNodeCall);
-parcelHelpers.export(exports, "errorMessages", ()=>errorMessages);
-parcelHelpers.export(exports, "extractIdentifiers", ()=>extractIdentifiers);
-parcelHelpers.export(exports, "findDir", ()=>findDir);
-parcelHelpers.export(exports, "findProp", ()=>findProp);
-parcelHelpers.export(exports, "forAliasRE", ()=>forAliasRE);
-parcelHelpers.export(exports, "generate", ()=>generate);
-parcelHelpers.export(exports, "getBaseTransformPreset", ()=>getBaseTransformPreset);
-parcelHelpers.export(exports, "getConstantType", ()=>getConstantType);
-parcelHelpers.export(exports, "getMemoedVNodeCall", ()=>getMemoedVNodeCall);
-parcelHelpers.export(exports, "getVNodeBlockHelper", ()=>getVNodeBlockHelper);
-parcelHelpers.export(exports, "getVNodeHelper", ()=>getVNodeHelper);
-parcelHelpers.export(exports, "hasDynamicKeyVBind", ()=>hasDynamicKeyVBind);
-parcelHelpers.export(exports, "hasScopeRef", ()=>hasScopeRef);
-parcelHelpers.export(exports, "helperNameMap", ()=>helperNameMap);
-parcelHelpers.export(exports, "injectProp", ()=>injectProp);
-parcelHelpers.export(exports, "isCoreComponent", ()=>isCoreComponent);
-parcelHelpers.export(exports, "isFnExpression", ()=>isFnExpression);
-parcelHelpers.export(exports, "isFnExpressionBrowser", ()=>isFnExpressionBrowser);
-parcelHelpers.export(exports, "isFnExpressionNode", ()=>isFnExpressionNode);
-parcelHelpers.export(exports, "isFunctionType", ()=>isFunctionType);
-parcelHelpers.export(exports, "isInDestructureAssignment", ()=>isInDestructureAssignment);
-parcelHelpers.export(exports, "isInNewExpression", ()=>isInNewExpression);
-parcelHelpers.export(exports, "isMemberExpression", ()=>isMemberExpression);
-parcelHelpers.export(exports, "isMemberExpressionBrowser", ()=>isMemberExpressionBrowser);
-parcelHelpers.export(exports, "isMemberExpressionNode", ()=>isMemberExpressionNode);
-parcelHelpers.export(exports, "isReferencedIdentifier", ()=>isReferencedIdentifier);
-parcelHelpers.export(exports, "isSimpleIdentifier", ()=>isSimpleIdentifier);
-parcelHelpers.export(exports, "isSlotOutlet", ()=>isSlotOutlet);
-parcelHelpers.export(exports, "isStaticArgOf", ()=>isStaticArgOf);
-parcelHelpers.export(exports, "isStaticExp", ()=>isStaticExp);
-parcelHelpers.export(exports, "isStaticProperty", ()=>isStaticProperty);
-parcelHelpers.export(exports, "isStaticPropertyKey", ()=>isStaticPropertyKey);
-parcelHelpers.export(exports, "isTemplateNode", ()=>isTemplateNode);
-parcelHelpers.export(exports, "isText", ()=>isText$1);
-parcelHelpers.export(exports, "isVSlot", ()=>isVSlot);
-parcelHelpers.export(exports, "locStub", ()=>locStub);
-parcelHelpers.export(exports, "noopDirectiveTransform", ()=>noopDirectiveTransform);
-parcelHelpers.export(exports, "processExpression", ()=>processExpression);
-parcelHelpers.export(exports, "processFor", ()=>processFor);
-parcelHelpers.export(exports, "processIf", ()=>processIf);
-parcelHelpers.export(exports, "processSlotOutlet", ()=>processSlotOutlet);
-parcelHelpers.export(exports, "registerRuntimeHelpers", ()=>registerRuntimeHelpers);
-parcelHelpers.export(exports, "resolveComponentType", ()=>resolveComponentType);
-parcelHelpers.export(exports, "stringifyExpression", ()=>stringifyExpression);
-parcelHelpers.export(exports, "toValidAssetId", ()=>toValidAssetId);
-parcelHelpers.export(exports, "trackSlotScopes", ()=>trackSlotScopes);
-parcelHelpers.export(exports, "trackVForSlotScopes", ()=>trackVForSlotScopes);
-parcelHelpers.export(exports, "transform", ()=>transform);
-parcelHelpers.export(exports, "transformBind", ()=>transformBind);
-parcelHelpers.export(exports, "transformElement", ()=>transformElement);
-parcelHelpers.export(exports, "transformExpression", ()=>transformExpression);
-parcelHelpers.export(exports, "transformModel", ()=>transformModel);
-parcelHelpers.export(exports, "transformOn", ()=>transformOn);
-parcelHelpers.export(exports, "traverseNode", ()=>traverseNode);
-parcelHelpers.export(exports, "unwrapTSNode", ()=>unwrapTSNode);
-parcelHelpers.export(exports, "walkBlockDeclarations", ()=>walkBlockDeclarations);
-parcelHelpers.export(exports, "walkFunctionParams", ()=>walkFunctionParams);
-parcelHelpers.export(exports, "walkIdentifiers", ()=>walkIdentifiers);
-parcelHelpers.export(exports, "warnDeprecation", ()=>warnDeprecation);
-var _shared = require("@vue/shared");
-const FRAGMENT = Symbol(`Fragment`);
-const TELEPORT = Symbol(`Teleport`);
-const SUSPENSE = Symbol(`Suspense`);
-const KEEP_ALIVE = Symbol(`KeepAlive`);
-const BASE_TRANSITION = Symbol(`BaseTransition`);
-const OPEN_BLOCK = Symbol(`openBlock`);
-const CREATE_BLOCK = Symbol(`createBlock`);
-const CREATE_ELEMENT_BLOCK = Symbol(`createElementBlock`);
-const CREATE_VNODE = Symbol(`createVNode`);
-const CREATE_ELEMENT_VNODE = Symbol(`createElementVNode`);
-const CREATE_COMMENT = Symbol(`createCommentVNode`);
-const CREATE_TEXT = Symbol(`createTextVNode`);
-const CREATE_STATIC = Symbol(`createStaticVNode`);
-const RESOLVE_COMPONENT = Symbol(`resolveComponent`);
-const RESOLVE_DYNAMIC_COMPONENT = Symbol(`resolveDynamicComponent`);
-const RESOLVE_DIRECTIVE = Symbol(`resolveDirective`);
-const RESOLVE_FILTER = Symbol(`resolveFilter`);
-const WITH_DIRECTIVES = Symbol(`withDirectives`);
-const RENDER_LIST = Symbol(`renderList`);
-const RENDER_SLOT = Symbol(`renderSlot`);
-const CREATE_SLOTS = Symbol(`createSlots`);
-const TO_DISPLAY_STRING = Symbol(`toDisplayString`);
-const MERGE_PROPS = Symbol(`mergeProps`);
-const NORMALIZE_CLASS = Symbol(`normalizeClass`);
-const NORMALIZE_STYLE = Symbol(`normalizeStyle`);
-const NORMALIZE_PROPS = Symbol(`normalizeProps`);
-const GUARD_REACTIVE_PROPS = Symbol(`guardReactiveProps`);
-const TO_HANDLERS = Symbol(`toHandlers`);
-const CAMELIZE = Symbol(`camelize`);
-const CAPITALIZE = Symbol(`capitalize`);
-const TO_HANDLER_KEY = Symbol(`toHandlerKey`);
-const SET_BLOCK_TRACKING = Symbol(`setBlockTracking`);
-const PUSH_SCOPE_ID = Symbol(`pushScopeId`);
-const POP_SCOPE_ID = Symbol(`popScopeId`);
-const WITH_CTX = Symbol(`withCtx`);
-const UNREF = Symbol(`unref`);
-const IS_REF = Symbol(`isRef`);
-const WITH_MEMO = Symbol(`withMemo`);
-const IS_MEMO_SAME = Symbol(`isMemoSame`);
-const helperNameMap = {
-    [FRAGMENT]: `Fragment`,
-    [TELEPORT]: `Teleport`,
-    [SUSPENSE]: `Suspense`,
-    [KEEP_ALIVE]: `KeepAlive`,
-    [BASE_TRANSITION]: `BaseTransition`,
-    [OPEN_BLOCK]: `openBlock`,
-    [CREATE_BLOCK]: `createBlock`,
-    [CREATE_ELEMENT_BLOCK]: `createElementBlock`,
-    [CREATE_VNODE]: `createVNode`,
-    [CREATE_ELEMENT_VNODE]: `createElementVNode`,
-    [CREATE_COMMENT]: `createCommentVNode`,
-    [CREATE_TEXT]: `createTextVNode`,
-    [CREATE_STATIC]: `createStaticVNode`,
-    [RESOLVE_COMPONENT]: `resolveComponent`,
-    [RESOLVE_DYNAMIC_COMPONENT]: `resolveDynamicComponent`,
-    [RESOLVE_DIRECTIVE]: `resolveDirective`,
-    [RESOLVE_FILTER]: `resolveFilter`,
-    [WITH_DIRECTIVES]: `withDirectives`,
-    [RENDER_LIST]: `renderList`,
-    [RENDER_SLOT]: `renderSlot`,
-    [CREATE_SLOTS]: `createSlots`,
-    [TO_DISPLAY_STRING]: `toDisplayString`,
-    [MERGE_PROPS]: `mergeProps`,
-    [NORMALIZE_CLASS]: `normalizeClass`,
-    [NORMALIZE_STYLE]: `normalizeStyle`,
-    [NORMALIZE_PROPS]: `normalizeProps`,
-    [GUARD_REACTIVE_PROPS]: `guardReactiveProps`,
-    [TO_HANDLERS]: `toHandlers`,
-    [CAMELIZE]: `camelize`,
-    [CAPITALIZE]: `capitalize`,
-    [TO_HANDLER_KEY]: `toHandlerKey`,
-    [SET_BLOCK_TRACKING]: `setBlockTracking`,
-    [PUSH_SCOPE_ID]: `pushScopeId`,
-    [POP_SCOPE_ID]: `popScopeId`,
-    [WITH_CTX]: `withCtx`,
-    [UNREF]: `unref`,
-    [IS_REF]: `isRef`,
-    [WITH_MEMO]: `withMemo`,
-    [IS_MEMO_SAME]: `isMemoSame`
-};
-function registerRuntimeHelpers(helpers) {
-    Object.getOwnPropertySymbols(helpers).forEach((s)=>{
-        helperNameMap[s] = helpers[s];
-    });
-}
-const Namespaces = {
-    "HTML": 0,
-    "0": "HTML",
-    "SVG": 1,
-    "1": "SVG",
-    "MATH_ML": 2,
-    "2": "MATH_ML"
-};
-const NodeTypes = {
-    "ROOT": 0,
-    "0": "ROOT",
-    "ELEMENT": 1,
-    "1": "ELEMENT",
-    "TEXT": 2,
-    "2": "TEXT",
-    "COMMENT": 3,
-    "3": "COMMENT",
-    "SIMPLE_EXPRESSION": 4,
-    "4": "SIMPLE_EXPRESSION",
-    "INTERPOLATION": 5,
-    "5": "INTERPOLATION",
-    "ATTRIBUTE": 6,
-    "6": "ATTRIBUTE",
-    "DIRECTIVE": 7,
-    "7": "DIRECTIVE",
-    "COMPOUND_EXPRESSION": 8,
-    "8": "COMPOUND_EXPRESSION",
-    "IF": 9,
-    "9": "IF",
-    "IF_BRANCH": 10,
-    "10": "IF_BRANCH",
-    "FOR": 11,
-    "11": "FOR",
-    "TEXT_CALL": 12,
-    "12": "TEXT_CALL",
-    "VNODE_CALL": 13,
-    "13": "VNODE_CALL",
-    "JS_CALL_EXPRESSION": 14,
-    "14": "JS_CALL_EXPRESSION",
-    "JS_OBJECT_EXPRESSION": 15,
-    "15": "JS_OBJECT_EXPRESSION",
-    "JS_PROPERTY": 16,
-    "16": "JS_PROPERTY",
-    "JS_ARRAY_EXPRESSION": 17,
-    "17": "JS_ARRAY_EXPRESSION",
-    "JS_FUNCTION_EXPRESSION": 18,
-    "18": "JS_FUNCTION_EXPRESSION",
-    "JS_CONDITIONAL_EXPRESSION": 19,
-    "19": "JS_CONDITIONAL_EXPRESSION",
-    "JS_CACHE_EXPRESSION": 20,
-    "20": "JS_CACHE_EXPRESSION",
-    "JS_BLOCK_STATEMENT": 21,
-    "21": "JS_BLOCK_STATEMENT",
-    "JS_TEMPLATE_LITERAL": 22,
-    "22": "JS_TEMPLATE_LITERAL",
-    "JS_IF_STATEMENT": 23,
-    "23": "JS_IF_STATEMENT",
-    "JS_ASSIGNMENT_EXPRESSION": 24,
-    "24": "JS_ASSIGNMENT_EXPRESSION",
-    "JS_SEQUENCE_EXPRESSION": 25,
-    "25": "JS_SEQUENCE_EXPRESSION",
-    "JS_RETURN_STATEMENT": 26,
-    "26": "JS_RETURN_STATEMENT"
-};
-const ElementTypes = {
-    "ELEMENT": 0,
-    "0": "ELEMENT",
-    "COMPONENT": 1,
-    "1": "COMPONENT",
-    "SLOT": 2,
-    "2": "SLOT",
-    "TEMPLATE": 3,
-    "3": "TEMPLATE"
-};
-const ConstantTypes = {
-    "NOT_CONSTANT": 0,
-    "0": "NOT_CONSTANT",
-    "CAN_SKIP_PATCH": 1,
-    "1": "CAN_SKIP_PATCH",
-    "CAN_CACHE": 2,
-    "2": "CAN_CACHE",
-    "CAN_STRINGIFY": 3,
-    "3": "CAN_STRINGIFY"
-};
-const locStub = {
-    start: {
-        line: 1,
-        column: 1,
-        offset: 0
-    },
-    end: {
-        line: 1,
-        column: 1,
-        offset: 0
-    },
-    source: ""
-};
-function createRoot(children, source = "") {
-    return {
-        type: 0,
-        source,
-        children,
-        helpers: /* @__PURE__ */ new Set(),
-        components: [],
-        directives: [],
-        hoists: [],
-        imports: [],
-        cached: [],
-        temps: 0,
-        codegenNode: void 0,
-        loc: locStub
-    };
-}
-function createVNodeCall(context, tag, props, children, patchFlag, dynamicProps, directives, isBlock = false, disableTracking = false, isComponent = false, loc = locStub) {
-    if (context) {
-        if (isBlock) {
-            context.helper(OPEN_BLOCK);
-            context.helper(getVNodeBlockHelper(context.inSSR, isComponent));
-        } else context.helper(getVNodeHelper(context.inSSR, isComponent));
-        if (directives) context.helper(WITH_DIRECTIVES);
-    }
-    return {
-        type: 13,
-        tag,
-        props,
-        children,
-        patchFlag,
-        dynamicProps,
-        directives,
-        isBlock,
-        disableTracking,
-        isComponent,
-        loc
-    };
-}
-function createArrayExpression(elements, loc = locStub) {
-    return {
-        type: 17,
-        loc,
-        elements
-    };
-}
-function createObjectExpression(properties, loc = locStub) {
-    return {
-        type: 15,
-        loc,
-        properties
-    };
-}
-function createObjectProperty(key, value) {
-    return {
-        type: 16,
-        loc: locStub,
-        key: (0, _shared.isString)(key) ? createSimpleExpression(key, true) : key,
-        value
-    };
-}
-function createSimpleExpression(content, isStatic = false, loc = locStub, constType = 0) {
-    return {
-        type: 4,
-        loc,
-        content,
-        isStatic,
-        constType: isStatic ? 3 : constType
-    };
-}
-function createInterpolation(content, loc) {
-    return {
-        type: 5,
-        loc,
-        content: (0, _shared.isString)(content) ? createSimpleExpression(content, false, loc) : content
-    };
-}
-function createCompoundExpression(children, loc = locStub) {
-    return {
-        type: 8,
-        loc,
-        children
-    };
-}
-function createCallExpression(callee, args = [], loc = locStub) {
-    return {
-        type: 14,
-        loc,
-        callee,
-        arguments: args
-    };
-}
-function createFunctionExpression(params, returns, newline = false, isSlot = false, loc = locStub) {
-    return {
-        type: 18,
-        params,
-        returns,
-        newline,
-        isSlot,
-        loc
-    };
-}
-function createConditionalExpression(test, consequent, alternate, newline = true) {
-    return {
-        type: 19,
-        test,
-        consequent,
-        alternate,
-        newline,
-        loc: locStub
-    };
-}
-function createCacheExpression(index, value, needPauseTracking = false, inVOnce = false) {
-    return {
-        type: 20,
-        index,
-        value,
-        needPauseTracking,
-        inVOnce,
-        needArraySpread: false,
-        loc: locStub
-    };
-}
-function createBlockStatement(body) {
-    return {
-        type: 21,
-        body,
-        loc: locStub
-    };
-}
-function createTemplateLiteral(elements) {
-    return {
-        type: 22,
-        elements,
-        loc: locStub
-    };
-}
-function createIfStatement(test, consequent, alternate) {
-    return {
-        type: 23,
-        test,
-        consequent,
-        alternate,
-        loc: locStub
-    };
-}
-function createAssignmentExpression(left, right) {
-    return {
-        type: 24,
-        left,
-        right,
-        loc: locStub
-    };
-}
-function createSequenceExpression(expressions) {
-    return {
-        type: 25,
-        expressions,
-        loc: locStub
-    };
-}
-function createReturnStatement(returns) {
-    return {
-        type: 26,
-        returns,
-        loc: locStub
-    };
-}
-function getVNodeHelper(ssr, isComponent) {
-    return ssr || isComponent ? CREATE_VNODE : CREATE_ELEMENT_VNODE;
-}
-function getVNodeBlockHelper(ssr, isComponent) {
-    return ssr || isComponent ? CREATE_BLOCK : CREATE_ELEMENT_BLOCK;
-}
-function convertToBlock(node, { helper, removeHelper, inSSR }) {
-    if (!node.isBlock) {
-        node.isBlock = true;
-        removeHelper(getVNodeHelper(inSSR, node.isComponent));
-        helper(OPEN_BLOCK);
-        helper(getVNodeBlockHelper(inSSR, node.isComponent));
-    }
-}
-const defaultDelimitersOpen = new Uint8Array([
-    123,
-    123
-]);
-const defaultDelimitersClose = new Uint8Array([
-    125,
-    125
-]);
-function isTagStartChar(c) {
-    return c >= 97 && c <= 122 || c >= 65 && c <= 90;
-}
-function isWhitespace(c) {
-    return c === 32 || c === 10 || c === 9 || c === 12 || c === 13;
-}
-function isEndOfTagSection(c) {
-    return c === 47 || c === 62 || isWhitespace(c);
-}
-function toCharCodes(str) {
-    const ret = new Uint8Array(str.length);
-    for(let i = 0; i < str.length; i++)ret[i] = str.charCodeAt(i);
-    return ret;
-}
-const Sequences = {
-    Cdata: new Uint8Array([
-        67,
-        68,
-        65,
-        84,
-        65,
-        91
-    ]),
-    // CDATA[
-    CdataEnd: new Uint8Array([
-        93,
-        93,
-        62
-    ]),
-    // ]]>
-    CommentEnd: new Uint8Array([
-        45,
-        45,
-        62
-    ]),
-    // `-->`
-    ScriptEnd: new Uint8Array([
-        60,
-        47,
-        115,
-        99,
-        114,
-        105,
-        112,
-        116
-    ]),
-    // `<\/script`
-    StyleEnd: new Uint8Array([
-        60,
-        47,
-        115,
-        116,
-        121,
-        108,
-        101
-    ]),
-    // `</style`
-    TitleEnd: new Uint8Array([
-        60,
-        47,
-        116,
-        105,
-        116,
-        108,
-        101
-    ]),
-    // `</title`
-    TextareaEnd: new Uint8Array([
-        60,
-        47,
-        116,
-        101,
-        120,
-        116,
-        97,
-        114,
-        101,
-        97
-    ])
-};
-class Tokenizer {
-    constructor(stack, cbs){
-        this.stack = stack;
-        this.cbs = cbs;
-        /** The current state the tokenizer is in. */ this.state = 1;
-        /** The read buffer. */ this.buffer = "";
-        /** The beginning of the section that is currently being read. */ this.sectionStart = 0;
-        /** The index within the buffer that we are currently looking at. */ this.index = 0;
-        /** The start of the last entity. */ this.entityStart = 0;
-        /** Some behavior, eg. when decoding entities, is done while we are in another state. This keeps track of the other state type. */ this.baseState = 1;
-        /** For special parsing behavior inside of script and style tags. */ this.inRCDATA = false;
-        /** For disabling RCDATA tags handling */ this.inXML = false;
-        /** For disabling interpolation parsing in v-pre */ this.inVPre = false;
-        /** Record newline positions for fast line / column calculation */ this.newlines = [];
-        this.mode = 0;
-        this.delimiterOpen = defaultDelimitersOpen;
-        this.delimiterClose = defaultDelimitersClose;
-        this.delimiterIndex = -1;
-        this.currentSequence = void 0;
-        this.sequenceIndex = 0;
-    }
-    get inSFCRoot() {
-        return this.mode === 2 && this.stack.length === 0;
-    }
-    reset() {
-        this.state = 1;
-        this.mode = 0;
-        this.buffer = "";
-        this.sectionStart = 0;
-        this.index = 0;
-        this.baseState = 1;
-        this.inRCDATA = false;
-        this.currentSequence = void 0;
-        this.newlines.length = 0;
-        this.delimiterOpen = defaultDelimitersOpen;
-        this.delimiterClose = defaultDelimitersClose;
-    }
-    /**
-   * Generate Position object with line / column information using recorded
-   * newline positions. We know the index is always going to be an already
-   * processed index, so all the newlines up to this index should have been
-   * recorded.
-   */ getPos(index) {
-        let line = 1;
-        let column = index + 1;
-        for(let i = this.newlines.length - 1; i >= 0; i--){
-            const newlineIndex = this.newlines[i];
-            if (index > newlineIndex) {
-                line = i + 2;
-                column = index - newlineIndex;
-                break;
-            }
-        }
-        return {
-            column,
-            line,
-            offset: index
-        };
-    }
-    peek() {
-        return this.buffer.charCodeAt(this.index + 1);
-    }
-    stateText(c) {
-        if (c === 60) {
-            if (this.index > this.sectionStart) this.cbs.ontext(this.sectionStart, this.index);
-            this.state = 5;
-            this.sectionStart = this.index;
-        } else if (!this.inVPre && c === this.delimiterOpen[0]) {
-            this.state = 2;
-            this.delimiterIndex = 0;
-            this.stateInterpolationOpen(c);
-        }
-    }
-    stateInterpolationOpen(c) {
-        if (c === this.delimiterOpen[this.delimiterIndex]) {
-            if (this.delimiterIndex === this.delimiterOpen.length - 1) {
-                const start = this.index + 1 - this.delimiterOpen.length;
-                if (start > this.sectionStart) this.cbs.ontext(this.sectionStart, start);
-                this.state = 3;
-                this.sectionStart = start;
-            } else this.delimiterIndex++;
-        } else if (this.inRCDATA) {
-            this.state = 32;
-            this.stateInRCDATA(c);
-        } else {
-            this.state = 1;
-            this.stateText(c);
-        }
-    }
-    stateInterpolation(c) {
-        if (c === this.delimiterClose[0]) {
-            this.state = 4;
-            this.delimiterIndex = 0;
-            this.stateInterpolationClose(c);
-        }
-    }
-    stateInterpolationClose(c) {
-        if (c === this.delimiterClose[this.delimiterIndex]) {
-            if (this.delimiterIndex === this.delimiterClose.length - 1) {
-                this.cbs.oninterpolation(this.sectionStart, this.index + 1);
-                if (this.inRCDATA) this.state = 32;
-                else this.state = 1;
-                this.sectionStart = this.index + 1;
-            } else this.delimiterIndex++;
-        } else {
-            this.state = 3;
-            this.stateInterpolation(c);
-        }
-    }
-    stateSpecialStartSequence(c) {
-        const isEnd = this.sequenceIndex === this.currentSequence.length;
-        const isMatch = isEnd ? // If we are at the end of the sequence, make sure the tag name has ended
-        isEndOfTagSection(c) : // Otherwise, do a case-insensitive comparison
-        (c | 32) === this.currentSequence[this.sequenceIndex];
-        if (!isMatch) this.inRCDATA = false;
-        else if (!isEnd) {
-            this.sequenceIndex++;
-            return;
-        }
-        this.sequenceIndex = 0;
-        this.state = 6;
-        this.stateInTagName(c);
-    }
-    /** Look for an end tag. For <title> and <textarea>, also decode entities. */ stateInRCDATA(c) {
-        if (this.sequenceIndex === this.currentSequence.length) {
-            if (c === 62 || isWhitespace(c)) {
-                const endOfText = this.index - this.currentSequence.length;
-                if (this.sectionStart < endOfText) {
-                    const actualIndex = this.index;
-                    this.index = endOfText;
-                    this.cbs.ontext(this.sectionStart, endOfText);
-                    this.index = actualIndex;
-                }
-                this.sectionStart = endOfText + 2;
-                this.stateInClosingTagName(c);
-                this.inRCDATA = false;
-                return;
-            }
-            this.sequenceIndex = 0;
-        }
-        if ((c | 32) === this.currentSequence[this.sequenceIndex]) this.sequenceIndex += 1;
-        else if (this.sequenceIndex === 0) {
-            if (this.currentSequence === Sequences.TitleEnd || this.currentSequence === Sequences.TextareaEnd && !this.inSFCRoot) {
-                if (!this.inVPre && c === this.delimiterOpen[0]) {
-                    this.state = 2;
-                    this.delimiterIndex = 0;
-                    this.stateInterpolationOpen(c);
-                }
-            } else if (this.fastForwardTo(60)) this.sequenceIndex = 1;
-        } else this.sequenceIndex = Number(c === 60);
-    }
-    stateCDATASequence(c) {
-        if (c === Sequences.Cdata[this.sequenceIndex]) {
-            if (++this.sequenceIndex === Sequences.Cdata.length) {
-                this.state = 28;
-                this.currentSequence = Sequences.CdataEnd;
-                this.sequenceIndex = 0;
-                this.sectionStart = this.index + 1;
-            }
-        } else {
-            this.sequenceIndex = 0;
-            this.state = 23;
-            this.stateInDeclaration(c);
-        }
-    }
-    /**
-   * When we wait for one specific character, we can speed things up
-   * by skipping through the buffer until we find it.
-   *
-   * @returns Whether the character was found.
-   */ fastForwardTo(c) {
-        while(++this.index < this.buffer.length){
-            const cc = this.buffer.charCodeAt(this.index);
-            if (cc === 10) this.newlines.push(this.index);
-            if (cc === c) return true;
-        }
-        this.index = this.buffer.length - 1;
-        return false;
-    }
-    /**
-   * Comments and CDATA end with `-->` and `]]>`.
-   *
-   * Their common qualities are:
-   * - Their end sequences have a distinct character they start with.
-   * - That character is then repeated, so we have to check multiple repeats.
-   * - All characters but the start character of the sequence can be skipped.
-   */ stateInCommentLike(c) {
-        if (c === this.currentSequence[this.sequenceIndex]) {
-            if (++this.sequenceIndex === this.currentSequence.length) {
-                if (this.currentSequence === Sequences.CdataEnd) this.cbs.oncdata(this.sectionStart, this.index - 2);
-                else this.cbs.oncomment(this.sectionStart, this.index - 2);
-                this.sequenceIndex = 0;
-                this.sectionStart = this.index + 1;
-                this.state = 1;
-            }
-        } else if (this.sequenceIndex === 0) {
-            if (this.fastForwardTo(this.currentSequence[0])) this.sequenceIndex = 1;
-        } else if (c !== this.currentSequence[this.sequenceIndex - 1]) this.sequenceIndex = 0;
-    }
-    startSpecial(sequence, offset) {
-        this.enterRCDATA(sequence, offset);
-        this.state = 31;
-    }
-    enterRCDATA(sequence, offset) {
-        this.inRCDATA = true;
-        this.currentSequence = sequence;
-        this.sequenceIndex = offset;
-    }
-    stateBeforeTagName(c) {
-        if (c === 33) {
-            this.state = 22;
-            this.sectionStart = this.index + 1;
-        } else if (c === 63) {
-            this.state = 24;
-            this.sectionStart = this.index + 1;
-        } else if (isTagStartChar(c)) {
-            this.sectionStart = this.index;
-            if (this.mode === 0) this.state = 6;
-            else if (this.inSFCRoot) this.state = 34;
-            else if (!this.inXML) {
-                if (c === 116) this.state = 30;
-                else this.state = c === 115 ? 29 : 6;
-            } else this.state = 6;
-        } else if (c === 47) this.state = 8;
-        else {
-            this.state = 1;
-            this.stateText(c);
-        }
-    }
-    stateInTagName(c) {
-        if (isEndOfTagSection(c)) this.handleTagName(c);
-    }
-    stateInSFCRootTagName(c) {
-        if (isEndOfTagSection(c)) {
-            const tag = this.buffer.slice(this.sectionStart, this.index);
-            if (tag !== "template") this.enterRCDATA(toCharCodes(`</` + tag), 0);
-            this.handleTagName(c);
-        }
-    }
-    handleTagName(c) {
-        this.cbs.onopentagname(this.sectionStart, this.index);
-        this.sectionStart = -1;
-        this.state = 11;
-        this.stateBeforeAttrName(c);
-    }
-    stateBeforeClosingTagName(c) {
-        if (isWhitespace(c)) ;
-        else if (c === 62) {
-            this.cbs.onerr(14, this.index);
-            this.state = 1;
-            this.sectionStart = this.index + 1;
-        } else {
-            this.state = isTagStartChar(c) ? 9 : 27;
-            this.sectionStart = this.index;
-        }
-    }
-    stateInClosingTagName(c) {
-        if (c === 62 || isWhitespace(c)) {
-            this.cbs.onclosetag(this.sectionStart, this.index);
-            this.sectionStart = -1;
-            this.state = 10;
-            this.stateAfterClosingTagName(c);
-        }
-    }
-    stateAfterClosingTagName(c) {
-        if (c === 62) {
-            this.state = 1;
-            this.sectionStart = this.index + 1;
-        }
-    }
-    stateBeforeAttrName(c) {
-        if (c === 62) {
-            this.cbs.onopentagend(this.index);
-            if (this.inRCDATA) this.state = 32;
-            else this.state = 1;
-            this.sectionStart = this.index + 1;
-        } else if (c === 47) {
-            this.state = 7;
-            if (this.peek() !== 62) this.cbs.onerr(22, this.index);
-        } else if (c === 60 && this.peek() === 47) {
-            this.cbs.onopentagend(this.index);
-            this.state = 5;
-            this.sectionStart = this.index;
-        } else if (!isWhitespace(c)) {
-            if (c === 61) this.cbs.onerr(19, this.index);
-            this.handleAttrStart(c);
-        }
-    }
-    handleAttrStart(c) {
-        if (c === 118 && this.peek() === 45) {
-            this.state = 13;
-            this.sectionStart = this.index;
-        } else if (c === 46 || c === 58 || c === 64 || c === 35) {
-            this.cbs.ondirname(this.index, this.index + 1);
-            this.state = 14;
-            this.sectionStart = this.index + 1;
-        } else {
-            this.state = 12;
-            this.sectionStart = this.index;
-        }
-    }
-    stateInSelfClosingTag(c) {
-        if (c === 62) {
-            this.cbs.onselfclosingtag(this.index);
-            this.state = 1;
-            this.sectionStart = this.index + 1;
-            this.inRCDATA = false;
-        } else if (!isWhitespace(c)) {
-            this.state = 11;
-            this.stateBeforeAttrName(c);
-        }
-    }
-    stateInAttrName(c) {
-        if (c === 61 || isEndOfTagSection(c)) {
-            this.cbs.onattribname(this.sectionStart, this.index);
-            this.handleAttrNameEnd(c);
-        } else if (c === 34 || c === 39 || c === 60) this.cbs.onerr(17, this.index);
-    }
-    stateInDirName(c) {
-        if (c === 61 || isEndOfTagSection(c)) {
-            this.cbs.ondirname(this.sectionStart, this.index);
-            this.handleAttrNameEnd(c);
-        } else if (c === 58) {
-            this.cbs.ondirname(this.sectionStart, this.index);
-            this.state = 14;
-            this.sectionStart = this.index + 1;
-        } else if (c === 46) {
-            this.cbs.ondirname(this.sectionStart, this.index);
-            this.state = 16;
-            this.sectionStart = this.index + 1;
-        }
-    }
-    stateInDirArg(c) {
-        if (c === 61 || isEndOfTagSection(c)) {
-            this.cbs.ondirarg(this.sectionStart, this.index);
-            this.handleAttrNameEnd(c);
-        } else if (c === 91) this.state = 15;
-        else if (c === 46) {
-            this.cbs.ondirarg(this.sectionStart, this.index);
-            this.state = 16;
-            this.sectionStart = this.index + 1;
-        }
-    }
-    stateInDynamicDirArg(c) {
-        if (c === 93) this.state = 14;
-        else if (c === 61 || isEndOfTagSection(c)) {
-            this.cbs.ondirarg(this.sectionStart, this.index + 1);
-            this.handleAttrNameEnd(c);
-            this.cbs.onerr(27, this.index);
-        }
-    }
-    stateInDirModifier(c) {
-        if (c === 61 || isEndOfTagSection(c)) {
-            this.cbs.ondirmodifier(this.sectionStart, this.index);
-            this.handleAttrNameEnd(c);
-        } else if (c === 46) {
-            this.cbs.ondirmodifier(this.sectionStart, this.index);
-            this.sectionStart = this.index + 1;
-        }
-    }
-    handleAttrNameEnd(c) {
-        this.sectionStart = this.index;
-        this.state = 17;
-        this.cbs.onattribnameend(this.index);
-        this.stateAfterAttrName(c);
-    }
-    stateAfterAttrName(c) {
-        if (c === 61) this.state = 18;
-        else if (c === 47 || c === 62) {
-            this.cbs.onattribend(0, this.sectionStart);
-            this.sectionStart = -1;
-            this.state = 11;
-            this.stateBeforeAttrName(c);
-        } else if (!isWhitespace(c)) {
-            this.cbs.onattribend(0, this.sectionStart);
-            this.handleAttrStart(c);
-        }
-    }
-    stateBeforeAttrValue(c) {
-        if (c === 34) {
-            this.state = 19;
-            this.sectionStart = this.index + 1;
-        } else if (c === 39) {
-            this.state = 20;
-            this.sectionStart = this.index + 1;
-        } else if (!isWhitespace(c)) {
-            this.sectionStart = this.index;
-            this.state = 21;
-            this.stateInAttrValueNoQuotes(c);
-        }
-    }
-    handleInAttrValue(c, quote) {
-        if (c === quote || this.fastForwardTo(quote)) {
-            this.cbs.onattribdata(this.sectionStart, this.index);
-            this.sectionStart = -1;
-            this.cbs.onattribend(quote === 34 ? 3 : 2, this.index + 1);
-            this.state = 11;
-        }
-    }
-    stateInAttrValueDoubleQuotes(c) {
-        this.handleInAttrValue(c, 34);
-    }
-    stateInAttrValueSingleQuotes(c) {
-        this.handleInAttrValue(c, 39);
-    }
-    stateInAttrValueNoQuotes(c) {
-        if (isWhitespace(c) || c === 62) {
-            this.cbs.onattribdata(this.sectionStart, this.index);
-            this.sectionStart = -1;
-            this.cbs.onattribend(1, this.index);
-            this.state = 11;
-            this.stateBeforeAttrName(c);
-        } else if (c === 34 || c === 39 || c === 60 || c === 61 || c === 96) this.cbs.onerr(18, this.index);
-    }
-    stateBeforeDeclaration(c) {
-        if (c === 91) {
-            this.state = 26;
-            this.sequenceIndex = 0;
-        } else this.state = c === 45 ? 25 : 23;
-    }
-    stateInDeclaration(c) {
-        if (c === 62 || this.fastForwardTo(62)) {
-            this.state = 1;
-            this.sectionStart = this.index + 1;
-        }
-    }
-    stateInProcessingInstruction(c) {
-        if (c === 62 || this.fastForwardTo(62)) {
-            this.cbs.onprocessinginstruction(this.sectionStart, this.index);
-            this.state = 1;
-            this.sectionStart = this.index + 1;
-        }
-    }
-    stateBeforeComment(c) {
-        if (c === 45) {
-            this.state = 28;
-            this.currentSequence = Sequences.CommentEnd;
-            this.sequenceIndex = 2;
-            this.sectionStart = this.index + 1;
-        } else this.state = 23;
-    }
-    stateInSpecialComment(c) {
-        if (c === 62 || this.fastForwardTo(62)) {
-            this.cbs.oncomment(this.sectionStart, this.index);
-            this.state = 1;
-            this.sectionStart = this.index + 1;
-        }
-    }
-    stateBeforeSpecialS(c) {
-        if (c === Sequences.ScriptEnd[3]) this.startSpecial(Sequences.ScriptEnd, 4);
-        else if (c === Sequences.StyleEnd[3]) this.startSpecial(Sequences.StyleEnd, 4);
-        else {
-            this.state = 6;
-            this.stateInTagName(c);
-        }
-    }
-    stateBeforeSpecialT(c) {
-        if (c === Sequences.TitleEnd[3]) this.startSpecial(Sequences.TitleEnd, 4);
-        else if (c === Sequences.TextareaEnd[3]) this.startSpecial(Sequences.TextareaEnd, 4);
-        else {
-            this.state = 6;
-            this.stateInTagName(c);
-        }
-    }
-    startEntity() {}
-    stateInEntity() {}
-    /**
-   * Iterates through the buffer, calling the function corresponding to the current state.
-   *
-   * States that are more likely to be hit are higher up, as a performance improvement.
-   */ parse(input) {
-        this.buffer = input;
-        while(this.index < this.buffer.length){
-            const c = this.buffer.charCodeAt(this.index);
-            if (c === 10) this.newlines.push(this.index);
-            switch(this.state){
-                case 1:
-                    this.stateText(c);
-                    break;
-                case 2:
-                    this.stateInterpolationOpen(c);
-                    break;
-                case 3:
-                    this.stateInterpolation(c);
-                    break;
-                case 4:
-                    this.stateInterpolationClose(c);
-                    break;
-                case 31:
-                    this.stateSpecialStartSequence(c);
-                    break;
-                case 32:
-                    this.stateInRCDATA(c);
-                    break;
-                case 26:
-                    this.stateCDATASequence(c);
-                    break;
-                case 19:
-                    this.stateInAttrValueDoubleQuotes(c);
-                    break;
-                case 12:
-                    this.stateInAttrName(c);
-                    break;
-                case 13:
-                    this.stateInDirName(c);
-                    break;
-                case 14:
-                    this.stateInDirArg(c);
-                    break;
-                case 15:
-                    this.stateInDynamicDirArg(c);
-                    break;
-                case 16:
-                    this.stateInDirModifier(c);
-                    break;
-                case 28:
-                    this.stateInCommentLike(c);
-                    break;
-                case 27:
-                    this.stateInSpecialComment(c);
-                    break;
-                case 11:
-                    this.stateBeforeAttrName(c);
-                    break;
-                case 6:
-                    this.stateInTagName(c);
-                    break;
-                case 34:
-                    this.stateInSFCRootTagName(c);
-                    break;
-                case 9:
-                    this.stateInClosingTagName(c);
-                    break;
-                case 5:
-                    this.stateBeforeTagName(c);
-                    break;
-                case 17:
-                    this.stateAfterAttrName(c);
-                    break;
-                case 20:
-                    this.stateInAttrValueSingleQuotes(c);
-                    break;
-                case 18:
-                    this.stateBeforeAttrValue(c);
-                    break;
-                case 8:
-                    this.stateBeforeClosingTagName(c);
-                    break;
-                case 10:
-                    this.stateAfterClosingTagName(c);
-                    break;
-                case 29:
-                    this.stateBeforeSpecialS(c);
-                    break;
-                case 30:
-                    this.stateBeforeSpecialT(c);
-                    break;
-                case 21:
-                    this.stateInAttrValueNoQuotes(c);
-                    break;
-                case 7:
-                    this.stateInSelfClosingTag(c);
-                    break;
-                case 23:
-                    this.stateInDeclaration(c);
-                    break;
-                case 22:
-                    this.stateBeforeDeclaration(c);
-                    break;
-                case 25:
-                    this.stateBeforeComment(c);
-                    break;
-                case 24:
-                    this.stateInProcessingInstruction(c);
-                    break;
-                case 33:
-                    this.stateInEntity();
-                    break;
-            }
-            this.index++;
-        }
-        this.cleanup();
-        this.finish();
-    }
-    /**
-   * Remove data that has already been consumed from the buffer.
-   */ cleanup() {
-        if (this.sectionStart !== this.index) {
-            if (this.state === 1 || this.state === 32 && this.sequenceIndex === 0) {
-                this.cbs.ontext(this.sectionStart, this.index);
-                this.sectionStart = this.index;
-            } else if (this.state === 19 || this.state === 20 || this.state === 21) {
-                this.cbs.onattribdata(this.sectionStart, this.index);
-                this.sectionStart = this.index;
-            }
-        }
-    }
-    finish() {
-        this.handleTrailingData();
-        this.cbs.onend();
-    }
-    /** Handle any trailing data. */ handleTrailingData() {
-        const endIndex = this.buffer.length;
-        if (this.sectionStart >= endIndex) return;
-        if (this.state === 28) {
-            if (this.currentSequence === Sequences.CdataEnd) this.cbs.oncdata(this.sectionStart, endIndex);
-            else this.cbs.oncomment(this.sectionStart, endIndex);
-        } else if (this.state === 6 || this.state === 11 || this.state === 18 || this.state === 17 || this.state === 12 || this.state === 13 || this.state === 14 || this.state === 15 || this.state === 16 || this.state === 20 || this.state === 19 || this.state === 21 || this.state === 9) ;
-        else this.cbs.ontext(this.sectionStart, endIndex);
-    }
-    emitCodePoint(cp, consumed) {}
-}
-const CompilerDeprecationTypes = {
-    "COMPILER_IS_ON_ELEMENT": "COMPILER_IS_ON_ELEMENT",
-    "COMPILER_V_BIND_SYNC": "COMPILER_V_BIND_SYNC",
-    "COMPILER_V_BIND_OBJECT_ORDER": "COMPILER_V_BIND_OBJECT_ORDER",
-    "COMPILER_V_ON_NATIVE": "COMPILER_V_ON_NATIVE",
-    "COMPILER_V_IF_V_FOR_PRECEDENCE": "COMPILER_V_IF_V_FOR_PRECEDENCE",
-    "COMPILER_NATIVE_TEMPLATE": "COMPILER_NATIVE_TEMPLATE",
-    "COMPILER_INLINE_TEMPLATE": "COMPILER_INLINE_TEMPLATE",
-    "COMPILER_FILTERS": "COMPILER_FILTERS"
-};
-const deprecationData = {
-    ["COMPILER_IS_ON_ELEMENT"]: {
-        message: `Platform-native elements with "is" prop will no longer be treated as components in Vue 3 unless the "is" value is explicitly prefixed with "vue:".`,
-        link: `https://v3-migration.vuejs.org/breaking-changes/custom-elements-interop.html`
-    },
-    ["COMPILER_V_BIND_SYNC"]: {
-        message: (key)=>`.sync modifier for v-bind has been removed. Use v-model with argument instead. \`v-bind:${key}.sync\` should be changed to \`v-model:${key}\`.`,
-        link: `https://v3-migration.vuejs.org/breaking-changes/v-model.html`
-    },
-    ["COMPILER_V_BIND_OBJECT_ORDER"]: {
-        message: `v-bind="obj" usage is now order sensitive and behaves like JavaScript object spread: it will now overwrite an existing non-mergeable attribute that appears before v-bind in the case of conflict. To retain 2.x behavior, move v-bind to make it the first attribute. You can also suppress this warning if the usage is intended.`,
-        link: `https://v3-migration.vuejs.org/breaking-changes/v-bind.html`
-    },
-    ["COMPILER_V_ON_NATIVE"]: {
-        message: `.native modifier for v-on has been removed as is no longer necessary.`,
-        link: `https://v3-migration.vuejs.org/breaking-changes/v-on-native-modifier-removed.html`
-    },
-    ["COMPILER_V_IF_V_FOR_PRECEDENCE"]: {
-        message: `v-if / v-for precedence when used on the same element has changed in Vue 3: v-if now takes higher precedence and will no longer have access to v-for scope variables. It is best to avoid the ambiguity with <template> tags or use a computed property that filters v-for data source.`,
-        link: `https://v3-migration.vuejs.org/breaking-changes/v-if-v-for.html`
-    },
-    ["COMPILER_NATIVE_TEMPLATE"]: {
-        message: `<template> with no special directives will render as a native template element instead of its inner content in Vue 3.`
-    },
-    ["COMPILER_INLINE_TEMPLATE"]: {
-        message: `"inline-template" has been removed in Vue 3.`,
-        link: `https://v3-migration.vuejs.org/breaking-changes/inline-template-attribute.html`
-    },
-    ["COMPILER_FILTERS"]: {
-        message: `filters have been removed in Vue 3. The "|" symbol will be treated as native JavaScript bitwise OR operator. Use method calls or computed properties instead.`,
-        link: `https://v3-migration.vuejs.org/breaking-changes/filters.html`
-    }
-};
-function getCompatValue(key, { compatConfig }) {
-    const value = compatConfig && compatConfig[key];
-    if (key === "MODE") return value || 3;
-    else return value;
-}
-function isCompatEnabled(key, context) {
-    const mode = getCompatValue("MODE", context);
-    const value = getCompatValue(key, context);
-    return mode === 3 ? value === true : value !== false;
-}
-function checkCompatEnabled(key, context, loc, ...args) {
-    const enabled = isCompatEnabled(key, context);
-    if (enabled) warnDeprecation(key, context, loc, ...args);
-    return enabled;
-}
-function warnDeprecation(key, context, loc, ...args) {
-    const val = getCompatValue(key, context);
-    if (val === "suppress-warning") return;
-    const { message, link } = deprecationData[key];
-    const msg = `(deprecation ${key}) ${typeof message === "function" ? message(...args) : message}${link ? `
-  Details: ${link}` : ``}`;
-    const err = new SyntaxError(msg);
-    err.code = key;
-    if (loc) err.loc = loc;
-    context.onWarn(err);
-}
-function defaultOnError(error) {
-    throw error;
-}
-function defaultOnWarn(msg) {
-    console.warn(`[Vue warn] ${msg.message}`);
-}
-function createCompilerError(code, loc, messages, additionalMessage) {
-    const msg = (messages || errorMessages)[code] + (additionalMessage || ``);
-    const error = new SyntaxError(String(msg));
-    error.code = code;
-    error.loc = loc;
-    return error;
-}
-const ErrorCodes = {
-    "ABRUPT_CLOSING_OF_EMPTY_COMMENT": 0,
-    "0": "ABRUPT_CLOSING_OF_EMPTY_COMMENT",
-    "CDATA_IN_HTML_CONTENT": 1,
-    "1": "CDATA_IN_HTML_CONTENT",
-    "DUPLICATE_ATTRIBUTE": 2,
-    "2": "DUPLICATE_ATTRIBUTE",
-    "END_TAG_WITH_ATTRIBUTES": 3,
-    "3": "END_TAG_WITH_ATTRIBUTES",
-    "END_TAG_WITH_TRAILING_SOLIDUS": 4,
-    "4": "END_TAG_WITH_TRAILING_SOLIDUS",
-    "EOF_BEFORE_TAG_NAME": 5,
-    "5": "EOF_BEFORE_TAG_NAME",
-    "EOF_IN_CDATA": 6,
-    "6": "EOF_IN_CDATA",
-    "EOF_IN_COMMENT": 7,
-    "7": "EOF_IN_COMMENT",
-    "EOF_IN_SCRIPT_HTML_COMMENT_LIKE_TEXT": 8,
-    "8": "EOF_IN_SCRIPT_HTML_COMMENT_LIKE_TEXT",
-    "EOF_IN_TAG": 9,
-    "9": "EOF_IN_TAG",
-    "INCORRECTLY_CLOSED_COMMENT": 10,
-    "10": "INCORRECTLY_CLOSED_COMMENT",
-    "INCORRECTLY_OPENED_COMMENT": 11,
-    "11": "INCORRECTLY_OPENED_COMMENT",
-    "INVALID_FIRST_CHARACTER_OF_TAG_NAME": 12,
-    "12": "INVALID_FIRST_CHARACTER_OF_TAG_NAME",
-    "MISSING_ATTRIBUTE_VALUE": 13,
-    "13": "MISSING_ATTRIBUTE_VALUE",
-    "MISSING_END_TAG_NAME": 14,
-    "14": "MISSING_END_TAG_NAME",
-    "MISSING_WHITESPACE_BETWEEN_ATTRIBUTES": 15,
-    "15": "MISSING_WHITESPACE_BETWEEN_ATTRIBUTES",
-    "NESTED_COMMENT": 16,
-    "16": "NESTED_COMMENT",
-    "UNEXPECTED_CHARACTER_IN_ATTRIBUTE_NAME": 17,
-    "17": "UNEXPECTED_CHARACTER_IN_ATTRIBUTE_NAME",
-    "UNEXPECTED_CHARACTER_IN_UNQUOTED_ATTRIBUTE_VALUE": 18,
-    "18": "UNEXPECTED_CHARACTER_IN_UNQUOTED_ATTRIBUTE_VALUE",
-    "UNEXPECTED_EQUALS_SIGN_BEFORE_ATTRIBUTE_NAME": 19,
-    "19": "UNEXPECTED_EQUALS_SIGN_BEFORE_ATTRIBUTE_NAME",
-    "UNEXPECTED_NULL_CHARACTER": 20,
-    "20": "UNEXPECTED_NULL_CHARACTER",
-    "UNEXPECTED_QUESTION_MARK_INSTEAD_OF_TAG_NAME": 21,
-    "21": "UNEXPECTED_QUESTION_MARK_INSTEAD_OF_TAG_NAME",
-    "UNEXPECTED_SOLIDUS_IN_TAG": 22,
-    "22": "UNEXPECTED_SOLIDUS_IN_TAG",
-    "X_INVALID_END_TAG": 23,
-    "23": "X_INVALID_END_TAG",
-    "X_MISSING_END_TAG": 24,
-    "24": "X_MISSING_END_TAG",
-    "X_MISSING_INTERPOLATION_END": 25,
-    "25": "X_MISSING_INTERPOLATION_END",
-    "X_MISSING_DIRECTIVE_NAME": 26,
-    "26": "X_MISSING_DIRECTIVE_NAME",
-    "X_MISSING_DYNAMIC_DIRECTIVE_ARGUMENT_END": 27,
-    "27": "X_MISSING_DYNAMIC_DIRECTIVE_ARGUMENT_END",
-    "X_V_IF_NO_EXPRESSION": 28,
-    "28": "X_V_IF_NO_EXPRESSION",
-    "X_V_IF_SAME_KEY": 29,
-    "29": "X_V_IF_SAME_KEY",
-    "X_V_ELSE_NO_ADJACENT_IF": 30,
-    "30": "X_V_ELSE_NO_ADJACENT_IF",
-    "X_V_FOR_NO_EXPRESSION": 31,
-    "31": "X_V_FOR_NO_EXPRESSION",
-    "X_V_FOR_MALFORMED_EXPRESSION": 32,
-    "32": "X_V_FOR_MALFORMED_EXPRESSION",
-    "X_V_FOR_TEMPLATE_KEY_PLACEMENT": 33,
-    "33": "X_V_FOR_TEMPLATE_KEY_PLACEMENT",
-    "X_V_BIND_NO_EXPRESSION": 34,
-    "34": "X_V_BIND_NO_EXPRESSION",
-    "X_V_ON_NO_EXPRESSION": 35,
-    "35": "X_V_ON_NO_EXPRESSION",
-    "X_V_SLOT_UNEXPECTED_DIRECTIVE_ON_SLOT_OUTLET": 36,
-    "36": "X_V_SLOT_UNEXPECTED_DIRECTIVE_ON_SLOT_OUTLET",
-    "X_V_SLOT_MIXED_SLOT_USAGE": 37,
-    "37": "X_V_SLOT_MIXED_SLOT_USAGE",
-    "X_V_SLOT_DUPLICATE_SLOT_NAMES": 38,
-    "38": "X_V_SLOT_DUPLICATE_SLOT_NAMES",
-    "X_V_SLOT_EXTRANEOUS_DEFAULT_SLOT_CHILDREN": 39,
-    "39": "X_V_SLOT_EXTRANEOUS_DEFAULT_SLOT_CHILDREN",
-    "X_V_SLOT_MISPLACED": 40,
-    "40": "X_V_SLOT_MISPLACED",
-    "X_V_MODEL_NO_EXPRESSION": 41,
-    "41": "X_V_MODEL_NO_EXPRESSION",
-    "X_V_MODEL_MALFORMED_EXPRESSION": 42,
-    "42": "X_V_MODEL_MALFORMED_EXPRESSION",
-    "X_V_MODEL_ON_SCOPE_VARIABLE": 43,
-    "43": "X_V_MODEL_ON_SCOPE_VARIABLE",
-    "X_V_MODEL_ON_PROPS": 44,
-    "44": "X_V_MODEL_ON_PROPS",
-    "X_INVALID_EXPRESSION": 45,
-    "45": "X_INVALID_EXPRESSION",
-    "X_KEEP_ALIVE_INVALID_CHILDREN": 46,
-    "46": "X_KEEP_ALIVE_INVALID_CHILDREN",
-    "X_PREFIX_ID_NOT_SUPPORTED": 47,
-    "47": "X_PREFIX_ID_NOT_SUPPORTED",
-    "X_MODULE_MODE_NOT_SUPPORTED": 48,
-    "48": "X_MODULE_MODE_NOT_SUPPORTED",
-    "X_CACHE_HANDLER_NOT_SUPPORTED": 49,
-    "49": "X_CACHE_HANDLER_NOT_SUPPORTED",
-    "X_SCOPE_ID_NOT_SUPPORTED": 50,
-    "50": "X_SCOPE_ID_NOT_SUPPORTED",
-    "X_VNODE_HOOKS": 51,
-    "51": "X_VNODE_HOOKS",
-    "X_V_BIND_INVALID_SAME_NAME_ARGUMENT": 52,
-    "52": "X_V_BIND_INVALID_SAME_NAME_ARGUMENT",
-    "__EXTEND_POINT__": 53,
-    "53": "__EXTEND_POINT__"
-};
-const errorMessages = {
-    // parse errors
-    [0]: "Illegal comment.",
-    [1]: "CDATA section is allowed only in XML context.",
-    [2]: "Duplicate attribute.",
-    [3]: "End tag cannot have attributes.",
-    [4]: "Illegal '/' in tags.",
-    [5]: "Unexpected EOF in tag.",
-    [6]: "Unexpected EOF in CDATA section.",
-    [7]: "Unexpected EOF in comment.",
-    [8]: "Unexpected EOF in script.",
-    [9]: "Unexpected EOF in tag.",
-    [10]: "Incorrectly closed comment.",
-    [11]: "Incorrectly opened comment.",
-    [12]: "Illegal tag name. Use '&lt;' to print '<'.",
-    [13]: "Attribute value was expected.",
-    [14]: "End tag name was expected.",
-    [15]: "Whitespace was expected.",
-    [16]: "Unexpected '<!--' in comment.",
-    [17]: `Attribute name cannot contain U+0022 ("), U+0027 ('), and U+003C (<).`,
-    [18]: "Unquoted attribute value cannot contain U+0022 (\"), U+0027 ('), U+003C (<), U+003D (=), and U+0060 (`).",
-    [19]: "Attribute name cannot start with '='.",
-    [21]: "'<?' is allowed only in XML context.",
-    [20]: `Unexpected null character.`,
-    [22]: "Illegal '/' in tags.",
-    // Vue-specific parse errors
-    [23]: "Invalid end tag.",
-    [24]: "Element is missing end tag.",
-    [25]: "Interpolation end sign was not found.",
-    [27]: "End bracket for dynamic directive argument was not found. Note that dynamic directive argument cannot contain spaces.",
-    [26]: "Legal directive name was expected.",
-    // transform errors
-    [28]: `v-if/v-else-if is missing expression.`,
-    [29]: `v-if/else branches must use unique keys.`,
-    [30]: `v-else/v-else-if has no adjacent v-if or v-else-if.`,
-    [31]: `v-for is missing expression.`,
-    [32]: `v-for has invalid expression.`,
-    [33]: `<template v-for> key should be placed on the <template> tag.`,
-    [34]: `v-bind is missing expression.`,
-    [52]: `v-bind with same-name shorthand only allows static argument.`,
-    [35]: `v-on is missing expression.`,
-    [36]: `Unexpected custom directive on <slot> outlet.`,
-    [37]: `Mixed v-slot usage on both the component and nested <template>. When there are multiple named slots, all slots should use <template> syntax to avoid scope ambiguity.`,
-    [38]: `Duplicate slot names found. `,
-    [39]: `Extraneous children found when component already has explicitly named default slot. These children will be ignored.`,
-    [40]: `v-slot can only be used on components or <template> tags.`,
-    [41]: `v-model is missing expression.`,
-    [42]: `v-model value must be a valid JavaScript member expression.`,
-    [43]: `v-model cannot be used on v-for or v-slot scope variables because they are not writable.`,
-    [44]: `v-model cannot be used on a prop, because local prop bindings are not writable.
-Use a v-bind binding combined with a v-on listener that emits update:x event instead.`,
-    [45]: `Error parsing JavaScript expression: `,
-    [46]: `<KeepAlive> expects exactly one child component.`,
-    [51]: `@vnode-* hooks in templates are no longer supported. Use the vue: prefix instead. For example, @vnode-mounted should be changed to @vue:mounted. @vnode-* hooks support has been removed in 3.4.`,
-    // generic errors
-    [47]: `"prefixIdentifiers" option is not supported in this build of compiler.`,
-    [48]: `ES module mode is not supported in this build of compiler.`,
-    [49]: `"cacheHandlers" option is only supported when the "prefixIdentifiers" option is enabled.`,
-    [50]: `"scopeId" option is only supported in module mode.`,
-    // just to fulfill types
-    [53]: ``
-};
-function walkIdentifiers(root, onIdentifier, includeAll = false, parentStack = [], knownIds = /* @__PURE__ */ Object.create(null)) {
-    return;
-}
-function isReferencedIdentifier(id, parent, parentStack) {
-    return false;
-}
-function isInDestructureAssignment(parent, parentStack) {
-    if (parent && (parent.type === "ObjectProperty" || parent.type === "ArrayPattern")) {
-        let i = parentStack.length;
-        while(i--){
-            const p = parentStack[i];
-            if (p.type === "AssignmentExpression") return true;
-            else if (p.type !== "ObjectProperty" && !p.type.endsWith("Pattern")) break;
-        }
-    }
-    return false;
-}
-function isInNewExpression(parentStack) {
-    let i = parentStack.length;
-    while(i--){
-        const p = parentStack[i];
-        if (p.type === "NewExpression") return true;
-        else if (p.type !== "MemberExpression") break;
-    }
-    return false;
-}
-function walkFunctionParams(node, onIdent) {
-    for (const p of node.params)for (const id of extractIdentifiers(p))onIdent(id);
-}
-function walkBlockDeclarations(block, onIdent) {
-    for (const stmt of block.body){
-        if (stmt.type === "VariableDeclaration") {
-            if (stmt.declare) continue;
-            for (const decl of stmt.declarations)for (const id of extractIdentifiers(decl.id))onIdent(id);
-        } else if (stmt.type === "FunctionDeclaration" || stmt.type === "ClassDeclaration") {
-            if (stmt.declare || !stmt.id) continue;
-            onIdent(stmt.id);
-        } else if (isForStatement(stmt)) walkForStatement(stmt, true, onIdent);
-    }
-}
-function isForStatement(stmt) {
-    return stmt.type === "ForOfStatement" || stmt.type === "ForInStatement" || stmt.type === "ForStatement";
-}
-function walkForStatement(stmt, isVar, onIdent) {
-    const variable = stmt.type === "ForStatement" ? stmt.init : stmt.left;
-    if (variable && variable.type === "VariableDeclaration" && (variable.kind === "var" ? isVar : !isVar)) {
-        for (const decl of variable.declarations)for (const id of extractIdentifiers(decl.id))onIdent(id);
-    }
-}
-function extractIdentifiers(param, nodes = []) {
-    switch(param.type){
-        case "Identifier":
-            nodes.push(param);
-            break;
-        case "MemberExpression":
-            let object = param;
-            while(object.type === "MemberExpression")object = object.object;
-            nodes.push(object);
-            break;
-        case "ObjectPattern":
-            for (const prop of param.properties)if (prop.type === "RestElement") extractIdentifiers(prop.argument, nodes);
-            else extractIdentifiers(prop.value, nodes);
-            break;
-        case "ArrayPattern":
-            param.elements.forEach((element)=>{
-                if (element) extractIdentifiers(element, nodes);
-            });
-            break;
-        case "RestElement":
-            extractIdentifiers(param.argument, nodes);
-            break;
-        case "AssignmentPattern":
-            extractIdentifiers(param.left, nodes);
-            break;
-    }
-    return nodes;
-}
-const isFunctionType = (node)=>{
-    return /Function(?:Expression|Declaration)$|Method$/.test(node.type);
-};
-const isStaticProperty = (node)=>node && (node.type === "ObjectProperty" || node.type === "ObjectMethod") && !node.computed;
-const isStaticPropertyKey = (node, parent)=>isStaticProperty(parent) && parent.key === node;
-const TS_NODE_TYPES = [
-    "TSAsExpression",
-    // foo as number
-    "TSTypeAssertion",
-    // (<number>foo)
-    "TSNonNullExpression",
-    // foo!
-    "TSInstantiationExpression",
-    // foo<string>
-    "TSSatisfiesExpression"
-];
-function unwrapTSNode(node) {
-    if (TS_NODE_TYPES.includes(node.type)) return unwrapTSNode(node.expression);
-    else return node;
-}
-const isStaticExp = (p)=>p.type === 4 && p.isStatic;
-function isCoreComponent(tag) {
-    switch(tag){
-        case "Teleport":
-        case "teleport":
-            return TELEPORT;
-        case "Suspense":
-        case "suspense":
-            return SUSPENSE;
-        case "KeepAlive":
-        case "keep-alive":
-            return KEEP_ALIVE;
-        case "BaseTransition":
-        case "base-transition":
-            return BASE_TRANSITION;
-    }
-}
-const nonIdentifierRE = /^\d|[^\$\w\xA0-\uFFFF]/;
-const isSimpleIdentifier = (name)=>!nonIdentifierRE.test(name);
-const validFirstIdentCharRE = /[A-Za-z_$\xA0-\uFFFF]/;
-const validIdentCharRE = /[\.\?\w$\xA0-\uFFFF]/;
-const whitespaceRE = /\s+[.[]\s*|\s*[.[]\s+/g;
-const getExpSource = (exp)=>exp.type === 4 ? exp.content : exp.loc.source;
-const isMemberExpressionBrowser = (exp)=>{
-    const path = getExpSource(exp).trim().replace(whitespaceRE, (s)=>s.trim());
-    let state = 0 /* inMemberExp */ ;
-    let stateStack = [];
-    let currentOpenBracketCount = 0;
-    let currentOpenParensCount = 0;
-    let currentStringType = null;
-    for(let i = 0; i < path.length; i++){
-        const char = path.charAt(i);
-        switch(state){
-            case 0 /* inMemberExp */ :
-                if (char === "[") {
-                    stateStack.push(state);
-                    state = 1 /* inBrackets */ ;
-                    currentOpenBracketCount++;
-                } else if (char === "(") {
-                    stateStack.push(state);
-                    state = 2 /* inParens */ ;
-                    currentOpenParensCount++;
-                } else if (!(i === 0 ? validFirstIdentCharRE : validIdentCharRE).test(char)) return false;
-                break;
-            case 1 /* inBrackets */ :
-                if (char === `'` || char === `"` || char === "`") {
-                    stateStack.push(state);
-                    state = 3 /* inString */ ;
-                    currentStringType = char;
-                } else if (char === `[`) currentOpenBracketCount++;
-                else if (char === `]`) {
-                    if (!--currentOpenBracketCount) state = stateStack.pop();
-                }
-                break;
-            case 2 /* inParens */ :
-                if (char === `'` || char === `"` || char === "`") {
-                    stateStack.push(state);
-                    state = 3 /* inString */ ;
-                    currentStringType = char;
-                } else if (char === `(`) currentOpenParensCount++;
-                else if (char === `)`) {
-                    if (i === path.length - 1) return false;
-                    if (!--currentOpenParensCount) state = stateStack.pop();
-                }
-                break;
-            case 3 /* inString */ :
-                if (char === currentStringType) {
-                    state = stateStack.pop();
-                    currentStringType = null;
-                }
-                break;
-        }
-    }
-    return !currentOpenBracketCount && !currentOpenParensCount;
-};
-const isMemberExpressionNode = (0, _shared.NOOP);
-const isMemberExpression = isMemberExpressionBrowser;
-const fnExpRE = /^\s*(async\s*)?(\([^)]*?\)|[\w$_]+)\s*(:[^=]+)?=>|^\s*(async\s+)?function(?:\s+[\w$]+)?\s*\(/;
-const isFnExpressionBrowser = (exp)=>fnExpRE.test(getExpSource(exp));
-const isFnExpressionNode = (0, _shared.NOOP);
-const isFnExpression = isFnExpressionBrowser;
-function advancePositionWithClone(pos, source, numberOfCharacters = source.length) {
-    return advancePositionWithMutation({
-        offset: pos.offset,
-        line: pos.line,
-        column: pos.column
-    }, source, numberOfCharacters);
-}
-function advancePositionWithMutation(pos, source, numberOfCharacters = source.length) {
-    let linesCount = 0;
-    let lastNewLinePos = -1;
-    for(let i = 0; i < numberOfCharacters; i++)if (source.charCodeAt(i) === 10) {
-        linesCount++;
-        lastNewLinePos = i;
-    }
-    pos.offset += numberOfCharacters;
-    pos.line += linesCount;
-    pos.column = lastNewLinePos === -1 ? pos.column + numberOfCharacters : numberOfCharacters - lastNewLinePos;
-    return pos;
-}
-function assert(condition, msg) {
-    if (!condition) throw new Error(msg || `unexpected compiler condition`);
-}
-function findDir(node, name, allowEmpty = false) {
-    for(let i = 0; i < node.props.length; i++){
-        const p = node.props[i];
-        if (p.type === 7 && (allowEmpty || p.exp) && ((0, _shared.isString)(name) ? p.name === name : name.test(p.name))) return p;
-    }
-}
-function findProp(node, name, dynamicOnly = false, allowEmpty = false) {
-    for(let i = 0; i < node.props.length; i++){
-        const p = node.props[i];
-        if (p.type === 6) {
-            if (dynamicOnly) continue;
-            if (p.name === name && (p.value || allowEmpty)) return p;
-        } else if (p.name === "bind" && (p.exp || allowEmpty) && isStaticArgOf(p.arg, name)) return p;
-    }
-}
-function isStaticArgOf(arg, name) {
-    return !!(arg && isStaticExp(arg) && arg.content === name);
-}
-function hasDynamicKeyVBind(node) {
-    return node.props.some((p)=>p.type === 7 && p.name === "bind" && (!p.arg || // v-bind="obj"
-        p.arg.type !== 4 || // v-bind:[_ctx.foo]
-        !p.arg.isStatic));
-}
-function isText$1(node) {
-    return node.type === 5 || node.type === 2;
-}
-function isVSlot(p) {
-    return p.type === 7 && p.name === "slot";
-}
-function isTemplateNode(node) {
-    return node.type === 1 && node.tagType === 3;
-}
-function isSlotOutlet(node) {
-    return node.type === 1 && node.tagType === 2;
-}
-const propsHelperSet = /* @__PURE__ */ new Set([
-    NORMALIZE_PROPS,
-    GUARD_REACTIVE_PROPS
-]);
-function getUnnormalizedProps(props, callPath = []) {
-    if (props && !(0, _shared.isString)(props) && props.type === 14) {
-        const callee = props.callee;
-        if (!(0, _shared.isString)(callee) && propsHelperSet.has(callee)) return getUnnormalizedProps(props.arguments[0], callPath.concat(props));
-    }
-    return [
-        props,
-        callPath
-    ];
-}
-function injectProp(node, prop, context) {
-    let propsWithInjection;
-    let props = node.type === 13 ? node.props : node.arguments[2];
-    let callPath = [];
-    let parentCall;
-    if (props && !(0, _shared.isString)(props) && props.type === 14) {
-        const ret = getUnnormalizedProps(props);
-        props = ret[0];
-        callPath = ret[1];
-        parentCall = callPath[callPath.length - 1];
-    }
-    if (props == null || (0, _shared.isString)(props)) propsWithInjection = createObjectExpression([
-        prop
-    ]);
-    else if (props.type === 14) {
-        const first = props.arguments[0];
-        if (!(0, _shared.isString)(first) && first.type === 15) {
-            if (!hasProp(prop, first)) first.properties.unshift(prop);
-        } else if (props.callee === TO_HANDLERS) propsWithInjection = createCallExpression(context.helper(MERGE_PROPS), [
-            createObjectExpression([
-                prop
-            ]),
-            props
-        ]);
-        else props.arguments.unshift(createObjectExpression([
-            prop
-        ]));
-        !propsWithInjection && (propsWithInjection = props);
-    } else if (props.type === 15) {
-        if (!hasProp(prop, props)) props.properties.unshift(prop);
-        propsWithInjection = props;
-    } else {
-        propsWithInjection = createCallExpression(context.helper(MERGE_PROPS), [
-            createObjectExpression([
-                prop
-            ]),
-            props
-        ]);
-        if (parentCall && parentCall.callee === GUARD_REACTIVE_PROPS) parentCall = callPath[callPath.length - 2];
-    }
-    if (node.type === 13) {
-        if (parentCall) parentCall.arguments[0] = propsWithInjection;
-        else node.props = propsWithInjection;
-    } else if (parentCall) parentCall.arguments[0] = propsWithInjection;
-    else node.arguments[2] = propsWithInjection;
-}
-function hasProp(prop, props) {
-    let result = false;
-    if (prop.key.type === 4) {
-        const propKeyName = prop.key.content;
-        result = props.properties.some((p)=>p.key.type === 4 && p.key.content === propKeyName);
-    }
-    return result;
-}
-function toValidAssetId(name, type) {
-    return `_${type}_${name.replace(/[^\w]/g, (searchValue, replaceValue)=>{
-        return searchValue === "-" ? "_" : name.charCodeAt(replaceValue).toString();
-    })}`;
-}
-function hasScopeRef(node, ids) {
-    if (!node || Object.keys(ids).length === 0) return false;
-    switch(node.type){
-        case 1:
-            for(let i = 0; i < node.props.length; i++){
-                const p = node.props[i];
-                if (p.type === 7 && (hasScopeRef(p.arg, ids) || hasScopeRef(p.exp, ids))) return true;
-            }
-            return node.children.some((c)=>hasScopeRef(c, ids));
-        case 11:
-            if (hasScopeRef(node.source, ids)) return true;
-            return node.children.some((c)=>hasScopeRef(c, ids));
-        case 9:
-            return node.branches.some((b)=>hasScopeRef(b, ids));
-        case 10:
-            if (hasScopeRef(node.condition, ids)) return true;
-            return node.children.some((c)=>hasScopeRef(c, ids));
-        case 4:
-            return !node.isStatic && isSimpleIdentifier(node.content) && !!ids[node.content];
-        case 8:
-            return node.children.some((c)=>(0, _shared.isObject)(c) && hasScopeRef(c, ids));
-        case 5:
-        case 12:
-            return hasScopeRef(node.content, ids);
-        case 2:
-        case 3:
-        case 20:
-            return false;
-        default:
-            return false;
-    }
-}
-function getMemoedVNodeCall(node) {
-    if (node.type === 14 && node.callee === WITH_MEMO) return node.arguments[1].returns;
-    else return node;
-}
-const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+(\S[\s\S]*)/;
-const defaultParserOptions = {
-    parseMode: "base",
-    ns: 0,
-    delimiters: [
-        `{{`,
-        `}}`
-    ],
-    getNamespace: ()=>0,
-    isVoidTag: (0, _shared.NO),
-    isPreTag: (0, _shared.NO),
-    isIgnoreNewlineTag: (0, _shared.NO),
-    isCustomElement: (0, _shared.NO),
-    onError: defaultOnError,
-    onWarn: defaultOnWarn,
-    comments: true,
-    prefixIdentifiers: false
-};
-let currentOptions = defaultParserOptions;
-let currentRoot = null;
-let currentInput = "";
-let currentOpenTag = null;
-let currentProp = null;
-let currentAttrValue = "";
-let currentAttrStartIndex = -1;
-let currentAttrEndIndex = -1;
-let inPre = 0;
-let inVPre = false;
-let currentVPreBoundary = null;
-const stack = [];
-const tokenizer = new Tokenizer(stack, {
-    onerr: emitError,
-    ontext (start, end) {
-        onText(getSlice(start, end), start, end);
-    },
-    ontextentity (char, start, end) {
-        onText(char, start, end);
-    },
-    oninterpolation (start, end) {
-        if (inVPre) return onText(getSlice(start, end), start, end);
-        let innerStart = start + tokenizer.delimiterOpen.length;
-        let innerEnd = end - tokenizer.delimiterClose.length;
-        while(isWhitespace(currentInput.charCodeAt(innerStart)))innerStart++;
-        while(isWhitespace(currentInput.charCodeAt(innerEnd - 1)))innerEnd--;
-        let exp = getSlice(innerStart, innerEnd);
-        if (exp.includes("&")) exp = currentOptions.decodeEntities(exp, false);
-        addNode({
-            type: 5,
-            content: createExp(exp, false, getLoc(innerStart, innerEnd)),
-            loc: getLoc(start, end)
-        });
-    },
-    onopentagname (start, end) {
-        const name = getSlice(start, end);
-        currentOpenTag = {
-            type: 1,
-            tag: name,
-            ns: currentOptions.getNamespace(name, stack[0], currentOptions.ns),
-            tagType: 0,
-            // will be refined on tag close
-            props: [],
-            children: [],
-            loc: getLoc(start - 1, end),
-            codegenNode: void 0
-        };
-    },
-    onopentagend (end) {
-        endOpenTag(end);
-    },
-    onclosetag (start, end) {
-        const name = getSlice(start, end);
-        if (!currentOptions.isVoidTag(name)) {
-            let found = false;
-            for(let i = 0; i < stack.length; i++){
-                const e = stack[i];
-                if (e.tag.toLowerCase() === name.toLowerCase()) {
-                    found = true;
-                    if (i > 0) emitError(24, stack[0].loc.start.offset);
-                    for(let j = 0; j <= i; j++){
-                        const el = stack.shift();
-                        onCloseTag(el, end, j < i);
-                    }
-                    break;
-                }
-            }
-            if (!found) emitError(23, backTrack(start, 60));
-        }
-    },
-    onselfclosingtag (end) {
-        const name = currentOpenTag.tag;
-        currentOpenTag.isSelfClosing = true;
-        endOpenTag(end);
-        if (stack[0] && stack[0].tag === name) onCloseTag(stack.shift(), end);
-    },
-    onattribname (start, end) {
-        currentProp = {
-            type: 6,
-            name: getSlice(start, end),
-            nameLoc: getLoc(start, end),
-            value: void 0,
-            loc: getLoc(start)
-        };
-    },
-    ondirname (start, end) {
-        const raw = getSlice(start, end);
-        const name = raw === "." || raw === ":" ? "bind" : raw === "@" ? "on" : raw === "#" ? "slot" : raw.slice(2);
-        if (!inVPre && name === "") emitError(26, start);
-        if (inVPre || name === "") currentProp = {
-            type: 6,
-            name: raw,
-            nameLoc: getLoc(start, end),
-            value: void 0,
-            loc: getLoc(start)
-        };
-        else {
-            currentProp = {
-                type: 7,
-                name,
-                rawName: raw,
-                exp: void 0,
-                arg: void 0,
-                modifiers: raw === "." ? [
-                    createSimpleExpression("prop")
-                ] : [],
-                loc: getLoc(start)
-            };
-            if (name === "pre") {
-                inVPre = tokenizer.inVPre = true;
-                currentVPreBoundary = currentOpenTag;
-                const props = currentOpenTag.props;
-                for(let i = 0; i < props.length; i++)if (props[i].type === 7) props[i] = dirToAttr(props[i]);
-            }
-        }
-    },
-    ondirarg (start, end) {
-        if (start === end) return;
-        const arg = getSlice(start, end);
-        if (inVPre) {
-            currentProp.name += arg;
-            setLocEnd(currentProp.nameLoc, end);
-        } else {
-            const isStatic = arg[0] !== `[`;
-            currentProp.arg = createExp(isStatic ? arg : arg.slice(1, -1), isStatic, getLoc(start, end), isStatic ? 3 : 0);
-        }
-    },
-    ondirmodifier (start, end) {
-        const mod = getSlice(start, end);
-        if (inVPre) {
-            currentProp.name += "." + mod;
-            setLocEnd(currentProp.nameLoc, end);
-        } else if (currentProp.name === "slot") {
-            const arg = currentProp.arg;
-            if (arg) {
-                arg.content += "." + mod;
-                setLocEnd(arg.loc, end);
-            }
-        } else {
-            const exp = createSimpleExpression(mod, true, getLoc(start, end));
-            currentProp.modifiers.push(exp);
-        }
-    },
-    onattribdata (start, end) {
-        currentAttrValue += getSlice(start, end);
-        if (currentAttrStartIndex < 0) currentAttrStartIndex = start;
-        currentAttrEndIndex = end;
-    },
-    onattribentity (char, start, end) {
-        currentAttrValue += char;
-        if (currentAttrStartIndex < 0) currentAttrStartIndex = start;
-        currentAttrEndIndex = end;
-    },
-    onattribnameend (end) {
-        const start = currentProp.loc.start.offset;
-        const name = getSlice(start, end);
-        if (currentProp.type === 7) currentProp.rawName = name;
-        if (currentOpenTag.props.some((p)=>(p.type === 7 ? p.rawName : p.name) === name)) emitError(2, start);
-    },
-    onattribend (quote, end) {
-        if (currentOpenTag && currentProp) {
-            setLocEnd(currentProp.loc, end);
-            if (quote !== 0) {
-                if (currentAttrValue.includes("&")) currentAttrValue = currentOptions.decodeEntities(currentAttrValue, true);
-                if (currentProp.type === 6) {
-                    if (currentProp.name === "class") currentAttrValue = condense(currentAttrValue).trim();
-                    if (quote === 1 && !currentAttrValue) emitError(13, end);
-                    currentProp.value = {
-                        type: 2,
-                        content: currentAttrValue,
-                        loc: quote === 1 ? getLoc(currentAttrStartIndex, currentAttrEndIndex) : getLoc(currentAttrStartIndex - 1, currentAttrEndIndex + 1)
-                    };
-                    if (tokenizer.inSFCRoot && currentOpenTag.tag === "template" && currentProp.name === "lang" && currentAttrValue && currentAttrValue !== "html") tokenizer.enterRCDATA(toCharCodes(`</template`), 0);
-                } else {
-                    let expParseMode = 0 /* Normal */ ;
-                    currentProp.exp = createExp(currentAttrValue, false, getLoc(currentAttrStartIndex, currentAttrEndIndex), 0, expParseMode);
-                    if (currentProp.name === "for") currentProp.forParseResult = parseForExpression(currentProp.exp);
-                    let syncIndex = -1;
-                    if (currentProp.name === "bind" && (syncIndex = currentProp.modifiers.findIndex((mod)=>mod.content === "sync")) > -1 && checkCompatEnabled("COMPILER_V_BIND_SYNC", currentOptions, currentProp.loc, currentProp.rawName)) {
-                        currentProp.name = "model";
-                        currentProp.modifiers.splice(syncIndex, 1);
-                    }
-                }
-            }
-            if (currentProp.type !== 7 || currentProp.name !== "pre") currentOpenTag.props.push(currentProp);
-        }
-        currentAttrValue = "";
-        currentAttrStartIndex = currentAttrEndIndex = -1;
-    },
-    oncomment (start, end) {
-        if (currentOptions.comments) addNode({
-            type: 3,
-            content: getSlice(start, end),
-            loc: getLoc(start - 4, end + 3)
-        });
-    },
-    onend () {
-        const end = currentInput.length;
-        if (tokenizer.state !== 1) switch(tokenizer.state){
-            case 5:
-            case 8:
-                emitError(5, end);
-                break;
-            case 3:
-            case 4:
-                emitError(25, tokenizer.sectionStart);
-                break;
-            case 28:
-                if (tokenizer.currentSequence === Sequences.CdataEnd) emitError(6, end);
-                else emitError(7, end);
-                break;
-            case 6:
-            case 7:
-            case 9:
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-            case 16:
-            case 17:
-            case 18:
-            case 19:
-            // "
-            case 20:
-            // '
-            case 21:
-                emitError(9, end);
-                break;
-        }
-        for(let index = 0; index < stack.length; index++){
-            onCloseTag(stack[index], end - 1);
-            emitError(24, stack[index].loc.start.offset);
-        }
-    },
-    oncdata (start, end) {
-        if (stack[0].ns !== 0) onText(getSlice(start, end), start, end);
-        else emitError(1, start - 9);
-    },
-    onprocessinginstruction (start) {
-        if ((stack[0] ? stack[0].ns : currentOptions.ns) === 0) emitError(21, start - 1);
-    }
-});
-const forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
-const stripParensRE = /^\(|\)$/g;
-function parseForExpression(input) {
-    const loc = input.loc;
-    const exp = input.content;
-    const inMatch = exp.match(forAliasRE);
-    if (!inMatch) return;
-    const [, LHS, RHS] = inMatch;
-    const createAliasExpression = (content, offset, asParam = false)=>{
-        const start = loc.start.offset + offset;
-        const end = start + content.length;
-        return createExp(content, false, getLoc(start, end), 0, asParam ? 1 /* Params */  : 0 /* Normal */ );
-    };
-    const result = {
-        source: createAliasExpression(RHS.trim(), exp.indexOf(RHS, LHS.length)),
-        value: void 0,
-        key: void 0,
-        index: void 0,
-        finalized: false
-    };
-    let valueContent = LHS.trim().replace(stripParensRE, "").trim();
-    const trimmedOffset = LHS.indexOf(valueContent);
-    const iteratorMatch = valueContent.match(forIteratorRE);
-    if (iteratorMatch) {
-        valueContent = valueContent.replace(forIteratorRE, "").trim();
-        const keyContent = iteratorMatch[1].trim();
-        let keyOffset;
-        if (keyContent) {
-            keyOffset = exp.indexOf(keyContent, trimmedOffset + valueContent.length);
-            result.key = createAliasExpression(keyContent, keyOffset, true);
-        }
-        if (iteratorMatch[2]) {
-            const indexContent = iteratorMatch[2].trim();
-            if (indexContent) result.index = createAliasExpression(indexContent, exp.indexOf(indexContent, result.key ? keyOffset + keyContent.length : trimmedOffset + valueContent.length), true);
-        }
-    }
-    if (valueContent) result.value = createAliasExpression(valueContent, trimmedOffset, true);
-    return result;
-}
-function getSlice(start, end) {
-    return currentInput.slice(start, end);
-}
-function endOpenTag(end) {
-    if (tokenizer.inSFCRoot) currentOpenTag.innerLoc = getLoc(end + 1, end + 1);
-    addNode(currentOpenTag);
-    const { tag, ns } = currentOpenTag;
-    if (ns === 0 && currentOptions.isPreTag(tag)) inPre++;
-    if (currentOptions.isVoidTag(tag)) onCloseTag(currentOpenTag, end);
-    else {
-        stack.unshift(currentOpenTag);
-        if (ns === 1 || ns === 2) tokenizer.inXML = true;
-    }
-    currentOpenTag = null;
-}
-function onText(content, start, end) {
-    {
-        const tag = stack[0] && stack[0].tag;
-        if (tag !== "script" && tag !== "style" && content.includes("&")) content = currentOptions.decodeEntities(content, false);
-    }
-    const parent = stack[0] || currentRoot;
-    const lastNode = parent.children[parent.children.length - 1];
-    if (lastNode && lastNode.type === 2) {
-        lastNode.content += content;
-        setLocEnd(lastNode.loc, end);
-    } else parent.children.push({
-        type: 2,
-        content,
-        loc: getLoc(start, end)
-    });
-}
-function onCloseTag(el, end, isImplied = false) {
-    if (isImplied) setLocEnd(el.loc, backTrack(end, 60));
-    else setLocEnd(el.loc, lookAhead(end, 62) + 1);
-    if (tokenizer.inSFCRoot) {
-        if (el.children.length) el.innerLoc.end = (0, _shared.extend)({}, el.children[el.children.length - 1].loc.end);
-        else el.innerLoc.end = (0, _shared.extend)({}, el.innerLoc.start);
-        el.innerLoc.source = getSlice(el.innerLoc.start.offset, el.innerLoc.end.offset);
-    }
-    const { tag, ns, children } = el;
-    if (!inVPre) {
-        if (tag === "slot") el.tagType = 2;
-        else if (isFragmentTemplate(el)) el.tagType = 3;
-        else if (isComponent(el)) el.tagType = 1;
-    }
-    if (!tokenizer.inRCDATA) el.children = condenseWhitespace(children);
-    if (ns === 0 && currentOptions.isIgnoreNewlineTag(tag)) {
-        const first = children[0];
-        if (first && first.type === 2) first.content = first.content.replace(/^\r?\n/, "");
-    }
-    if (ns === 0 && currentOptions.isPreTag(tag)) inPre--;
-    if (currentVPreBoundary === el) {
-        inVPre = tokenizer.inVPre = false;
-        currentVPreBoundary = null;
-    }
-    if (tokenizer.inXML && (stack[0] ? stack[0].ns : currentOptions.ns) === 0) tokenizer.inXML = false;
-    {
-        const props = el.props;
-        if (isCompatEnabled("COMPILER_V_IF_V_FOR_PRECEDENCE", currentOptions)) {
-            let hasIf = false;
-            let hasFor = false;
-            for(let i = 0; i < props.length; i++){
-                const p = props[i];
-                if (p.type === 7) {
-                    if (p.name === "if") hasIf = true;
-                    else if (p.name === "for") hasFor = true;
-                }
-                if (hasIf && hasFor) {
-                    warnDeprecation("COMPILER_V_IF_V_FOR_PRECEDENCE", currentOptions, el.loc);
-                    break;
-                }
-            }
-        }
-        if (!tokenizer.inSFCRoot && isCompatEnabled("COMPILER_NATIVE_TEMPLATE", currentOptions) && el.tag === "template" && !isFragmentTemplate(el)) {
-            warnDeprecation("COMPILER_NATIVE_TEMPLATE", currentOptions, el.loc);
-            const parent = stack[0] || currentRoot;
-            const index = parent.children.indexOf(el);
-            parent.children.splice(index, 1, ...el.children);
-        }
-        const inlineTemplateProp = props.find((p)=>p.type === 6 && p.name === "inline-template");
-        if (inlineTemplateProp && checkCompatEnabled("COMPILER_INLINE_TEMPLATE", currentOptions, inlineTemplateProp.loc) && el.children.length) inlineTemplateProp.value = {
-            type: 2,
-            content: getSlice(el.children[0].loc.start.offset, el.children[el.children.length - 1].loc.end.offset),
-            loc: inlineTemplateProp.loc
-        };
-    }
-}
-function lookAhead(index, c) {
-    let i = index;
-    while(currentInput.charCodeAt(i) !== c && i < currentInput.length - 1)i++;
-    return i;
-}
-function backTrack(index, c) {
-    let i = index;
-    while(currentInput.charCodeAt(i) !== c && i >= 0)i--;
-    return i;
-}
-const specialTemplateDir = /* @__PURE__ */ new Set([
-    "if",
-    "else",
-    "else-if",
-    "for",
-    "slot"
-]);
-function isFragmentTemplate({ tag, props }) {
-    if (tag === "template") for(let i = 0; i < props.length; i++){
-        if (props[i].type === 7 && specialTemplateDir.has(props[i].name)) return true;
-    }
-    return false;
-}
-function isComponent({ tag, props }) {
-    if (currentOptions.isCustomElement(tag)) return false;
-    if (tag === "component" || isUpperCase(tag.charCodeAt(0)) || isCoreComponent(tag) || currentOptions.isBuiltInComponent && currentOptions.isBuiltInComponent(tag) || currentOptions.isNativeTag && !currentOptions.isNativeTag(tag)) return true;
-    for(let i = 0; i < props.length; i++){
-        const p = props[i];
-        if (p.type === 6) {
-            if (p.name === "is" && p.value) {
-                if (p.value.content.startsWith("vue:")) return true;
-                else if (checkCompatEnabled("COMPILER_IS_ON_ELEMENT", currentOptions, p.loc)) return true;
-            }
-        } else if (p.name === "bind" && isStaticArgOf(p.arg, "is") && checkCompatEnabled("COMPILER_IS_ON_ELEMENT", currentOptions, p.loc)) return true;
-    }
-    return false;
-}
-function isUpperCase(c) {
-    return c > 64 && c < 91;
-}
-const windowsNewlineRE = /\r\n/g;
-function condenseWhitespace(nodes, tag) {
-    const shouldCondense = currentOptions.whitespace !== "preserve";
-    let removedWhitespace = false;
-    for(let i = 0; i < nodes.length; i++){
-        const node = nodes[i];
-        if (node.type === 2) {
-            if (!inPre) {
-                if (isAllWhitespace(node.content)) {
-                    const prev = nodes[i - 1] && nodes[i - 1].type;
-                    const next = nodes[i + 1] && nodes[i + 1].type;
-                    if (!prev || !next || shouldCondense && (prev === 3 && (next === 3 || next === 1) || prev === 1 && (next === 3 || next === 1 && hasNewlineChar(node.content)))) {
-                        removedWhitespace = true;
-                        nodes[i] = null;
-                    } else node.content = " ";
-                } else if (shouldCondense) node.content = condense(node.content);
-            } else node.content = node.content.replace(windowsNewlineRE, "\n");
-        }
-    }
-    return removedWhitespace ? nodes.filter(Boolean) : nodes;
-}
-function isAllWhitespace(str) {
-    for(let i = 0; i < str.length; i++){
-        if (!isWhitespace(str.charCodeAt(i))) return false;
-    }
-    return true;
-}
-function hasNewlineChar(str) {
-    for(let i = 0; i < str.length; i++){
-        const c = str.charCodeAt(i);
-        if (c === 10 || c === 13) return true;
-    }
-    return false;
-}
-function condense(str) {
-    let ret = "";
-    let prevCharIsWhitespace = false;
-    for(let i = 0; i < str.length; i++){
-        if (isWhitespace(str.charCodeAt(i))) {
-            if (!prevCharIsWhitespace) {
-                ret += " ";
-                prevCharIsWhitespace = true;
-            }
-        } else {
-            ret += str[i];
-            prevCharIsWhitespace = false;
-        }
-    }
-    return ret;
-}
-function addNode(node) {
-    (stack[0] || currentRoot).children.push(node);
-}
-function getLoc(start, end) {
-    return {
-        start: tokenizer.getPos(start),
-        // @ts-expect-error allow late attachment
-        end: end == null ? end : tokenizer.getPos(end),
-        // @ts-expect-error allow late attachment
-        source: end == null ? end : getSlice(start, end)
-    };
-}
-function cloneLoc(loc) {
-    return getLoc(loc.start.offset, loc.end.offset);
-}
-function setLocEnd(loc, end) {
-    loc.end = tokenizer.getPos(end);
-    loc.source = getSlice(loc.start.offset, end);
-}
-function dirToAttr(dir) {
-    const attr = {
-        type: 6,
-        name: dir.rawName,
-        nameLoc: getLoc(dir.loc.start.offset, dir.loc.start.offset + dir.rawName.length),
-        value: void 0,
-        loc: dir.loc
-    };
-    if (dir.exp) {
-        const loc = dir.exp.loc;
-        if (loc.end.offset < dir.loc.end.offset) {
-            loc.start.offset--;
-            loc.start.column--;
-            loc.end.offset++;
-            loc.end.column++;
-        }
-        attr.value = {
-            type: 2,
-            content: dir.exp.content,
-            loc
-        };
-    }
-    return attr;
-}
-function createExp(content, isStatic = false, loc, constType = 0, parseMode = 0 /* Normal */ ) {
-    const exp = createSimpleExpression(content, isStatic, loc, constType);
-    return exp;
-}
-function emitError(code, index, message) {
-    currentOptions.onError(createCompilerError(code, getLoc(index, index), void 0, message));
-}
-function reset() {
-    tokenizer.reset();
-    currentOpenTag = null;
-    currentProp = null;
-    currentAttrValue = "";
-    currentAttrStartIndex = -1;
-    currentAttrEndIndex = -1;
-    stack.length = 0;
-}
-function baseParse(input, options) {
-    reset();
-    currentInput = input;
-    currentOptions = (0, _shared.extend)({}, defaultParserOptions);
-    if (options) {
-        let key;
-        for(key in options)if (options[key] != null) currentOptions[key] = options[key];
-    }
-    if (!currentOptions.decodeEntities) throw new Error(`[@vue/compiler-core] decodeEntities option is required in browser builds.`);
-    tokenizer.mode = currentOptions.parseMode === "html" ? 1 : currentOptions.parseMode === "sfc" ? 2 : 0;
-    tokenizer.inXML = currentOptions.ns === 1 || currentOptions.ns === 2;
-    const delimiters = options && options.delimiters;
-    if (delimiters) {
-        tokenizer.delimiterOpen = toCharCodes(delimiters[0]);
-        tokenizer.delimiterClose = toCharCodes(delimiters[1]);
-    }
-    const root = currentRoot = createRoot([], input);
-    tokenizer.parse(currentInput);
-    root.loc = getLoc(0, input.length);
-    root.children = condenseWhitespace(root.children);
-    currentRoot = null;
-    return root;
-}
-function cacheStatic(root, context) {
-    walk(root, void 0, context, // Root node is unfortunately non-hoistable due to potential parent
-    // fallthrough attributes.
-    isSingleElementRoot(root, root.children[0]));
-}
-function isSingleElementRoot(root, child) {
-    const { children } = root;
-    return children.length === 1 && child.type === 1 && !isSlotOutlet(child);
-}
-function walk(node, parent, context, doNotHoistNode = false, inFor = false) {
-    const { children } = node;
-    const toCache = [];
-    for(let i = 0; i < children.length; i++){
-        const child = children[i];
-        if (child.type === 1 && child.tagType === 0) {
-            const constantType = doNotHoistNode ? 0 : getConstantType(child, context);
-            if (constantType > 0) {
-                if (constantType >= 2) {
-                    child.codegenNode.patchFlag = -1;
-                    toCache.push(child);
-                    continue;
-                }
-            } else {
-                const codegenNode = child.codegenNode;
-                if (codegenNode.type === 13) {
-                    const flag = codegenNode.patchFlag;
-                    if ((flag === void 0 || flag === 512 || flag === 1) && getGeneratedPropsConstantType(child, context) >= 2) {
-                        const props = getNodeProps(child);
-                        if (props) codegenNode.props = context.hoist(props);
-                    }
-                    if (codegenNode.dynamicProps) codegenNode.dynamicProps = context.hoist(codegenNode.dynamicProps);
-                }
-            }
-        } else if (child.type === 12) {
-            const constantType = doNotHoistNode ? 0 : getConstantType(child, context);
-            if (constantType >= 2) {
-                toCache.push(child);
-                continue;
-            }
-        }
-        if (child.type === 1) {
-            const isComponent = child.tagType === 1;
-            if (isComponent) context.scopes.vSlot++;
-            walk(child, node, context, false, inFor);
-            if (isComponent) context.scopes.vSlot--;
-        } else if (child.type === 11) walk(child, node, context, child.children.length === 1, true);
-        else if (child.type === 9) for(let i2 = 0; i2 < child.branches.length; i2++)walk(child.branches[i2], node, context, child.branches[i2].children.length === 1, inFor);
-    }
-    let cachedAsArray = false;
-    if (toCache.length === children.length && node.type === 1) {
-        if (node.tagType === 0 && node.codegenNode && node.codegenNode.type === 13 && (0, _shared.isArray)(node.codegenNode.children)) {
-            node.codegenNode.children = getCacheExpression(createArrayExpression(node.codegenNode.children));
-            cachedAsArray = true;
-        } else if (node.tagType === 1 && node.codegenNode && node.codegenNode.type === 13 && node.codegenNode.children && !(0, _shared.isArray)(node.codegenNode.children) && node.codegenNode.children.type === 15) {
-            const slot = getSlotNode(node.codegenNode, "default");
-            if (slot) {
-                slot.returns = getCacheExpression(createArrayExpression(slot.returns));
-                cachedAsArray = true;
-            }
-        } else if (node.tagType === 3 && parent && parent.type === 1 && parent.tagType === 1 && parent.codegenNode && parent.codegenNode.type === 13 && parent.codegenNode.children && !(0, _shared.isArray)(parent.codegenNode.children) && parent.codegenNode.children.type === 15) {
-            const slotName = findDir(node, "slot", true);
-            const slot = slotName && slotName.arg && getSlotNode(parent.codegenNode, slotName.arg);
-            if (slot) {
-                slot.returns = getCacheExpression(createArrayExpression(slot.returns));
-                cachedAsArray = true;
-            }
-        }
-    }
-    if (!cachedAsArray) for (const child of toCache)child.codegenNode = context.cache(child.codegenNode);
-    function getCacheExpression(value) {
-        const exp = context.cache(value);
-        if (inFor && context.hmr) exp.needArraySpread = true;
-        return exp;
-    }
-    function getSlotNode(node2, name) {
-        if (node2.children && !(0, _shared.isArray)(node2.children) && node2.children.type === 15) {
-            const slot = node2.children.properties.find((p)=>p.key === name || p.key.content === name);
-            return slot && slot.value;
-        }
-    }
-    if (toCache.length && context.transformHoist) context.transformHoist(children, context, node);
-}
-function getConstantType(node, context) {
-    const { constantCache } = context;
-    switch(node.type){
-        case 1:
-            if (node.tagType !== 0) return 0;
-            const cached = constantCache.get(node);
-            if (cached !== void 0) return cached;
-            const codegenNode = node.codegenNode;
-            if (codegenNode.type !== 13) return 0;
-            if (codegenNode.isBlock && node.tag !== "svg" && node.tag !== "foreignObject" && node.tag !== "math") return 0;
-            if (codegenNode.patchFlag === void 0) {
-                let returnType2 = 3;
-                const generatedPropsType = getGeneratedPropsConstantType(node, context);
-                if (generatedPropsType === 0) {
-                    constantCache.set(node, 0);
-                    return 0;
-                }
-                if (generatedPropsType < returnType2) returnType2 = generatedPropsType;
-                for(let i = 0; i < node.children.length; i++){
-                    const childType = getConstantType(node.children[i], context);
-                    if (childType === 0) {
-                        constantCache.set(node, 0);
-                        return 0;
-                    }
-                    if (childType < returnType2) returnType2 = childType;
-                }
-                if (returnType2 > 1) for(let i = 0; i < node.props.length; i++){
-                    const p = node.props[i];
-                    if (p.type === 7 && p.name === "bind" && p.exp) {
-                        const expType = getConstantType(p.exp, context);
-                        if (expType === 0) {
-                            constantCache.set(node, 0);
-                            return 0;
-                        }
-                        if (expType < returnType2) returnType2 = expType;
-                    }
-                }
-                if (codegenNode.isBlock) {
-                    for(let i = 0; i < node.props.length; i++){
-                        const p = node.props[i];
-                        if (p.type === 7) {
-                            constantCache.set(node, 0);
-                            return 0;
-                        }
-                    }
-                    context.removeHelper(OPEN_BLOCK);
-                    context.removeHelper(getVNodeBlockHelper(context.inSSR, codegenNode.isComponent));
-                    codegenNode.isBlock = false;
-                    context.helper(getVNodeHelper(context.inSSR, codegenNode.isComponent));
-                }
-                constantCache.set(node, returnType2);
-                return returnType2;
-            } else {
-                constantCache.set(node, 0);
-                return 0;
-            }
-        case 2:
-        case 3:
-            return 3;
-        case 9:
-        case 11:
-        case 10:
-            return 0;
-        case 5:
-        case 12:
-            return getConstantType(node.content, context);
-        case 4:
-            return node.constType;
-        case 8:
-            let returnType = 3;
-            for(let i = 0; i < node.children.length; i++){
-                const child = node.children[i];
-                if ((0, _shared.isString)(child) || (0, _shared.isSymbol)(child)) continue;
-                const childType = getConstantType(child, context);
-                if (childType === 0) return 0;
-                else if (childType < returnType) returnType = childType;
-            }
-            return returnType;
-        case 20:
-            return 2;
-        default:
-            return 0;
-    }
-}
-const allowHoistedHelperSet = /* @__PURE__ */ new Set([
-    NORMALIZE_CLASS,
-    NORMALIZE_STYLE,
-    NORMALIZE_PROPS,
-    GUARD_REACTIVE_PROPS
-]);
-function getConstantTypeOfHelperCall(value, context) {
-    if (value.type === 14 && !(0, _shared.isString)(value.callee) && allowHoistedHelperSet.has(value.callee)) {
-        const arg = value.arguments[0];
-        if (arg.type === 4) return getConstantType(arg, context);
-        else if (arg.type === 14) return getConstantTypeOfHelperCall(arg, context);
-    }
-    return 0;
-}
-function getGeneratedPropsConstantType(node, context) {
-    let returnType = 3;
-    const props = getNodeProps(node);
-    if (props && props.type === 15) {
-        const { properties } = props;
-        for(let i = 0; i < properties.length; i++){
-            const { key, value } = properties[i];
-            const keyType = getConstantType(key, context);
-            if (keyType === 0) return keyType;
-            if (keyType < returnType) returnType = keyType;
-            let valueType;
-            if (value.type === 4) valueType = getConstantType(value, context);
-            else if (value.type === 14) valueType = getConstantTypeOfHelperCall(value, context);
-            else valueType = 0;
-            if (valueType === 0) return valueType;
-            if (valueType < returnType) returnType = valueType;
-        }
-    }
-    return returnType;
-}
-function getNodeProps(node) {
-    const codegenNode = node.codegenNode;
-    if (codegenNode.type === 13) return codegenNode.props;
-}
-function createTransformContext(root, { filename = "", prefixIdentifiers = false, hoistStatic = false, hmr = false, cacheHandlers = false, nodeTransforms = [], directiveTransforms = {}, transformHoist = null, isBuiltInComponent = (0, _shared.NOOP), isCustomElement = (0, _shared.NOOP), expressionPlugins = [], scopeId = null, slotted = true, ssr = false, inSSR = false, ssrCssVars = ``, bindingMetadata = (0, _shared.EMPTY_OBJ), inline = false, isTS = false, onError = defaultOnError, onWarn = defaultOnWarn, compatConfig }) {
-    const nameMatch = filename.replace(/\?.*$/, "").match(/([^/\\]+)\.\w+$/);
-    const context = {
-        // options
-        filename,
-        selfName: nameMatch && (0, _shared.capitalize)((0, _shared.camelize)(nameMatch[1])),
-        prefixIdentifiers,
-        hoistStatic,
-        hmr,
-        cacheHandlers,
-        nodeTransforms,
-        directiveTransforms,
-        transformHoist,
-        isBuiltInComponent,
-        isCustomElement,
-        expressionPlugins,
-        scopeId,
-        slotted,
-        ssr,
-        inSSR,
-        ssrCssVars,
-        bindingMetadata,
-        inline,
-        isTS,
-        onError,
-        onWarn,
-        compatConfig,
-        // state
-        root,
-        helpers: /* @__PURE__ */ new Map(),
-        components: /* @__PURE__ */ new Set(),
-        directives: /* @__PURE__ */ new Set(),
-        hoists: [],
-        imports: [],
-        cached: [],
-        constantCache: /* @__PURE__ */ new WeakMap(),
-        temps: 0,
-        identifiers: /* @__PURE__ */ Object.create(null),
-        scopes: {
-            vFor: 0,
-            vSlot: 0,
-            vPre: 0,
-            vOnce: 0
-        },
-        parent: null,
-        grandParent: null,
-        currentNode: root,
-        childIndex: 0,
-        inVOnce: false,
-        // methods
-        helper (name) {
-            const count = context.helpers.get(name) || 0;
-            context.helpers.set(name, count + 1);
-            return name;
-        },
-        removeHelper (name) {
-            const count = context.helpers.get(name);
-            if (count) {
-                const currentCount = count - 1;
-                if (!currentCount) context.helpers.delete(name);
-                else context.helpers.set(name, currentCount);
-            }
-        },
-        helperString (name) {
-            return `_${helperNameMap[context.helper(name)]}`;
-        },
-        replaceNode (node) {
-            if (!context.currentNode) throw new Error(`Node being replaced is already removed.`);
-            if (!context.parent) throw new Error(`Cannot replace root node.`);
-            context.parent.children[context.childIndex] = context.currentNode = node;
-        },
-        removeNode (node) {
-            if (!context.parent) throw new Error(`Cannot remove root node.`);
-            const list = context.parent.children;
-            const removalIndex = node ? list.indexOf(node) : context.currentNode ? context.childIndex : -1;
-            if (removalIndex < 0) throw new Error(`node being removed is not a child of current parent`);
-            if (!node || node === context.currentNode) {
-                context.currentNode = null;
-                context.onNodeRemoved();
-            } else if (context.childIndex > removalIndex) {
-                context.childIndex--;
-                context.onNodeRemoved();
-            }
-            context.parent.children.splice(removalIndex, 1);
-        },
-        onNodeRemoved: (0, _shared.NOOP),
-        addIdentifiers (exp) {},
-        removeIdentifiers (exp) {},
-        hoist (exp) {
-            if ((0, _shared.isString)(exp)) exp = createSimpleExpression(exp);
-            context.hoists.push(exp);
-            const identifier = createSimpleExpression(`_hoisted_${context.hoists.length}`, false, exp.loc, 2);
-            identifier.hoisted = exp;
-            return identifier;
-        },
-        cache (exp, isVNode = false, inVOnce = false) {
-            const cacheExp = createCacheExpression(context.cached.length, exp, isVNode, inVOnce);
-            context.cached.push(cacheExp);
-            return cacheExp;
-        }
-    };
-    context.filters = /* @__PURE__ */ new Set();
-    return context;
-}
-function transform(root, options) {
-    const context = createTransformContext(root, options);
-    traverseNode(root, context);
-    if (options.hoistStatic) cacheStatic(root, context);
-    if (!options.ssr) createRootCodegen(root, context);
-    root.helpers = /* @__PURE__ */ new Set([
-        ...context.helpers.keys()
-    ]);
-    root.components = [
-        ...context.components
-    ];
-    root.directives = [
-        ...context.directives
-    ];
-    root.imports = context.imports;
-    root.hoists = context.hoists;
-    root.temps = context.temps;
-    root.cached = context.cached;
-    root.transformed = true;
-    root.filters = [
-        ...context.filters
-    ];
-}
-function createRootCodegen(root, context) {
-    const { helper } = context;
-    const { children } = root;
-    if (children.length === 1) {
-        const child = children[0];
-        if (isSingleElementRoot(root, child) && child.codegenNode) {
-            const codegenNode = child.codegenNode;
-            if (codegenNode.type === 13) convertToBlock(codegenNode, context);
-            root.codegenNode = codegenNode;
-        } else root.codegenNode = child;
-    } else if (children.length > 1) {
-        let patchFlag = 64;
-        if (children.filter((c)=>c.type !== 3).length === 1) patchFlag |= 2048;
-        root.codegenNode = createVNodeCall(context, helper(FRAGMENT), void 0, root.children, patchFlag, void 0, void 0, true, void 0, false);
-    }
-}
-function traverseChildren(parent, context) {
-    let i = 0;
-    const nodeRemoved = ()=>{
-        i--;
-    };
-    for(; i < parent.children.length; i++){
-        const child = parent.children[i];
-        if ((0, _shared.isString)(child)) continue;
-        context.grandParent = context.parent;
-        context.parent = parent;
-        context.childIndex = i;
-        context.onNodeRemoved = nodeRemoved;
-        traverseNode(child, context);
-    }
-}
-function traverseNode(node, context) {
-    context.currentNode = node;
-    const { nodeTransforms } = context;
-    const exitFns = [];
-    for(let i2 = 0; i2 < nodeTransforms.length; i2++){
-        const onExit = nodeTransforms[i2](node, context);
-        if (onExit) {
-            if ((0, _shared.isArray)(onExit)) exitFns.push(...onExit);
-            else exitFns.push(onExit);
-        }
-        if (!context.currentNode) return;
-        else node = context.currentNode;
-    }
-    switch(node.type){
-        case 3:
-            if (!context.ssr) context.helper(CREATE_COMMENT);
-            break;
-        case 5:
-            if (!context.ssr) context.helper(TO_DISPLAY_STRING);
-            break;
-        // for container types, further traverse downwards
-        case 9:
-            for(let i2 = 0; i2 < node.branches.length; i2++)traverseNode(node.branches[i2], context);
-            break;
-        case 10:
-        case 11:
-        case 1:
-        case 0:
-            traverseChildren(node, context);
-            break;
-    }
-    context.currentNode = node;
-    let i = exitFns.length;
-    while(i--)exitFns[i]();
-}
-function createStructuralDirectiveTransform(name, fn) {
-    const matches = (0, _shared.isString)(name) ? (n)=>n === name : (n)=>name.test(n);
-    return (node, context)=>{
-        if (node.type === 1) {
-            const { props } = node;
-            if (node.tagType === 3 && props.some(isVSlot)) return;
-            const exitFns = [];
-            for(let i = 0; i < props.length; i++){
-                const prop = props[i];
-                if (prop.type === 7 && matches(prop.name)) {
-                    props.splice(i, 1);
-                    i--;
-                    const onExit = fn(node, prop, context);
-                    if (onExit) exitFns.push(onExit);
-                }
-            }
-            return exitFns;
-        }
-    };
-}
-const PURE_ANNOTATION = `/*@__PURE__*/`;
-const aliasHelper = (s)=>`${helperNameMap[s]}: _${helperNameMap[s]}`;
-function createCodegenContext(ast, { mode = "function", prefixIdentifiers = mode === "module", sourceMap = false, filename = `template.vue.html`, scopeId = null, optimizeImports = false, runtimeGlobalName = `Vue`, runtimeModuleName = `vue`, ssrRuntimeModuleName = "vue/server-renderer", ssr = false, isTS = false, inSSR = false }) {
-    const context = {
-        mode,
-        prefixIdentifiers,
-        sourceMap,
-        filename,
-        scopeId,
-        optimizeImports,
-        runtimeGlobalName,
-        runtimeModuleName,
-        ssrRuntimeModuleName,
-        ssr,
-        isTS,
-        inSSR,
-        source: ast.source,
-        code: ``,
-        column: 1,
-        line: 1,
-        offset: 0,
-        indentLevel: 0,
-        pure: false,
-        map: void 0,
-        helper (key) {
-            return `_${helperNameMap[key]}`;
-        },
-        push (code, newlineIndex = -2 /* None */ , node) {
-            context.code += code;
-        },
-        indent () {
-            newline(++context.indentLevel);
-        },
-        deindent (withoutNewLine = false) {
-            if (withoutNewLine) --context.indentLevel;
-            else newline(--context.indentLevel);
-        },
-        newline () {
-            newline(context.indentLevel);
-        }
-    };
-    function newline(n) {
-        context.push("\n" + `  `.repeat(n), 0 /* Start */ );
-    }
-    return context;
-}
-function generate(ast, options = {}) {
-    const context = createCodegenContext(ast, options);
-    if (options.onContextCreated) options.onContextCreated(context);
-    const { mode, push, prefixIdentifiers, indent, deindent, newline, scopeId, ssr } = context;
-    const helpers = Array.from(ast.helpers);
-    const hasHelpers = helpers.length > 0;
-    const useWithBlock = !prefixIdentifiers && mode !== "module";
-    const preambleContext = context;
-    genFunctionPreamble(ast, preambleContext);
-    const functionName = ssr ? `ssrRender` : `render`;
-    const args = ssr ? [
-        "_ctx",
-        "_push",
-        "_parent",
-        "_attrs"
-    ] : [
-        "_ctx",
-        "_cache"
-    ];
-    const signature = args.join(", ");
-    push(`function ${functionName}(${signature}) {`);
-    indent();
-    if (useWithBlock) {
-        push(`with (_ctx) {`);
-        indent();
-        if (hasHelpers) {
-            push(`const { ${helpers.map(aliasHelper).join(", ")} } = _Vue
-`, -1 /* End */ );
-            newline();
-        }
-    }
-    if (ast.components.length) {
-        genAssets(ast.components, "component", context);
-        if (ast.directives.length || ast.temps > 0) newline();
-    }
-    if (ast.directives.length) {
-        genAssets(ast.directives, "directive", context);
-        if (ast.temps > 0) newline();
-    }
-    if (ast.filters && ast.filters.length) {
-        newline();
-        genAssets(ast.filters, "filter", context);
-        newline();
-    }
-    if (ast.temps > 0) {
-        push(`let `);
-        for(let i = 0; i < ast.temps; i++)push(`${i > 0 ? `, ` : ``}_temp${i}`);
-    }
-    if (ast.components.length || ast.directives.length || ast.temps) {
-        push(`
-`, 0 /* Start */ );
-        newline();
-    }
-    if (!ssr) push(`return `);
-    if (ast.codegenNode) genNode(ast.codegenNode, context);
-    else push(`null`);
-    if (useWithBlock) {
-        deindent();
-        push(`}`);
-    }
-    deindent();
-    push(`}`);
-    return {
-        ast,
-        code: context.code,
-        preamble: ``,
-        map: context.map ? context.map.toJSON() : void 0
-    };
-}
-function genFunctionPreamble(ast, context) {
-    const { ssr, prefixIdentifiers, push, newline, runtimeModuleName, runtimeGlobalName, ssrRuntimeModuleName } = context;
-    const VueBinding = runtimeGlobalName;
-    const helpers = Array.from(ast.helpers);
-    if (helpers.length > 0) {
-        push(`const _Vue = ${VueBinding}
-`, -1 /* End */ );
-        if (ast.hoists.length) {
-            const staticHelpers = [
-                CREATE_VNODE,
-                CREATE_ELEMENT_VNODE,
-                CREATE_COMMENT,
-                CREATE_TEXT,
-                CREATE_STATIC
-            ].filter((helper)=>helpers.includes(helper)).map(aliasHelper).join(", ");
-            push(`const { ${staticHelpers} } = _Vue
-`, -1 /* End */ );
-        }
-    }
-    genHoists(ast.hoists, context);
-    newline();
-    push(`return `);
-}
-function genAssets(assets, type, { helper, push, newline, isTS }) {
-    const resolver = helper(type === "filter" ? RESOLVE_FILTER : type === "component" ? RESOLVE_COMPONENT : RESOLVE_DIRECTIVE);
-    for(let i = 0; i < assets.length; i++){
-        let id = assets[i];
-        const maybeSelfReference = id.endsWith("__self");
-        if (maybeSelfReference) id = id.slice(0, -6);
-        push(`const ${toValidAssetId(id, type)} = ${resolver}(${JSON.stringify(id)}${maybeSelfReference ? `, true` : ``})${isTS ? `!` : ``}`);
-        if (i < assets.length - 1) newline();
-    }
-}
-function genHoists(hoists, context) {
-    if (!hoists.length) return;
-    context.pure = true;
-    const { push, newline } = context;
-    newline();
-    for(let i = 0; i < hoists.length; i++){
-        const exp = hoists[i];
-        if (exp) {
-            push(`const _hoisted_${i + 1} = `);
-            genNode(exp, context);
-            newline();
-        }
-    }
-    context.pure = false;
-}
-function isText(n) {
-    return (0, _shared.isString)(n) || n.type === 4 || n.type === 2 || n.type === 5 || n.type === 8;
-}
-function genNodeListAsArray(nodes, context) {
-    const multilines = nodes.length > 3 || nodes.some((n)=>(0, _shared.isArray)(n) || !isText(n));
-    context.push(`[`);
-    multilines && context.indent();
-    genNodeList(nodes, context, multilines);
-    multilines && context.deindent();
-    context.push(`]`);
-}
-function genNodeList(nodes, context, multilines = false, comma = true) {
-    const { push, newline } = context;
-    for(let i = 0; i < nodes.length; i++){
-        const node = nodes[i];
-        if ((0, _shared.isString)(node)) push(node, -3 /* Unknown */ );
-        else if ((0, _shared.isArray)(node)) genNodeListAsArray(node, context);
-        else genNode(node, context);
-        if (i < nodes.length - 1) {
-            if (multilines) {
-                comma && push(",");
-                newline();
-            } else comma && push(", ");
-        }
-    }
-}
-function genNode(node, context) {
-    if ((0, _shared.isString)(node)) {
-        context.push(node, -3 /* Unknown */ );
-        return;
-    }
-    if ((0, _shared.isSymbol)(node)) {
-        context.push(context.helper(node));
-        return;
-    }
-    switch(node.type){
-        case 1:
-        case 9:
-        case 11:
-            assert(node.codegenNode != null, `Codegen node is missing for element/if/for node. Apply appropriate transforms first.`);
-            genNode(node.codegenNode, context);
-            break;
-        case 2:
-            genText(node, context);
-            break;
-        case 4:
-            genExpression(node, context);
-            break;
-        case 5:
-            genInterpolation(node, context);
-            break;
-        case 12:
-            genNode(node.codegenNode, context);
-            break;
-        case 8:
-            genCompoundExpression(node, context);
-            break;
-        case 3:
-            genComment(node, context);
-            break;
-        case 13:
-            genVNodeCall(node, context);
-            break;
-        case 14:
-            genCallExpression(node, context);
-            break;
-        case 15:
-            genObjectExpression(node, context);
-            break;
-        case 17:
-            genArrayExpression(node, context);
-            break;
-        case 18:
-            genFunctionExpression(node, context);
-            break;
-        case 19:
-            genConditionalExpression(node, context);
-            break;
-        case 20:
-            genCacheExpression(node, context);
-            break;
-        case 21:
-            genNodeList(node.body, context, true, false);
-            break;
-        // SSR only types
-        case 22:
-            break;
-        case 23:
-            break;
-        case 24:
-            break;
-        case 25:
-            break;
-        case 26:
-            break;
-        /* v8 ignore start */ case 10:
-            break;
-        default:
-            {
-                assert(false, `unhandled codegen node type: ${node.type}`);
-                const exhaustiveCheck = node;
-                return exhaustiveCheck;
-            }
-    }
-}
-function genText(node, context) {
-    context.push(JSON.stringify(node.content), -3 /* Unknown */ , node);
-}
-function genExpression(node, context) {
-    const { content, isStatic } = node;
-    context.push(isStatic ? JSON.stringify(content) : content, -3 /* Unknown */ , node);
-}
-function genInterpolation(node, context) {
-    const { push, helper, pure } = context;
-    if (pure) push(PURE_ANNOTATION);
-    push(`${helper(TO_DISPLAY_STRING)}(`);
-    genNode(node.content, context);
-    push(`)`);
-}
-function genCompoundExpression(node, context) {
-    for(let i = 0; i < node.children.length; i++){
-        const child = node.children[i];
-        if ((0, _shared.isString)(child)) context.push(child, -3 /* Unknown */ );
-        else genNode(child, context);
-    }
-}
-function genExpressionAsPropertyKey(node, context) {
-    const { push } = context;
-    if (node.type === 8) {
-        push(`[`);
-        genCompoundExpression(node, context);
-        push(`]`);
-    } else if (node.isStatic) {
-        const text = isSimpleIdentifier(node.content) ? node.content : JSON.stringify(node.content);
-        push(text, -2 /* None */ , node);
-    } else push(`[${node.content}]`, -3 /* Unknown */ , node);
-}
-function genComment(node, context) {
-    const { push, helper, pure } = context;
-    if (pure) push(PURE_ANNOTATION);
-    push(`${helper(CREATE_COMMENT)}(${JSON.stringify(node.content)})`, -3 /* Unknown */ , node);
-}
-function genVNodeCall(node, context) {
-    const { push, helper, pure } = context;
-    const { tag, props, children, patchFlag, dynamicProps, directives, isBlock, disableTracking, isComponent } = node;
-    let patchFlagString;
-    if (patchFlag) {
-        if (patchFlag < 0) patchFlagString = patchFlag + ` /* ${(0, _shared.PatchFlagNames)[patchFlag]} */`;
-        else {
-            const flagNames = Object.keys((0, _shared.PatchFlagNames)).map(Number).filter((n)=>n > 0 && patchFlag & n).map((n)=>(0, _shared.PatchFlagNames)[n]).join(`, `);
-            patchFlagString = patchFlag + ` /* ${flagNames} */`;
-        }
-    }
-    if (directives) push(helper(WITH_DIRECTIVES) + `(`);
-    if (isBlock) push(`(${helper(OPEN_BLOCK)}(${disableTracking ? `true` : ``}), `);
-    if (pure) push(PURE_ANNOTATION);
-    const callHelper = isBlock ? getVNodeBlockHelper(context.inSSR, isComponent) : getVNodeHelper(context.inSSR, isComponent);
-    push(helper(callHelper) + `(`, -2 /* None */ , node);
-    genNodeList(genNullableArgs([
-        tag,
-        props,
-        children,
-        patchFlagString,
-        dynamicProps
-    ]), context);
-    push(`)`);
-    if (isBlock) push(`)`);
-    if (directives) {
-        push(`, `);
-        genNode(directives, context);
-        push(`)`);
-    }
-}
-function genNullableArgs(args) {
-    let i = args.length;
-    while(i--){
-        if (args[i] != null) break;
-    }
-    return args.slice(0, i + 1).map((arg)=>arg || `null`);
-}
-function genCallExpression(node, context) {
-    const { push, helper, pure } = context;
-    const callee = (0, _shared.isString)(node.callee) ? node.callee : helper(node.callee);
-    if (pure) push(PURE_ANNOTATION);
-    push(callee + `(`, -2 /* None */ , node);
-    genNodeList(node.arguments, context);
-    push(`)`);
-}
-function genObjectExpression(node, context) {
-    const { push, indent, deindent, newline } = context;
-    const { properties } = node;
-    if (!properties.length) {
-        push(`{}`, -2 /* None */ , node);
-        return;
-    }
-    const multilines = properties.length > 1 || properties.some((p)=>p.value.type !== 4);
-    push(multilines ? `{` : `{ `);
-    multilines && indent();
-    for(let i = 0; i < properties.length; i++){
-        const { key, value } = properties[i];
-        genExpressionAsPropertyKey(key, context);
-        push(`: `);
-        genNode(value, context);
-        if (i < properties.length - 1) {
-            push(`,`);
-            newline();
-        }
-    }
-    multilines && deindent();
-    push(multilines ? `}` : ` }`);
-}
-function genArrayExpression(node, context) {
-    genNodeListAsArray(node.elements, context);
-}
-function genFunctionExpression(node, context) {
-    const { push, indent, deindent } = context;
-    const { params, returns, body, newline, isSlot } = node;
-    if (isSlot) push(`_${helperNameMap[WITH_CTX]}(`);
-    push(`(`, -2 /* None */ , node);
-    if ((0, _shared.isArray)(params)) genNodeList(params, context);
-    else if (params) genNode(params, context);
-    push(`) => `);
-    if (newline || body) {
-        push(`{`);
-        indent();
-    }
-    if (returns) {
-        if (newline) push(`return `);
-        if ((0, _shared.isArray)(returns)) genNodeListAsArray(returns, context);
-        else genNode(returns, context);
-    } else if (body) genNode(body, context);
-    if (newline || body) {
-        deindent();
-        push(`}`);
-    }
-    if (isSlot) {
-        if (node.isNonScopedSlot) push(`, undefined, true`);
-        push(`)`);
-    }
-}
-function genConditionalExpression(node, context) {
-    const { test, consequent, alternate, newline: needNewline } = node;
-    const { push, indent, deindent, newline } = context;
-    if (test.type === 4) {
-        const needsParens = !isSimpleIdentifier(test.content);
-        needsParens && push(`(`);
-        genExpression(test, context);
-        needsParens && push(`)`);
-    } else {
-        push(`(`);
-        genNode(test, context);
-        push(`)`);
-    }
-    needNewline && indent();
-    context.indentLevel++;
-    needNewline || push(` `);
-    push(`? `);
-    genNode(consequent, context);
-    context.indentLevel--;
-    needNewline && newline();
-    needNewline || push(` `);
-    push(`: `);
-    const isNested = alternate.type === 19;
-    if (!isNested) context.indentLevel++;
-    genNode(alternate, context);
-    if (!isNested) context.indentLevel--;
-    needNewline && deindent(true);
-}
-function genCacheExpression(node, context) {
-    const { push, helper, indent, deindent, newline } = context;
-    const { needPauseTracking, needArraySpread } = node;
-    if (needArraySpread) push(`[...(`);
-    push(`_cache[${node.index}] || (`);
-    if (needPauseTracking) {
-        indent();
-        push(`${helper(SET_BLOCK_TRACKING)}(-1`);
-        if (node.inVOnce) push(`, true`);
-        push(`),`);
-        newline();
-        push(`(`);
-    }
-    push(`_cache[${node.index}] = `);
-    genNode(node.value, context);
-    if (needPauseTracking) {
-        push(`).cacheIndex = ${node.index},`);
-        newline();
-        push(`${helper(SET_BLOCK_TRACKING)}(1),`);
-        newline();
-        push(`_cache[${node.index}]`);
-        deindent();
-    }
-    push(`)`);
-    if (needArraySpread) push(`)]`);
-}
-const prohibitedKeywordRE = new RegExp("\\b" + "arguments,await,break,case,catch,class,const,continue,debugger,default,delete,do,else,export,extends,finally,for,function,if,import,let,new,return,super,switch,throw,try,var,void,while,with,yield".split(",").join("\\b|\\b") + "\\b");
-const stripStringRE = /'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*\$\{|\}(?:[^`\\]|\\.)*`|`(?:[^`\\]|\\.)*`/g;
-function validateBrowserExpression(node, context, asParams = false, asRawStatements = false) {
-    const exp = node.content;
-    if (!exp.trim()) return;
-    try {
-        new Function(asRawStatements ? ` ${exp} ` : `return ${asParams ? `(${exp}) => {}` : `(${exp})`}`);
-    } catch (e) {
-        let message = e.message;
-        const keywordMatch = exp.replace(stripStringRE, "").match(prohibitedKeywordRE);
-        if (keywordMatch) message = `avoid using JavaScript keyword as property name: "${keywordMatch[0]}"`;
-        context.onError(createCompilerError(45, node.loc, void 0, message));
-    }
-}
-const transformExpression = (node, context)=>{
-    if (node.type === 5) node.content = processExpression(node.content, context);
-    else if (node.type === 1) {
-        const memo = findDir(node, "memo");
-        for(let i = 0; i < node.props.length; i++){
-            const dir = node.props[i];
-            if (dir.type === 7 && dir.name !== "for") {
-                const exp = dir.exp;
-                const arg = dir.arg;
-                if (exp && exp.type === 4 && !(dir.name === "on" && arg) && // key has been processed in transformFor(vMemo + vFor)
-                !(memo && arg && arg.type === 4 && arg.content === "key")) dir.exp = processExpression(exp, context, // slot args must be processed as function params
-                dir.name === "slot");
-                if (arg && arg.type === 4 && !arg.isStatic) dir.arg = processExpression(arg, context);
-            }
-        }
-    }
-};
-function processExpression(node, context, asParams = false, asRawStatements = false, localVars = Object.create(context.identifiers)) {
-    validateBrowserExpression(node, context, asParams, asRawStatements);
-    return node;
-}
-function stringifyExpression(exp) {
-    if ((0, _shared.isString)(exp)) return exp;
-    else if (exp.type === 4) return exp.content;
-    else return exp.children.map(stringifyExpression).join("");
-}
-const transformIf = createStructuralDirectiveTransform(/^(if|else|else-if)$/, (node, dir, context)=>{
-    return processIf(node, dir, context, (ifNode, branch, isRoot)=>{
-        const siblings = context.parent.children;
-        let i = siblings.indexOf(ifNode);
-        let key = 0;
-        while(i-- >= 0){
-            const sibling = siblings[i];
-            if (sibling && sibling.type === 9) key += sibling.branches.length;
-        }
-        return ()=>{
-            if (isRoot) ifNode.codegenNode = createCodegenNodeForBranch(branch, key, context);
-            else {
-                const parentCondition = getParentCondition(ifNode.codegenNode);
-                parentCondition.alternate = createCodegenNodeForBranch(branch, key + ifNode.branches.length - 1, context);
-            }
-        };
-    });
-});
-function processIf(node, dir, context, processCodegen) {
-    if (dir.name !== "else" && (!dir.exp || !dir.exp.content.trim())) {
-        const loc = dir.exp ? dir.exp.loc : node.loc;
-        context.onError(createCompilerError(28, dir.loc));
-        dir.exp = createSimpleExpression(`true`, false, loc);
-    }
-    if (0, dir.exp) validateBrowserExpression(dir.exp, context);
-    if (dir.name === "if") {
-        const branch = createIfBranch(node, dir);
-        const ifNode = {
-            type: 9,
-            loc: cloneLoc(node.loc),
-            branches: [
-                branch
-            ]
-        };
-        context.replaceNode(ifNode);
-        if (processCodegen) return processCodegen(ifNode, branch, true);
-    } else {
-        const siblings = context.parent.children;
-        const comments = [];
-        let i = siblings.indexOf(node);
-        while(i-- >= -1){
-            const sibling = siblings[i];
-            if (sibling && sibling.type === 3) {
-                context.removeNode(sibling);
-                comments.unshift(sibling);
-                continue;
-            }
-            if (sibling && sibling.type === 2 && !sibling.content.trim().length) {
-                context.removeNode(sibling);
-                continue;
-            }
-            if (sibling && sibling.type === 9) {
-                if (dir.name === "else-if" && sibling.branches[sibling.branches.length - 1].condition === void 0) context.onError(createCompilerError(30, node.loc));
-                context.removeNode();
-                const branch = createIfBranch(node, dir);
-                if ((0, comments.length) && // #3619 ignore comments if the v-if is direct child of <transition>
-                !(context.parent && context.parent.type === 1 && (context.parent.tag === "transition" || context.parent.tag === "Transition"))) branch.children = [
-                    ...comments,
-                    ...branch.children
-                ];
-                {
-                    const key = branch.userKey;
-                    if (key) sibling.branches.forEach(({ userKey })=>{
-                        if (isSameKey(userKey, key)) context.onError(createCompilerError(29, branch.userKey.loc));
-                    });
-                }
-                sibling.branches.push(branch);
-                const onExit = processCodegen && processCodegen(sibling, branch, false);
-                traverseNode(branch, context);
-                if (onExit) onExit();
-                context.currentNode = null;
-            } else context.onError(createCompilerError(30, node.loc));
-            break;
-        }
-    }
-}
-function createIfBranch(node, dir) {
-    const isTemplateIf = node.tagType === 3;
-    return {
-        type: 10,
-        loc: node.loc,
-        condition: dir.name === "else" ? void 0 : dir.exp,
-        children: isTemplateIf && !findDir(node, "for") ? node.children : [
-            node
-        ],
-        userKey: findProp(node, `key`),
-        isTemplateIf
-    };
-}
-function createCodegenNodeForBranch(branch, keyIndex, context) {
-    if (branch.condition) return createConditionalExpression(branch.condition, createChildrenCodegenNode(branch, keyIndex, context), // make sure to pass in asBlock: true so that the comment node call
-    // closes the current block.
-    createCallExpression(context.helper(CREATE_COMMENT), [
-        '"v-if"',
-        "true"
-    ]));
-    else return createChildrenCodegenNode(branch, keyIndex, context);
-}
-function createChildrenCodegenNode(branch, keyIndex, context) {
-    const { helper } = context;
-    const keyProperty = createObjectProperty(`key`, createSimpleExpression(`${keyIndex}`, false, locStub, 2));
-    const { children } = branch;
-    const firstChild = children[0];
-    const needFragmentWrapper = children.length !== 1 || firstChild.type !== 1;
-    if (needFragmentWrapper) {
-        if (children.length === 1 && firstChild.type === 11) {
-            const vnodeCall = firstChild.codegenNode;
-            injectProp(vnodeCall, keyProperty, context);
-            return vnodeCall;
-        } else {
-            let patchFlag = 64;
-            if (!branch.isTemplateIf && children.filter((c)=>c.type !== 3).length === 1) patchFlag |= 2048;
-            return createVNodeCall(context, helper(FRAGMENT), createObjectExpression([
-                keyProperty
-            ]), children, patchFlag, void 0, void 0, true, false, false, branch.loc);
-        }
-    } else {
-        const ret = firstChild.codegenNode;
-        const vnodeCall = getMemoedVNodeCall(ret);
-        if (vnodeCall.type === 13) convertToBlock(vnodeCall, context);
-        injectProp(vnodeCall, keyProperty, context);
-        return ret;
-    }
-}
-function isSameKey(a, b) {
-    if (!a || a.type !== b.type) return false;
-    if (a.type === 6) {
-        if (a.value.content !== b.value.content) return false;
-    } else {
-        const exp = a.exp;
-        const branchExp = b.exp;
-        if (exp.type !== branchExp.type) return false;
-        if (exp.type !== 4 || exp.isStatic !== branchExp.isStatic || exp.content !== branchExp.content) return false;
-    }
-    return true;
-}
-function getParentCondition(node) {
-    while(true){
-        if (node.type === 19) {
-            if (node.alternate.type === 19) node = node.alternate;
-            else return node;
-        } else if (node.type === 20) node = node.value;
-    }
-}
-const transformBind = (dir, _node, context)=>{
-    const { modifiers, loc } = dir;
-    const arg = dir.arg;
-    let { exp } = dir;
-    if (exp && exp.type === 4 && !exp.content.trim()) exp = void 0;
-    if (!exp) {
-        if (arg.type !== 4 || !arg.isStatic) {
-            context.onError(createCompilerError(52, arg.loc));
-            return {
-                props: [
-                    createObjectProperty(arg, createSimpleExpression("", true, loc))
-                ]
-            };
-        }
-        transformBindShorthand(dir);
-        exp = dir.exp;
-    }
-    if (arg.type !== 4) {
-        arg.children.unshift(`(`);
-        arg.children.push(`) || ""`);
-    } else if (!arg.isStatic) arg.content = `${arg.content} || ""`;
-    if (modifiers.some((mod)=>mod.content === "camel")) {
-        if (arg.type === 4) {
-            if (arg.isStatic) arg.content = (0, _shared.camelize)(arg.content);
-            else arg.content = `${context.helperString(CAMELIZE)}(${arg.content})`;
-        } else {
-            arg.children.unshift(`${context.helperString(CAMELIZE)}(`);
-            arg.children.push(`)`);
-        }
-    }
-    if (!context.inSSR) {
-        if (modifiers.some((mod)=>mod.content === "prop")) injectPrefix(arg, ".");
-        if (modifiers.some((mod)=>mod.content === "attr")) injectPrefix(arg, "^");
-    }
-    return {
-        props: [
-            createObjectProperty(arg, exp)
-        ]
-    };
-};
-const transformBindShorthand = (dir, context)=>{
-    const arg = dir.arg;
-    const propName = (0, _shared.camelize)(arg.content);
-    dir.exp = createSimpleExpression(propName, false, arg.loc);
-};
-const injectPrefix = (arg, prefix)=>{
-    if (arg.type === 4) {
-        if (arg.isStatic) arg.content = prefix + arg.content;
-        else arg.content = `\`${prefix}\${${arg.content}}\``;
-    } else {
-        arg.children.unshift(`'${prefix}' + (`);
-        arg.children.push(`)`);
-    }
-};
-const transformFor = createStructuralDirectiveTransform("for", (node, dir, context)=>{
-    const { helper, removeHelper } = context;
-    return processFor(node, dir, context, (forNode)=>{
-        const renderExp = createCallExpression(helper(RENDER_LIST), [
-            forNode.source
-        ]);
-        const isTemplate = isTemplateNode(node);
-        const memo = findDir(node, "memo");
-        const keyProp = findProp(node, `key`, false, true);
-        const isDirKey = keyProp && keyProp.type === 7;
-        if (isDirKey && !keyProp.exp) transformBindShorthand(keyProp);
-        let keyExp = keyProp && (keyProp.type === 6 ? keyProp.value ? createSimpleExpression(keyProp.value.content, true) : void 0 : keyProp.exp);
-        const keyProperty = keyProp && keyExp ? createObjectProperty(`key`, keyExp) : null;
-        const isStableFragment = forNode.source.type === 4 && forNode.source.constType > 0;
-        const fragmentFlag = isStableFragment ? 64 : keyProp ? 128 : 256;
-        forNode.codegenNode = createVNodeCall(context, helper(FRAGMENT), void 0, renderExp, fragmentFlag, void 0, void 0, true, !isStableFragment, false, node.loc);
-        return ()=>{
-            let childBlock;
-            const { children } = forNode;
-            if (isTemplate) node.children.some((c)=>{
-                if (c.type === 1) {
-                    const key = findProp(c, "key");
-                    if (key) {
-                        context.onError(createCompilerError(33, key.loc));
-                        return true;
-                    }
-                }
-            });
-            const needFragmentWrapper = children.length !== 1 || children[0].type !== 1;
-            const slotOutlet = isSlotOutlet(node) ? node : isTemplate && node.children.length === 1 && isSlotOutlet(node.children[0]) ? node.children[0] : null;
-            if (slotOutlet) {
-                childBlock = slotOutlet.codegenNode;
-                if (isTemplate && keyProperty) injectProp(childBlock, keyProperty, context);
-            } else if (needFragmentWrapper) childBlock = createVNodeCall(context, helper(FRAGMENT), keyProperty ? createObjectExpression([
-                keyProperty
-            ]) : void 0, node.children, 64, void 0, void 0, true, void 0, false);
-            else {
-                childBlock = children[0].codegenNode;
-                if (isTemplate && keyProperty) injectProp(childBlock, keyProperty, context);
-                if (childBlock.isBlock !== !isStableFragment) {
-                    if (childBlock.isBlock) {
-                        removeHelper(OPEN_BLOCK);
-                        removeHelper(getVNodeBlockHelper(context.inSSR, childBlock.isComponent));
-                    } else removeHelper(getVNodeHelper(context.inSSR, childBlock.isComponent));
-                }
-                childBlock.isBlock = !isStableFragment;
-                if (childBlock.isBlock) {
-                    helper(OPEN_BLOCK);
-                    helper(getVNodeBlockHelper(context.inSSR, childBlock.isComponent));
-                } else helper(getVNodeHelper(context.inSSR, childBlock.isComponent));
-            }
-            if (memo) {
-                const loop = createFunctionExpression(createForLoopParams(forNode.parseResult, [
-                    createSimpleExpression(`_cached`)
-                ]));
-                loop.body = createBlockStatement([
-                    createCompoundExpression([
-                        `const _memo = (`,
-                        memo.exp,
-                        `)`
-                    ]),
-                    createCompoundExpression([
-                        `if (_cached`,
-                        ...keyExp ? [
-                            ` && _cached.key === `,
-                            keyExp
-                        ] : [],
-                        ` && ${context.helperString(IS_MEMO_SAME)}(_cached, _memo)) return _cached`
-                    ]),
-                    createCompoundExpression([
-                        `const _item = `,
-                        childBlock
-                    ]),
-                    createSimpleExpression(`_item.memo = _memo`),
-                    createSimpleExpression(`return _item`)
-                ]);
-                renderExp.arguments.push(loop, createSimpleExpression(`_cache`), createSimpleExpression(String(context.cached.length)));
-                context.cached.push(null);
-            } else renderExp.arguments.push(createFunctionExpression(createForLoopParams(forNode.parseResult), childBlock, true));
-        };
-    });
-});
-function processFor(node, dir, context, processCodegen) {
-    if (!dir.exp) {
-        context.onError(createCompilerError(31, dir.loc));
-        return;
-    }
-    const parseResult = dir.forParseResult;
-    if (!parseResult) {
-        context.onError(createCompilerError(32, dir.loc));
-        return;
-    }
-    finalizeForParseResult(parseResult, context);
-    const { addIdentifiers, removeIdentifiers, scopes } = context;
-    const { source, value, key, index } = parseResult;
-    const forNode = {
-        type: 11,
-        loc: dir.loc,
-        source,
-        valueAlias: value,
-        keyAlias: key,
-        objectIndexAlias: index,
-        parseResult,
-        children: isTemplateNode(node) ? node.children : [
-            node
-        ]
-    };
-    context.replaceNode(forNode);
-    scopes.vFor++;
-    const onExit = processCodegen && processCodegen(forNode);
-    return ()=>{
-        scopes.vFor--;
-        if (onExit) onExit();
-    };
-}
-function finalizeForParseResult(result, context) {
-    if (result.finalized) return;
-    validateBrowserExpression(result.source, context);
-    if (result.key) validateBrowserExpression(result.key, context, true);
-    if (result.index) validateBrowserExpression(result.index, context, true);
-    if (result.value) validateBrowserExpression(result.value, context, true);
-    result.finalized = true;
-}
-function createForLoopParams({ value, key, index }, memoArgs = []) {
-    return createParamsList([
-        value,
-        key,
-        index,
-        ...memoArgs
-    ]);
-}
-function createParamsList(args) {
-    let i = args.length;
-    while(i--){
-        if (args[i]) break;
-    }
-    return args.slice(0, i + 1).map((arg, i2)=>arg || createSimpleExpression(`_`.repeat(i2 + 1), false));
-}
-const defaultFallback = createSimpleExpression(`undefined`, false);
-const trackSlotScopes = (node, context)=>{
-    if (node.type === 1 && (node.tagType === 1 || node.tagType === 3)) {
-        const vSlot = findDir(node, "slot");
-        if (vSlot) {
-            vSlot.exp;
-            context.scopes.vSlot++;
-            return ()=>{
-                context.scopes.vSlot--;
-            };
-        }
-    }
-};
-const trackVForSlotScopes = (node, context)=>{
-    let vFor;
-    if (isTemplateNode(node) && node.props.some(isVSlot) && (vFor = findDir(node, "for"))) {
-        const result = vFor.forParseResult;
-        if (result) {
-            finalizeForParseResult(result, context);
-            const { value, key, index } = result;
-            const { addIdentifiers, removeIdentifiers } = context;
-            value && addIdentifiers(value);
-            key && addIdentifiers(key);
-            index && addIdentifiers(index);
-            return ()=>{
-                value && removeIdentifiers(value);
-                key && removeIdentifiers(key);
-                index && removeIdentifiers(index);
-            };
-        }
-    }
-};
-const buildClientSlotFn = (props, _vForExp, children, loc)=>createFunctionExpression(props, children, false, true, children.length ? children[0].loc : loc);
-function buildSlots(node, context, buildSlotFn = buildClientSlotFn) {
-    context.helper(WITH_CTX);
-    const { children, loc } = node;
-    const slotsProperties = [];
-    const dynamicSlots = [];
-    let hasDynamicSlots = context.scopes.vSlot > 0 || context.scopes.vFor > 0;
-    const onComponentSlot = findDir(node, "slot", true);
-    if (onComponentSlot) {
-        const { arg, exp } = onComponentSlot;
-        if (arg && !isStaticExp(arg)) hasDynamicSlots = true;
-        slotsProperties.push(createObjectProperty(arg || createSimpleExpression("default", true), buildSlotFn(exp, void 0, children, loc)));
-    }
-    let hasTemplateSlots = false;
-    let hasNamedDefaultSlot = false;
-    const implicitDefaultChildren = [];
-    const seenSlotNames = /* @__PURE__ */ new Set();
-    let conditionalBranchIndex = 0;
-    for(let i = 0; i < children.length; i++){
-        const slotElement = children[i];
-        let slotDir;
-        if (!isTemplateNode(slotElement) || !(slotDir = findDir(slotElement, "slot", true))) {
-            if (slotElement.type !== 3) implicitDefaultChildren.push(slotElement);
-            continue;
-        }
-        if (onComponentSlot) {
-            context.onError(createCompilerError(37, slotDir.loc));
-            break;
-        }
-        hasTemplateSlots = true;
-        const { children: slotChildren, loc: slotLoc } = slotElement;
-        const { arg: slotName = createSimpleExpression(`default`, true), exp: slotProps, loc: dirLoc } = slotDir;
-        let staticSlotName;
-        if (isStaticExp(slotName)) staticSlotName = slotName ? slotName.content : `default`;
-        else hasDynamicSlots = true;
-        const vFor = findDir(slotElement, "for");
-        const slotFunction = buildSlotFn(slotProps, vFor, slotChildren, slotLoc);
-        let vIf;
-        let vElse;
-        if (vIf = findDir(slotElement, "if")) {
-            hasDynamicSlots = true;
-            dynamicSlots.push(createConditionalExpression(vIf.exp, buildDynamicSlot(slotName, slotFunction, conditionalBranchIndex++), defaultFallback));
-        } else if (vElse = findDir(slotElement, /^else(-if)?$/, true)) {
-            let j = i;
-            let prev;
-            while(j--){
-                prev = children[j];
-                if (prev.type !== 3) break;
-            }
-            if (prev && isTemplateNode(prev) && findDir(prev, /^(else-)?if$/)) {
-                let conditional = dynamicSlots[dynamicSlots.length - 1];
-                while(conditional.alternate.type === 19)conditional = conditional.alternate;
-                conditional.alternate = vElse.exp ? createConditionalExpression(vElse.exp, buildDynamicSlot(slotName, slotFunction, conditionalBranchIndex++), defaultFallback) : buildDynamicSlot(slotName, slotFunction, conditionalBranchIndex++);
-            } else context.onError(createCompilerError(30, vElse.loc));
-        } else if (vFor) {
-            hasDynamicSlots = true;
-            const parseResult = vFor.forParseResult;
-            if (parseResult) {
-                finalizeForParseResult(parseResult, context);
-                dynamicSlots.push(createCallExpression(context.helper(RENDER_LIST), [
-                    parseResult.source,
-                    createFunctionExpression(createForLoopParams(parseResult), buildDynamicSlot(slotName, slotFunction), true)
-                ]));
-            } else context.onError(createCompilerError(32, vFor.loc));
-        } else {
-            if (staticSlotName) {
-                if (seenSlotNames.has(staticSlotName)) {
-                    context.onError(createCompilerError(38, dirLoc));
-                    continue;
-                }
-                seenSlotNames.add(staticSlotName);
-                if (staticSlotName === "default") hasNamedDefaultSlot = true;
-            }
-            slotsProperties.push(createObjectProperty(slotName, slotFunction));
-        }
-    }
-    if (!onComponentSlot) {
-        const buildDefaultSlotProperty = (props, children2)=>{
-            const fn = buildSlotFn(props, void 0, children2, loc);
-            if (context.compatConfig) fn.isNonScopedSlot = true;
-            return createObjectProperty(`default`, fn);
-        };
-        if (!hasTemplateSlots) slotsProperties.push(buildDefaultSlotProperty(void 0, children));
-        else if (implicitDefaultChildren.length && // #3766
-        // with whitespace: 'preserve', whitespaces between slots will end up in
-        // implicitDefaultChildren. Ignore if all implicit children are whitespaces.
-        implicitDefaultChildren.some((node2)=>isNonWhitespaceContent(node2))) {
-            if (hasNamedDefaultSlot) context.onError(createCompilerError(39, implicitDefaultChildren[0].loc));
-            else slotsProperties.push(buildDefaultSlotProperty(void 0, implicitDefaultChildren));
-        }
-    }
-    const slotFlag = hasDynamicSlots ? 2 : hasForwardedSlots(node.children) ? 3 : 1;
-    let slots = createObjectExpression(slotsProperties.concat(createObjectProperty(`_`, // 2 = compiled but dynamic = can skip normalization, but must run diff
-    // 1 = compiled and static = can skip normalization AND diff as optimized
-    createSimpleExpression(slotFlag + ` /* ${(0, _shared.slotFlagsText)[slotFlag]} */`, false))), loc);
-    if (dynamicSlots.length) slots = createCallExpression(context.helper(CREATE_SLOTS), [
-        slots,
-        createArrayExpression(dynamicSlots)
-    ]);
-    return {
-        slots,
-        hasDynamicSlots
-    };
-}
-function buildDynamicSlot(name, fn, index) {
-    const props = [
-        createObjectProperty(`name`, name),
-        createObjectProperty(`fn`, fn)
-    ];
-    if (index != null) props.push(createObjectProperty(`key`, createSimpleExpression(String(index), true)));
-    return createObjectExpression(props);
-}
-function hasForwardedSlots(children) {
-    for(let i = 0; i < children.length; i++){
-        const child = children[i];
-        switch(child.type){
-            case 1:
-                if (child.tagType === 2 || hasForwardedSlots(child.children)) return true;
-                break;
-            case 9:
-                if (hasForwardedSlots(child.branches)) return true;
-                break;
-            case 10:
-            case 11:
-                if (hasForwardedSlots(child.children)) return true;
-                break;
-        }
-    }
-    return false;
-}
-function isNonWhitespaceContent(node) {
-    if (node.type !== 2 && node.type !== 12) return true;
-    return node.type === 2 ? !!node.content.trim() : isNonWhitespaceContent(node.content);
-}
-const directiveImportMap = /* @__PURE__ */ new WeakMap();
-const transformElement = (node, context)=>{
-    return function postTransformElement() {
-        node = context.currentNode;
-        if (!(node.type === 1 && (node.tagType === 0 || node.tagType === 1))) return;
-        const { tag, props } = node;
-        const isComponent = node.tagType === 1;
-        let vnodeTag = isComponent ? resolveComponentType(node, context) : `"${tag}"`;
-        const isDynamicComponent = (0, _shared.isObject)(vnodeTag) && vnodeTag.callee === RESOLVE_DYNAMIC_COMPONENT;
-        let vnodeProps;
-        let vnodeChildren;
-        let patchFlag = 0;
-        let vnodeDynamicProps;
-        let dynamicPropNames;
-        let vnodeDirectives;
-        let shouldUseBlock = // dynamic component may resolve to plain elements
-        isDynamicComponent || vnodeTag === TELEPORT || vnodeTag === SUSPENSE || !isComponent && // <svg> and <foreignObject> must be forced into blocks so that block
-        // updates inside get proper isSVG flag at runtime. (#639, #643)
-        // This is technically web-specific, but splitting the logic out of core
-        // leads to too much unnecessary complexity.
-        (tag === "svg" || tag === "foreignObject" || tag === "math");
-        if (props.length > 0) {
-            const propsBuildResult = buildProps(node, context, void 0, isComponent, isDynamicComponent);
-            vnodeProps = propsBuildResult.props;
-            patchFlag = propsBuildResult.patchFlag;
-            dynamicPropNames = propsBuildResult.dynamicPropNames;
-            const directives = propsBuildResult.directives;
-            vnodeDirectives = directives && directives.length ? createArrayExpression(directives.map((dir)=>buildDirectiveArgs(dir, context))) : void 0;
-            if (propsBuildResult.shouldUseBlock) shouldUseBlock = true;
-        }
-        if (node.children.length > 0) {
-            if (vnodeTag === KEEP_ALIVE) {
-                shouldUseBlock = true;
-                patchFlag |= 1024;
-                if (node.children.length > 1) context.onError(createCompilerError(46, {
-                    start: node.children[0].loc.start,
-                    end: node.children[node.children.length - 1].loc.end,
-                    source: ""
-                }));
-            }
-            const shouldBuildAsSlots = isComponent && // Teleport is not a real component and has dedicated runtime handling
-            vnodeTag !== TELEPORT && // explained above.
-            vnodeTag !== KEEP_ALIVE;
-            if (shouldBuildAsSlots) {
-                const { slots, hasDynamicSlots } = buildSlots(node, context);
-                vnodeChildren = slots;
-                if (hasDynamicSlots) patchFlag |= 1024;
-            } else if (node.children.length === 1 && vnodeTag !== TELEPORT) {
-                const child = node.children[0];
-                const type = child.type;
-                const hasDynamicTextChild = type === 5 || type === 8;
-                if (hasDynamicTextChild && getConstantType(child, context) === 0) patchFlag |= 1;
-                if (hasDynamicTextChild || type === 2) vnodeChildren = child;
-                else vnodeChildren = node.children;
-            } else vnodeChildren = node.children;
-        }
-        if (dynamicPropNames && dynamicPropNames.length) vnodeDynamicProps = stringifyDynamicPropNames(dynamicPropNames);
-        node.codegenNode = createVNodeCall(context, vnodeTag, vnodeProps, vnodeChildren, patchFlag === 0 ? void 0 : patchFlag, vnodeDynamicProps, vnodeDirectives, !!shouldUseBlock, false, isComponent, node.loc);
-    };
-};
-function resolveComponentType(node, context, ssr = false) {
-    let { tag } = node;
-    const isExplicitDynamic = isComponentTag(tag);
-    const isProp = findProp(node, "is", false, true);
-    if (isProp) {
-        if (isExplicitDynamic || isCompatEnabled("COMPILER_IS_ON_ELEMENT", context)) {
-            let exp;
-            if (isProp.type === 6) exp = isProp.value && createSimpleExpression(isProp.value.content, true);
-            else {
-                exp = isProp.exp;
-                if (!exp) exp = createSimpleExpression(`is`, false, isProp.arg.loc);
-            }
-            if (exp) return createCallExpression(context.helper(RESOLVE_DYNAMIC_COMPONENT), [
-                exp
-            ]);
-        } else if (isProp.type === 6 && isProp.value.content.startsWith("vue:")) tag = isProp.value.content.slice(4);
-    }
-    const builtIn = isCoreComponent(tag) || context.isBuiltInComponent(tag);
-    if (builtIn) {
-        if (!ssr) context.helper(builtIn);
-        return builtIn;
-    }
-    context.helper(RESOLVE_COMPONENT);
-    context.components.add(tag);
-    return toValidAssetId(tag, `component`);
-}
-function buildProps(node, context, props = node.props, isComponent, isDynamicComponent, ssr = false) {
-    const { tag, loc: elementLoc, children } = node;
-    let properties = [];
-    const mergeArgs = [];
-    const runtimeDirectives = [];
-    const hasChildren = children.length > 0;
-    let shouldUseBlock = false;
-    let patchFlag = 0;
-    let hasRef = false;
-    let hasClassBinding = false;
-    let hasStyleBinding = false;
-    let hasHydrationEventBinding = false;
-    let hasDynamicKeys = false;
-    let hasVnodeHook = false;
-    const dynamicPropNames = [];
-    const pushMergeArg = (arg)=>{
-        if (properties.length) {
-            mergeArgs.push(createObjectExpression(dedupeProperties(properties), elementLoc));
-            properties = [];
-        }
-        if (arg) mergeArgs.push(arg);
-    };
-    const pushRefVForMarker = ()=>{
-        if (context.scopes.vFor > 0) properties.push(createObjectProperty(createSimpleExpression("ref_for", true), createSimpleExpression("true")));
-    };
-    const analyzePatchFlag = ({ key, value })=>{
-        if (isStaticExp(key)) {
-            const name = key.content;
-            const isEventHandler = (0, _shared.isOn)(name);
-            if (isEventHandler && (!isComponent || isDynamicComponent) && // omit the flag for click handlers because hydration gives click
-            // dedicated fast path.
-            name.toLowerCase() !== "onclick" && // omit v-model handlers
-            name !== "onUpdate:modelValue" && // omit onVnodeXXX hooks
-            !(0, _shared.isReservedProp)(name)) hasHydrationEventBinding = true;
-            if (isEventHandler && (0, _shared.isReservedProp)(name)) hasVnodeHook = true;
-            if (isEventHandler && value.type === 14) value = value.arguments[0];
-            if (value.type === 20 || (value.type === 4 || value.type === 8) && getConstantType(value, context) > 0) return;
-            if (name === "ref") hasRef = true;
-            else if (name === "class") hasClassBinding = true;
-            else if (name === "style") hasStyleBinding = true;
-            else if (name !== "key" && !dynamicPropNames.includes(name)) dynamicPropNames.push(name);
-            if (isComponent && (name === "class" || name === "style") && !dynamicPropNames.includes(name)) dynamicPropNames.push(name);
-        } else hasDynamicKeys = true;
-    };
-    for(let i = 0; i < props.length; i++){
-        const prop = props[i];
-        if (prop.type === 6) {
-            const { loc, name, nameLoc, value } = prop;
-            let isStatic = true;
-            if (name === "ref") {
-                hasRef = true;
-                pushRefVForMarker();
-            }
-            if (name === "is" && (isComponentTag(tag) || value && value.content.startsWith("vue:") || isCompatEnabled("COMPILER_IS_ON_ELEMENT", context))) continue;
-            properties.push(createObjectProperty(createSimpleExpression(name, true, nameLoc), createSimpleExpression(value ? value.content : "", isStatic, value ? value.loc : loc)));
-        } else {
-            const { name, arg, exp, loc, modifiers } = prop;
-            const isVBind = name === "bind";
-            const isVOn = name === "on";
-            if (name === "slot") {
-                if (!isComponent) context.onError(createCompilerError(40, loc));
-                continue;
-            }
-            if (name === "once" || name === "memo") continue;
-            if (name === "is" || isVBind && isStaticArgOf(arg, "is") && (isComponentTag(tag) || isCompatEnabled("COMPILER_IS_ON_ELEMENT", context))) continue;
-            if (isVOn && ssr) continue;
-            if (// #938: elements with dynamic keys should be forced into blocks
-            isVBind && isStaticArgOf(arg, "key") || // inline before-update hooks need to force block so that it is invoked
-            // before children
-            isVOn && hasChildren && isStaticArgOf(arg, "vue:before-update")) shouldUseBlock = true;
-            if (isVBind && isStaticArgOf(arg, "ref")) pushRefVForMarker();
-            if (!arg && (isVBind || isVOn)) {
-                hasDynamicKeys = true;
-                if (exp) {
-                    if (isVBind) {
-                        pushRefVForMarker();
-                        pushMergeArg();
-                        {
-                            const hasOverridableKeys = mergeArgs.some((arg2)=>{
-                                if (arg2.type === 15) return arg2.properties.some(({ key })=>{
-                                    if (key.type !== 4 || !key.isStatic) return true;
-                                    return key.content !== "class" && key.content !== "style" && !(0, _shared.isOn)(key.content);
-                                });
-                                else return true;
-                            });
-                            if (hasOverridableKeys) checkCompatEnabled("COMPILER_V_BIND_OBJECT_ORDER", context, loc);
-                        }
-                        if (isCompatEnabled("COMPILER_V_BIND_OBJECT_ORDER", context)) {
-                            mergeArgs.unshift(exp);
-                            continue;
-                        }
-                        mergeArgs.push(exp);
-                    } else pushMergeArg({
-                        type: 14,
-                        loc,
-                        callee: context.helper(TO_HANDLERS),
-                        arguments: isComponent ? [
-                            exp
-                        ] : [
-                            exp,
-                            `true`
-                        ]
-                    });
-                } else context.onError(createCompilerError(isVBind ? 34 : 35, loc));
-                continue;
-            }
-            if (isVBind && modifiers.some((mod)=>mod.content === "prop")) patchFlag |= 32;
-            const directiveTransform = context.directiveTransforms[name];
-            if (directiveTransform) {
-                const { props: props2, needRuntime } = directiveTransform(prop, node, context);
-                !ssr && props2.forEach(analyzePatchFlag);
-                if (isVOn && arg && !isStaticExp(arg)) pushMergeArg(createObjectExpression(props2, elementLoc));
-                else properties.push(...props2);
-                if (needRuntime) {
-                    runtimeDirectives.push(prop);
-                    if ((0, _shared.isSymbol)(needRuntime)) directiveImportMap.set(prop, needRuntime);
-                }
-            } else if (!(0, _shared.isBuiltInDirective)(name)) {
-                runtimeDirectives.push(prop);
-                if (hasChildren) shouldUseBlock = true;
-            }
-        }
-    }
-    let propsExpression = void 0;
-    if (mergeArgs.length) {
-        pushMergeArg();
-        if (mergeArgs.length > 1) propsExpression = createCallExpression(context.helper(MERGE_PROPS), mergeArgs, elementLoc);
-        else propsExpression = mergeArgs[0];
-    } else if (properties.length) propsExpression = createObjectExpression(dedupeProperties(properties), elementLoc);
-    if (hasDynamicKeys) patchFlag |= 16;
-    else {
-        if (hasClassBinding && !isComponent) patchFlag |= 2;
-        if (hasStyleBinding && !isComponent) patchFlag |= 4;
-        if (dynamicPropNames.length) patchFlag |= 8;
-        if (hasHydrationEventBinding) patchFlag |= 32;
-    }
-    if (!shouldUseBlock && (patchFlag === 0 || patchFlag === 32) && (hasRef || hasVnodeHook || runtimeDirectives.length > 0)) patchFlag |= 512;
-    if (!context.inSSR && propsExpression) switch(propsExpression.type){
-        case 15:
-            let classKeyIndex = -1;
-            let styleKeyIndex = -1;
-            let hasDynamicKey = false;
-            for(let i = 0; i < propsExpression.properties.length; i++){
-                const key = propsExpression.properties[i].key;
-                if (isStaticExp(key)) {
-                    if (key.content === "class") classKeyIndex = i;
-                    else if (key.content === "style") styleKeyIndex = i;
-                } else if (!key.isHandlerKey) hasDynamicKey = true;
-            }
-            const classProp = propsExpression.properties[classKeyIndex];
-            const styleProp = propsExpression.properties[styleKeyIndex];
-            if (!hasDynamicKey) {
-                if (classProp && !isStaticExp(classProp.value)) classProp.value = createCallExpression(context.helper(NORMALIZE_CLASS), [
-                    classProp.value
-                ]);
-                if (styleProp && // the static style is compiled into an object,
-                // so use `hasStyleBinding` to ensure that it is a dynamic style binding
-                (hasStyleBinding || styleProp.value.type === 4 && styleProp.value.content.trim()[0] === `[` || // v-bind:style and style both exist,
-                // v-bind:style with static literal object
-                styleProp.value.type === 17)) styleProp.value = createCallExpression(context.helper(NORMALIZE_STYLE), [
-                    styleProp.value
-                ]);
-            } else propsExpression = createCallExpression(context.helper(NORMALIZE_PROPS), [
-                propsExpression
-            ]);
-            break;
-        case 14:
-            break;
-        default:
-            propsExpression = createCallExpression(context.helper(NORMALIZE_PROPS), [
-                createCallExpression(context.helper(GUARD_REACTIVE_PROPS), [
-                    propsExpression
-                ])
-            ]);
-            break;
-    }
-    return {
-        props: propsExpression,
-        directives: runtimeDirectives,
-        patchFlag,
-        dynamicPropNames,
-        shouldUseBlock
-    };
-}
-function dedupeProperties(properties) {
-    const knownProps = /* @__PURE__ */ new Map();
-    const deduped = [];
-    for(let i = 0; i < properties.length; i++){
-        const prop = properties[i];
-        if (prop.key.type === 8 || !prop.key.isStatic) {
-            deduped.push(prop);
-            continue;
-        }
-        const name = prop.key.content;
-        const existing = knownProps.get(name);
-        if (existing) {
-            if (name === "style" || name === "class" || (0, _shared.isOn)(name)) mergeAsArray(existing, prop);
-        } else {
-            knownProps.set(name, prop);
-            deduped.push(prop);
-        }
-    }
-    return deduped;
-}
-function mergeAsArray(existing, incoming) {
-    if (existing.value.type === 17) existing.value.elements.push(incoming.value);
-    else existing.value = createArrayExpression([
-        existing.value,
-        incoming.value
-    ], existing.loc);
-}
-function buildDirectiveArgs(dir, context) {
-    const dirArgs = [];
-    const runtime = directiveImportMap.get(dir);
-    if (runtime) dirArgs.push(context.helperString(runtime));
-    else {
-        context.helper(RESOLVE_DIRECTIVE);
-        context.directives.add(dir.name);
-        dirArgs.push(toValidAssetId(dir.name, `directive`));
-    }
-    const { loc } = dir;
-    if (dir.exp) dirArgs.push(dir.exp);
-    if (dir.arg) {
-        if (!dir.exp) dirArgs.push(`void 0`);
-        dirArgs.push(dir.arg);
-    }
-    if (Object.keys(dir.modifiers).length) {
-        if (!dir.arg) {
-            if (!dir.exp) dirArgs.push(`void 0`);
-            dirArgs.push(`void 0`);
-        }
-        const trueExpression = createSimpleExpression(`true`, false, loc);
-        dirArgs.push(createObjectExpression(dir.modifiers.map((modifier)=>createObjectProperty(modifier, trueExpression)), loc));
-    }
-    return createArrayExpression(dirArgs, dir.loc);
-}
-function stringifyDynamicPropNames(props) {
-    let propsNamesString = `[`;
-    for(let i = 0, l = props.length; i < l; i++){
-        propsNamesString += JSON.stringify(props[i]);
-        if (i < l - 1) propsNamesString += ", ";
-    }
-    return propsNamesString + `]`;
-}
-function isComponentTag(tag) {
-    return tag === "component" || tag === "Component";
-}
-const transformSlotOutlet = (node, context)=>{
-    if (isSlotOutlet(node)) {
-        const { children, loc } = node;
-        const { slotName, slotProps } = processSlotOutlet(node, context);
-        const slotArgs = [
-            context.prefixIdentifiers ? `_ctx.$slots` : `$slots`,
-            slotName,
-            "{}",
-            "undefined",
-            "true"
-        ];
-        let expectedLen = 2;
-        if (slotProps) {
-            slotArgs[2] = slotProps;
-            expectedLen = 3;
-        }
-        if (children.length) {
-            slotArgs[3] = createFunctionExpression([], children, false, false, loc);
-            expectedLen = 4;
-        }
-        if (context.scopeId && !context.slotted) expectedLen = 5;
-        slotArgs.splice(expectedLen);
-        node.codegenNode = createCallExpression(context.helper(RENDER_SLOT), slotArgs, loc);
-    }
-};
-function processSlotOutlet(node, context) {
-    let slotName = `"default"`;
-    let slotProps = void 0;
-    const nonNameProps = [];
-    for(let i = 0; i < node.props.length; i++){
-        const p = node.props[i];
-        if (p.type === 6) {
-            if (p.value) {
-                if (p.name === "name") slotName = JSON.stringify(p.value.content);
-                else {
-                    p.name = (0, _shared.camelize)(p.name);
-                    nonNameProps.push(p);
-                }
-            }
-        } else if (p.name === "bind" && isStaticArgOf(p.arg, "name")) {
-            if (p.exp) slotName = p.exp;
-            else if (p.arg && p.arg.type === 4) {
-                const name = (0, _shared.camelize)(p.arg.content);
-                slotName = p.exp = createSimpleExpression(name, false, p.arg.loc);
-            }
-        } else {
-            if (p.name === "bind" && p.arg && isStaticExp(p.arg)) p.arg.content = (0, _shared.camelize)(p.arg.content);
-            nonNameProps.push(p);
-        }
-    }
-    if (nonNameProps.length > 0) {
-        const { props, directives } = buildProps(node, context, nonNameProps, false, false);
-        slotProps = props;
-        if (directives.length) context.onError(createCompilerError(36, directives[0].loc));
-    }
-    return {
-        slotName,
-        slotProps
-    };
-}
-const transformOn = (dir, node, context, augmentor)=>{
-    const { loc, modifiers, arg } = dir;
-    if (!dir.exp && !modifiers.length) context.onError(createCompilerError(35, loc));
-    let eventName;
-    if (arg.type === 4) {
-        if (arg.isStatic) {
-            let rawName = arg.content;
-            if (rawName.startsWith("vnode")) context.onError(createCompilerError(51, arg.loc));
-            if (rawName.startsWith("vue:")) rawName = `vnode-${rawName.slice(4)}`;
-            const eventString = node.tagType !== 0 || rawName.startsWith("vnode") || !/[A-Z]/.test(rawName) ? // for non-element and vnode lifecycle event listeners, auto convert
-            // it to camelCase. See issue #2249
-            (0, _shared.toHandlerKey)((0, _shared.camelize)(rawName)) : // preserve case for plain element listeners that have uppercase
-            // letters, as these may be custom elements' custom events
-            `on:${rawName}`;
-            eventName = createSimpleExpression(eventString, true, arg.loc);
-        } else eventName = createCompoundExpression([
-            `${context.helperString(TO_HANDLER_KEY)}(`,
-            arg,
-            `)`
-        ]);
-    } else {
-        eventName = arg;
-        eventName.children.unshift(`${context.helperString(TO_HANDLER_KEY)}(`);
-        eventName.children.push(`)`);
-    }
-    let exp = dir.exp;
-    if (exp && !exp.content.trim()) exp = void 0;
-    let shouldCache = context.cacheHandlers && !exp && !context.inVOnce;
-    if (exp) {
-        const isMemberExp = isMemberExpression(exp);
-        const isInlineStatement = !(isMemberExp || isFnExpression(exp));
-        const hasMultipleStatements = exp.content.includes(`;`);
-        validateBrowserExpression(exp, context, false, hasMultipleStatements);
-        if (isInlineStatement || shouldCache && isMemberExp) exp = createCompoundExpression([
-            `${isInlineStatement ? `$event` : `${``}(...args)`} => ${hasMultipleStatements ? `{` : `(`}`,
-            exp,
-            hasMultipleStatements ? `}` : `)`
-        ]);
-    }
-    let ret = {
-        props: [
-            createObjectProperty(eventName, exp || createSimpleExpression(`() => {}`, false, loc))
-        ]
-    };
-    if (augmentor) ret = augmentor(ret);
-    if (shouldCache) ret.props[0].value = context.cache(ret.props[0].value);
-    ret.props.forEach((p)=>p.key.isHandlerKey = true);
-    return ret;
-};
-const transformText = (node, context)=>{
-    if (node.type === 0 || node.type === 1 || node.type === 11 || node.type === 10) return ()=>{
-        const children = node.children;
-        let currentContainer = void 0;
-        let hasText = false;
-        for(let i = 0; i < children.length; i++){
-            const child = children[i];
-            if (isText$1(child)) {
-                hasText = true;
-                for(let j = i + 1; j < children.length; j++){
-                    const next = children[j];
-                    if (isText$1(next)) {
-                        if (!currentContainer) currentContainer = children[i] = createCompoundExpression([
-                            child
-                        ], child.loc);
-                        currentContainer.children.push(` + `, next);
-                        children.splice(j, 1);
-                        j--;
-                    } else {
-                        currentContainer = void 0;
-                        break;
-                    }
-                }
-            }
-        }
-        if (!hasText || // if this is a plain element with a single text child, leave it
-        // as-is since the runtime has dedicated fast path for this by directly
-        // setting textContent of the element.
-        // for component root it's always normalized anyway.
-        children.length === 1 && (node.type === 0 || node.type === 1 && node.tagType === 0 && // #3756
-        // custom directives can potentially add DOM elements arbitrarily,
-        // we need to avoid setting textContent of the element at runtime
-        // to avoid accidentally overwriting the DOM elements added
-        // by the user through custom directives.
-        !node.props.find((p)=>p.type === 7 && !context.directiveTransforms[p.name]) && // in compat mode, <template> tags with no special directives
-        // will be rendered as a fragment so its children must be
-        // converted into vnodes.
-        !(node.tag === "template"))) return;
-        for(let i = 0; i < children.length; i++){
-            const child = children[i];
-            if (isText$1(child) || child.type === 8) {
-                const callArgs = [];
-                if (child.type !== 2 || child.content !== " ") callArgs.push(child);
-                if (!context.ssr && getConstantType(child, context) === 0) callArgs.push(1 + ` /* ${(0, _shared.PatchFlagNames)[1]} */`);
-                children[i] = {
-                    type: 12,
-                    content: child,
-                    loc: child.loc,
-                    codegenNode: createCallExpression(context.helper(CREATE_TEXT), callArgs)
-                };
-            }
-        }
-    };
-};
-const seen$1 = /* @__PURE__ */ new WeakSet();
-const transformOnce = (node, context)=>{
-    if (node.type === 1 && findDir(node, "once", true)) {
-        if (seen$1.has(node) || context.inVOnce || context.inSSR) return;
-        seen$1.add(node);
-        context.inVOnce = true;
-        context.helper(SET_BLOCK_TRACKING);
-        return ()=>{
-            context.inVOnce = false;
-            const cur = context.currentNode;
-            if (cur.codegenNode) cur.codegenNode = context.cache(cur.codegenNode, true, true);
-        };
-    }
-};
-const transformModel = (dir, node, context)=>{
-    const { exp, arg } = dir;
-    if (!exp) {
-        context.onError(createCompilerError(41, dir.loc));
-        return createTransformProps();
-    }
-    const rawExp = exp.loc.source.trim();
-    const expString = exp.type === 4 ? exp.content : rawExp;
-    const bindingType = context.bindingMetadata[rawExp];
-    if (bindingType === "props" || bindingType === "props-aliased") {
-        context.onError(createCompilerError(44, exp.loc));
-        return createTransformProps();
-    }
-    const maybeRef = false;
-    if (!expString.trim() || !isMemberExpression(exp) && !maybeRef) {
-        context.onError(createCompilerError(42, exp.loc));
-        return createTransformProps();
-    }
-    const propName = arg ? arg : createSimpleExpression("modelValue", true);
-    const eventName = arg ? isStaticExp(arg) ? `onUpdate:${(0, _shared.camelize)(arg.content)}` : createCompoundExpression([
-        '"onUpdate:" + ',
-        arg
-    ]) : `onUpdate:modelValue`;
-    let assignmentExp;
-    const eventArg = context.isTS ? `($event: any)` : `$event`;
-    assignmentExp = createCompoundExpression([
-        `${eventArg} => ((`,
-        exp,
-        `) = $event)`
-    ]);
-    const props = [
-        // modelValue: foo
-        createObjectProperty(propName, dir.exp),
-        // "onUpdate:modelValue": $event => (foo = $event)
-        createObjectProperty(eventName, assignmentExp)
-    ];
-    if (dir.modifiers.length && node.tagType === 1) {
-        const modifiers = dir.modifiers.map((m)=>m.content).map((m)=>(isSimpleIdentifier(m) ? m : JSON.stringify(m)) + `: true`).join(`, `);
-        const modifiersKey = arg ? isStaticExp(arg) ? `${arg.content}Modifiers` : createCompoundExpression([
-            arg,
-            ' + "Modifiers"'
-        ]) : `modelModifiers`;
-        props.push(createObjectProperty(modifiersKey, createSimpleExpression(`{ ${modifiers} }`, false, dir.loc, 2)));
-    }
-    return createTransformProps(props);
-};
-function createTransformProps(props = []) {
-    return {
-        props
-    };
-}
-const validDivisionCharRE = /[\w).+\-_$\]]/;
-const transformFilter = (node, context)=>{
-    if (!isCompatEnabled("COMPILER_FILTERS", context)) return;
-    if (node.type === 5) rewriteFilter(node.content, context);
-    else if (node.type === 1) node.props.forEach((prop)=>{
-        if (prop.type === 7 && prop.name !== "for" && prop.exp) rewriteFilter(prop.exp, context);
-    });
-};
-function rewriteFilter(node, context) {
-    if (node.type === 4) parseFilter(node, context);
-    else for(let i = 0; i < node.children.length; i++){
-        const child = node.children[i];
-        if (typeof child !== "object") continue;
-        if (child.type === 4) parseFilter(child, context);
-        else if (child.type === 8) rewriteFilter(node, context);
-        else if (child.type === 5) rewriteFilter(child.content, context);
-    }
-}
-function parseFilter(node, context) {
-    const exp = node.content;
-    let inSingle = false;
-    let inDouble = false;
-    let inTemplateString = false;
-    let inRegex = false;
-    let curly = 0;
-    let square = 0;
-    let paren = 0;
-    let lastFilterIndex = 0;
-    let c, prev, i, expression, filters = [];
-    for(i = 0; i < exp.length; i++){
-        prev = c;
-        c = exp.charCodeAt(i);
-        if (inSingle) {
-            if (c === 39 && prev !== 92) inSingle = false;
-        } else if (inDouble) {
-            if (c === 34 && prev !== 92) inDouble = false;
-        } else if (inTemplateString) {
-            if (c === 96 && prev !== 92) inTemplateString = false;
-        } else if (inRegex) {
-            if (c === 47 && prev !== 92) inRegex = false;
-        } else if (c === 124 && // pipe
-        exp.charCodeAt(i + 1) !== 124 && exp.charCodeAt(i - 1) !== 124 && !curly && !square && !paren) {
-            if (expression === void 0) {
-                lastFilterIndex = i + 1;
-                expression = exp.slice(0, i).trim();
-            } else pushFilter();
-        } else {
-            switch(c){
-                case 34:
-                    inDouble = true;
-                    break;
-                // "
-                case 39:
-                    inSingle = true;
-                    break;
-                // '
-                case 96:
-                    inTemplateString = true;
-                    break;
-                // `
-                case 40:
-                    paren++;
-                    break;
-                // (
-                case 41:
-                    paren--;
-                    break;
-                // )
-                case 91:
-                    square++;
-                    break;
-                // [
-                case 93:
-                    square--;
-                    break;
-                // ]
-                case 123:
-                    curly++;
-                    break;
-                // {
-                case 125:
-                    curly--;
-                    break;
-            }
-            if (c === 47) {
-                let j = i - 1;
-                let p;
-                for(; j >= 0; j--){
-                    p = exp.charAt(j);
-                    if (p !== " ") break;
-                }
-                if (!p || !validDivisionCharRE.test(p)) inRegex = true;
-            }
-        }
-    }
-    if (expression === void 0) expression = exp.slice(0, i).trim();
-    else if (lastFilterIndex !== 0) pushFilter();
-    function pushFilter() {
-        filters.push(exp.slice(lastFilterIndex, i).trim());
-        lastFilterIndex = i + 1;
-    }
-    if (filters.length) {
-        warnDeprecation("COMPILER_FILTERS", context, node.loc);
-        for(i = 0; i < filters.length; i++)expression = wrapFilter(expression, filters[i], context);
-        node.content = expression;
-        node.ast = void 0;
-    }
-}
-function wrapFilter(exp, filter, context) {
-    context.helper(RESOLVE_FILTER);
-    const i = filter.indexOf("(");
-    if (i < 0) {
-        context.filters.add(filter);
-        return `${toValidAssetId(filter, "filter")}(${exp})`;
-    } else {
-        const name = filter.slice(0, i);
-        const args = filter.slice(i + 1);
-        context.filters.add(name);
-        return `${toValidAssetId(name, "filter")}(${exp}${args !== ")" ? "," + args : args}`;
-    }
-}
-const seen = /* @__PURE__ */ new WeakSet();
-const transformMemo = (node, context)=>{
-    if (node.type === 1) {
-        const dir = findDir(node, "memo");
-        if (!dir || seen.has(node)) return;
-        seen.add(node);
-        return ()=>{
-            const codegenNode = node.codegenNode || context.currentNode.codegenNode;
-            if (codegenNode && codegenNode.type === 13) {
-                if (node.tagType !== 1) convertToBlock(codegenNode, context);
-                node.codegenNode = createCallExpression(context.helper(WITH_MEMO), [
-                    dir.exp,
-                    createFunctionExpression(void 0, codegenNode),
-                    `_cache`,
-                    String(context.cached.length)
-                ]);
-                context.cached.push(null);
-            }
-        };
-    }
-};
-function getBaseTransformPreset(prefixIdentifiers) {
-    return [
-        [
-            transformOnce,
-            transformIf,
-            transformMemo,
-            transformFor,
-            transformFilter,
-            transformExpression,
-            transformSlotOutlet,
-            transformElement,
-            trackSlotScopes,
-            transformText
-        ],
-        {
-            on: transformOn,
-            bind: transformBind,
-            model: transformModel
-        }
-    ];
-}
-function baseCompile(source, options = {}) {
-    const onError = options.onError || defaultOnError;
-    const isModuleMode = options.mode === "module";
-    if (options.prefixIdentifiers === true) onError(createCompilerError(47));
-    else if (isModuleMode) onError(createCompilerError(48));
-    const prefixIdentifiers = false;
-    if (options.cacheHandlers) onError(createCompilerError(49));
-    if (options.scopeId && !isModuleMode) onError(createCompilerError(50));
-    const resolvedOptions = (0, _shared.extend)({}, options, {
-        prefixIdentifiers
-    });
-    const ast = (0, _shared.isString)(source) ? baseParse(source, resolvedOptions) : source;
-    const [nodeTransforms, directiveTransforms] = getBaseTransformPreset();
-    transform(ast, (0, _shared.extend)({}, resolvedOptions, {
-        nodeTransforms: [
-            ...nodeTransforms,
-            ...options.nodeTransforms || []
-        ],
-        directiveTransforms: (0, _shared.extend)({}, directiveTransforms, options.directiveTransforms || {})
-    }));
-    return generate(ast, resolvedOptions);
-}
-const BindingTypes = {
-    "DATA": "data",
-    "PROPS": "props",
-    "PROPS_ALIASED": "props-aliased",
-    "SETUP_LET": "setup-let",
-    "SETUP_CONST": "setup-const",
-    "SETUP_REACTIVE_CONST": "setup-reactive-const",
-    "SETUP_MAYBE_REF": "setup-maybe-ref",
-    "SETUP_REF": "setup-ref",
-    "OPTIONS": "options",
-    "LITERAL_CONST": "literal-const"
-};
-const noopDirectiveTransform = ()=>({
-        props: []
-    });
-
-},{"@vue/shared":"3SM3y","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7Vm5H":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7Vm5H":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 let script;
@@ -37251,7 +37190,49 @@ if (module.hot) {
 }
 exports.default = script;
 
-},{"44dde6b10bf05846":"csJmQ","da9fa902bfa1a253":"bIwVm","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","345af5315a66c29a":"fknR7"}],"csJmQ":[function(require,module,exports,__globalThis) {
+},{"345af5315a66c29a":"fknR7","44dde6b10bf05846":"csJmQ","da9fa902bfa1a253":"bIwVm","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fknR7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _lucideVueNext = require("lucide-vue-next");
+exports.default = {
+    __name: 'button',
+    props: {
+        "text": {
+            "type": String,
+            "required": true
+        },
+        "text-sending": {
+            "type": String,
+            "required": false,
+            "default": ""
+        },
+        "sending": {
+            "type": Boolean,
+            "required": true
+        },
+        "valid": {
+            "type": Boolean,
+            "required": true
+        }
+    },
+    setup (__props, { expose: __expose }) {
+        __expose();
+        const props = __props;
+        const __returned__ = {
+            props,
+            get Loader () {
+                return 0, _lucideVueNext.Loader;
+            }
+        };
+        Object.defineProperty(__returned__, '__isScriptSetup', {
+            enumerable: false,
+            value: true
+        });
+        return __returned__;
+    }
+};
+
+},{"lucide-vue-next":"23TMe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"csJmQ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "render", ()=>render);
@@ -37297,38 +37278,201 @@ parcelHelpers.defineInteropFlag(exports);
 let NOOP = ()=>{};
 exports.default = (script)=>{};
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fknR7":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"70xBJ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
+let script;
+let initialize = ()=>{
+    script = require("f510ea1251ce7b1d");
+    if (script.__esModule) script = script.default;
+    script.render = require("9ab9af1c9b0a012f").render;
+    require("fd3902e16814b31b").default(script);
+    script.__scopeId = 'data-v-8aa212';
+    script.__file = "/home/sweb/github-project/login-user-front/src/components/inputEmail.vue";
+};
+initialize();
+if (module.hot) {
+    script.__hmrId = '8aa212-hmr';
+    module.hot.accept(()=>{
+        setTimeout(()=>{
+            initialize();
+            if (!__VUE_HMR_RUNTIME__.createRecord('8aa212-hmr', script)) __VUE_HMR_RUNTIME__.reload('8aa212-hmr', script);
+        }, 0);
+    });
+}
+exports.default = script;
+
+},{"9ab9af1c9b0a012f":"hzH2r","fd3902e16814b31b":"10bCM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","f510ea1251ce7b1d":"ej859"}],"hzH2r":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "render", ()=>render);
+var _vue = require("vue");
+const _hoisted_1 = {
+    class: "field"
+};
+const _hoisted_2 = [
+    "textContent"
+];
+const _hoisted_3 = {
+    class: "control has-icons-left has-icons-right"
+};
+const _hoisted_4 = {
+    class: "icon is-small is-left"
+};
+const _hoisted_5 = {
+    class: "icon is-small is-right"
+};
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+    return (0, _vue.openBlock)(), (0, _vue.createElementBlock)("div", _hoisted_1, [
+        (0, _vue.createElementVNode)("label", {
+            for: "email2",
+            class: "label tracking-wide",
+            textContent: (0, _vue.toDisplayString)($props.label)
+        }, null, 8 /* PROPS */ , _hoisted_2),
+        (0, _vue.createElementVNode)("div", _hoisted_3, [
+            (0, _vue.withDirectives)((0, _vue.createElementVNode)("input", {
+                onFocus: _cache[0] || (_cache[0] = ($event)=>{
+                    $setup.focus = true;
+                }),
+                onBlur: _cache[1] || (_cache[1] = ($event)=>{
+                    $setup.dirty = true;
+                    $setup.runValid($setup.email);
+                }),
+                "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event)=>$setup.email = $event),
+                id: "email2",
+                name: "email2",
+                class: (0, _vue.normalizeClass)([
+                    "input",
+                    {
+                        'is-danger': $setup.noValid,
+                        'is-success': $setup.valid
+                    }
+                ]),
+                type: "text",
+                autocomplete: "off",
+                autocapitalize: "off"
+            }, null, 34 /* CLASS, NEED_HYDRATION */ ), [
+                [
+                    (0, _vue.vModelText),
+                    $setup.email
+                ]
+            ]),
+            (0, _vue.createElementVNode)("span", _hoisted_4, [
+                (0, _vue.createVNode)($setup["Mail"], {
+                    class: (0, _vue.normalizeClass)({
+                        'text-green-600': $setup.valid,
+                        'text-red-700': $setup.noValid
+                    }),
+                    size: 20
+                }, null, 8 /* PROPS */ , [
+                    "class"
+                ])
+            ]),
+            (0, _vue.createElementVNode)("span", _hoisted_5, [
+                $setup.valid ? ((0, _vue.openBlock)(), (0, _vue.createBlock)($setup["Check"], {
+                    key: 0,
+                    class: "text-green-600",
+                    size: 20
+                })) : $setup.noValid ? ((0, _vue.openBlock)(), (0, _vue.createBlock)($setup["X"], {
+                    key: 1,
+                    class: "text-red-700",
+                    size: 20
+                })) : (0, _vue.createCommentVNode)("v-if", true)
+            ])
+        ])
+    ]);
+}
+if (module.hot) module.hot.accept(()=>{
+    __VUE_HMR_RUNTIME__.rerender('8aa212-hmr', render);
+});
+
+},{"vue":"gzxs9","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"10bCM":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+let NOOP = ()=>{};
+exports.default = (script)=>{};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ej859":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _vue = require("vue");
+var _zod = require("zod");
 var _lucideVueNext = require("lucide-vue-next");
 exports.default = {
-    __name: 'button',
-    props: {
-        "text": {
+    __name: 'inputEmail',
+    props: /*@__PURE__*/ (0, _vue.mergeModels)({
+        "value": {
             "type": String,
-            "required": true
+            "default": "adminm@gmail.com"
         },
-        "text-sending": {
+        "label": {
             "type": String,
-            "required": false,
-            "default": ""
-        },
-        "sending": {
-            "type": Boolean,
-            "required": true
-        },
-        "valid": {
-            "type": Boolean,
             "required": true
         }
-    },
+    }, {
+        "modelValue": {},
+        "modelModifiers": {}
+    }),
+    emits: [
+        "update:modelValue"
+    ],
     setup (__props, { expose: __expose }) {
         __expose();
+        const email = (0, _vue.useModel)(__props, "modelValue");
+        const valid = (0, _vue.ref)(false);
+        const noValid = (0, _vue.ref)(false);
+        const dirty = (0, _vue.ref)(false);
+        const focus = (0, _vue.ref)(false);
+        const emailSchema = (0, _zod.z).string().email().min(5);
+        const isValid = (vl)=>{
+            let emailValidation = emailSchema.safeParse(vl).success;
+            if (emailValidation && !dirty.value) dirty.value = true;
+            /*
+	console.log("----------------------------------------------------------");
+	console.log("Focus is : " , focus.value);
+	console.log("Dirty is : " , dirty.value);
+	console.log("Email Schmea is : " ,emailSchema.safeParse( vl ).success);
+	console.log("----------------------------------------------------------");
+	*/ const result = focus.value && emailValidation;
+            // console.log( result );
+            return result;
+        };
         const props = __props;
+        const runValid = (newVl, oldVl)=>{
+            const validTemp = isValid(newVl);
+            valid.value = validTemp;
+            noValid.value = !validTemp && focus.value && dirty.value;
+        };
+        (0, _vue.watch)(email, runValid);
+        if (email.value !== "") {
+            console.log("hola", email.value);
+            focus.value = true;
+            dirty.value = true;
+            runValid(email.value);
+        }
         const __returned__ = {
+            email,
+            valid,
+            noValid,
+            dirty,
+            focus,
+            emailSchema,
+            isValid,
             props,
-            get Loader () {
-                return 0, _lucideVueNext.Loader;
+            runValid,
+            ref: (0, _vue.ref),
+            watch: (0, _vue.watch),
+            get z () {
+                return 0, _zod.z;
+            },
+            get Mail () {
+                return 0, _lucideVueNext.Mail;
+            },
+            get Check () {
+                return 0, _lucideVueNext.Check;
+            },
+            get X () {
+                return 0, _lucideVueNext.X;
             }
         };
         Object.defineProperty(__returned__, '__isScriptSetup', {
@@ -37339,6 +37483,6 @@ exports.default = {
     }
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","lucide-vue-next":"23TMe"}]},["9w8YQ","bNKaB"], "bNKaB", "parcelRequire94c2")
+},{"lucide-vue-next":"23TMe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","vue":"gzxs9","zod":"aoXZ0"}]},["9w8YQ","bNKaB"], "bNKaB", "parcelRequire94c2")
 
 //# sourceMappingURL=index.0641b553.js.map

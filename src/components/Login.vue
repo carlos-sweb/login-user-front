@@ -5,16 +5,8 @@
            <div class="column is-4">
                <div class="box">
                  <h1 class="title tracking-wide text-blue-700">Acceso</h1>                 
-                 <form  @submit.prevent="onSubmit" >
-                   <div class="field">
-                     <label for="email" class="label tracking-wide">Correo Electronico</label>  
-                     <div class="control has-icons-left">
-                        <input :disabled="f.sending" id="email" name="email" class="input" type="text" autocomplete="off" autocapitalize="off" v-model="f.email" >
-                        <span class="icon is-small is-left">
-                          <Mail :size="20" />
-                        </span>
-                     </div>
-                   </div>
+                 <form  @submit.prevent="onSubmit" >      
+                  <pp-email label="Correo Electrónico" v-model="f.email" />                   
                    <div class="field">
                      <label for="password" class="label tracking-wide">Contraseña</label>  
                      <div class="control has-icons-left">
@@ -26,7 +18,7 @@
                    </div>
                    
                     <pp-button :sending="f.sending" :valid="isValid().success" text="Enviar" text-sending="Enviando..." />
-                    
+
                    <div class="field">
                      <div class="control has-text-centered">
                         <a @click="link" class="button is-ghost" href="/#/recuperar">¿ Olvide la contraseña ?</a>
@@ -61,7 +53,7 @@
  const link = (event)=>{ f.sending  &&  event.preventDefault() }
 
  const f = reactive({
-  email:"admin@gmail.com",
+  email:"",
   password:"12345554",
   sending:false
  });
