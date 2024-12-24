@@ -7,7 +7,7 @@
                  <h1 class="title tracking-wide text-blue-700">Recuperar</h1>                 
                  <form  @submit.prevent="onSubmit" >
                                    
-                    <pp-email label="Correo Electrónico" v-model="f.email" />  
+                    <pp-email :sending="f.sending" label="Correo Electrónico" v-model="f.email" />
                     <pp-button :sending="f.sending" :valid="isValid().success" text="Enviar" />
 
                  </form>

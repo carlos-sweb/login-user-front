@@ -6,7 +6,8 @@
                <div class="box">
                  <h1 class="title tracking-wide text-blue-700">Crear cuenta</h1>                 
                  <form  @submit.prevent="onSubmit" >
-                   <div class="field">
+                  <pp-email :sending="f.sending" label="Correo Electrónico" v-model="f.email" />
+                   <!--<div class="field">
                      <label for="email" class="label tracking-wide">Correo Electronico</label>  
                      <div class="control has-icons-left has-icons-right">
                         <input id="email" name="email" class="input" type="text" autocomplete="off" autocapitalize="off" v-model="f.email" >
@@ -15,11 +16,11 @@
                         </span>
                         <span class="icon is-small is-right">
                           <Check :size="20" />
-                          <!--<X :size="20" />-->
+                          <X :size="20" />
                         </span>
                      </div>
                      <p class="help is-danger">* Ingrese un correo valido</p>
-                   </div>
+                   </div>-->
                    <div class="field">                     
                      <div class="is-flex is-flex-column">
                       <label for="password" class="label tracking-wide is-flex-grow-1">Contraseña
@@ -45,7 +46,7 @@
                      </div>
                      <p class="help is-danger">* La contraseña no coincide</p>
                    </div>
-                      <pp-button :sending="f.sending" :valid="isValid().success" text="Crear" text-sending="Creando..." />
+                      <pp-button :sending="f.sending" :valid="isValid().success" text="Crear" />
                  </form>
                </div> 
               

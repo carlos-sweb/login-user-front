@@ -36721,10 +36721,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                             ])
                         }, [
                             (0, _vue.createVNode)(_component_pp_email, {
+                                sending: $setup.f.sending,
                                 label: "Correo Electr\xf3nico",
                                 modelValue: $setup.f.email,
                                 "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event)=>$setup.f.email = $event)
                             }, null, 8 /* PROPS */ , [
+                                "sending",
                                 "modelValue"
                             ]),
                             (0, _vue.createVNode)(_component_pp_button, {
@@ -36940,46 +36942,35 @@ const _hoisted_6 = {
     class: "field"
 };
 const _hoisted_7 = {
-    class: "control has-icons-left has-icons-right"
+    class: "is-flex is-flex-column"
 };
 const _hoisted_8 = {
+    class: "control has-icons-left"
+};
+const _hoisted_9 = [
+    "type"
+];
+const _hoisted_10 = {
     class: "icon is-small is-left"
 };
-const _hoisted_9 = {
-    class: "icon is-small is-right"
-};
-const _hoisted_10 = {
-    class: "field"
-};
 const _hoisted_11 = {
-    class: "is-flex is-flex-column"
+    class: "field"
 };
 const _hoisted_12 = {
     class: "control has-icons-left"
 };
-const _hoisted_13 = [
-    "type"
-];
-const _hoisted_14 = {
-    class: "icon is-small is-left"
-};
-const _hoisted_15 = {
-    class: "field"
-};
-const _hoisted_16 = {
-    class: "control has-icons-left"
-};
-const _hoisted_17 = {
+const _hoisted_13 = {
     class: "icon is-small is-left"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_pp_email = (0, _vue.resolveComponent)("pp-email");
     const _component_pp_button = (0, _vue.resolveComponent)("pp-button");
     return (0, _vue.openBlock)(), (0, _vue.createElementBlock)("section", _hoisted_1, [
         (0, _vue.createElementVNode)("div", _hoisted_2, [
             (0, _vue.createElementVNode)("div", _hoisted_3, [
                 (0, _vue.createElementVNode)("div", _hoisted_4, [
                     (0, _vue.createElementVNode)("div", _hoisted_5, [
-                        _cache[10] || (_cache[10] = (0, _vue.createElementVNode)("h1", {
+                        _cache[8] || (_cache[8] = (0, _vue.createElementVNode)("h1", {
                             class: "title tracking-wide text-blue-700"
                         }, "Crear cuenta", -1 /* HOISTED */ )),
                         (0, _vue.createElementVNode)("form", {
@@ -36987,45 +36978,19 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                                 "prevent"
                             ])
                         }, [
-                            (0, _vue.createElementVNode)("div", _hoisted_6, [
-                                _cache[5] || (_cache[5] = (0, _vue.createElementVNode)("label", {
-                                    for: "email",
-                                    class: "label tracking-wide"
-                                }, "Correo Electronico", -1 /* HOISTED */ )),
-                                (0, _vue.createElementVNode)("div", _hoisted_7, [
-                                    (0, _vue.withDirectives)((0, _vue.createElementVNode)("input", {
-                                        id: "email",
-                                        name: "email",
-                                        class: "input",
-                                        type: "text",
-                                        autocomplete: "off",
-                                        autocapitalize: "off",
-                                        "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event)=>$setup.f.email = $event)
-                                    }, null, 512 /* NEED_PATCH */ ), [
-                                        [
-                                            (0, _vue.vModelText),
-                                            $setup.f.email
-                                        ]
-                                    ]),
-                                    (0, _vue.createElementVNode)("span", _hoisted_8, [
-                                        (0, _vue.createVNode)($setup["Mail"], {
-                                            size: 20
-                                        })
-                                    ]),
-                                    (0, _vue.createElementVNode)("span", _hoisted_9, [
-                                        (0, _vue.createVNode)($setup["Check"], {
-                                            size: 20
-                                        }),
-                                        (0, _vue.createCommentVNode)("<X :size=\"20\" />")
-                                    ])
-                                ]),
-                                _cache[6] || (_cache[6] = (0, _vue.createElementVNode)("p", {
-                                    class: "help is-danger"
-                                }, "* Ingrese un correo valido", -1 /* HOISTED */ ))
+                            (0, _vue.createVNode)(_component_pp_email, {
+                                sending: $setup.f.sending,
+                                label: "Correo Electr\xf3nico",
+                                modelValue: $setup.f.email,
+                                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event)=>$setup.f.email = $event)
+                            }, null, 8 /* PROPS */ , [
+                                "sending",
+                                "modelValue"
                             ]),
-                            (0, _vue.createElementVNode)("div", _hoisted_10, [
-                                (0, _vue.createElementVNode)("div", _hoisted_11, [
-                                    _cache[7] || (_cache[7] = (0, _vue.createElementVNode)("label", {
+                            (0, _vue.createCommentVNode)("<div class=\"field\">\n                     <label for=\"email\" class=\"label tracking-wide\">Correo Electronico</label>  \n                     <div class=\"control has-icons-left has-icons-right\">\n                        <input id=\"email\" name=\"email\" class=\"input\" type=\"text\" autocomplete=\"off\" autocapitalize=\"off\" v-model=\"f.email\" >\n                        <span class=\"icon is-small is-left\">\n                          <Mail :size=\"20\" />\n                        </span>\n                        <span class=\"icon is-small is-right\">\n                          <Check :size=\"20\" />\n                          <X :size=\"20\" />\n                        </span>\n                     </div>\n                     <p class=\"help is-danger\">* Ingrese un correo valido</p>\n                   </div>"),
+                            (0, _vue.createElementVNode)("div", _hoisted_6, [
+                                (0, _vue.createElementVNode)("div", _hoisted_7, [
+                                    _cache[5] || (_cache[5] = (0, _vue.createElementVNode)("label", {
                                         for: "password",
                                         class: "label tracking-wide is-flex-grow-1"
                                     }, "Contrase\xf1a ", -1 /* HOISTED */ )),
@@ -37040,7 +37005,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                                         size: 24
                                     })) : (0, _vue.createCommentVNode)("v-if", true)
                                 ]),
-                                (0, _vue.createElementVNode)("div", _hoisted_12, [
+                                (0, _vue.createElementVNode)("div", _hoisted_8, [
                                     (0, _vue.withDirectives)((0, _vue.createElementVNode)("input", {
                                         id: "password",
                                         name: "password",
@@ -37049,25 +37014,25 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                                         autocomplete: "off",
                                         autocapitalize: "off",
                                         "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event)=>$setup.f.password = $event)
-                                    }, null, 8 /* PROPS */ , _hoisted_13), [
+                                    }, null, 8 /* PROPS */ , _hoisted_9), [
                                         [
                                             (0, _vue.vModelDynamic),
                                             $setup.f.password
                                         ]
                                     ]),
-                                    (0, _vue.createElementVNode)("span", _hoisted_14, [
+                                    (0, _vue.createElementVNode)("span", _hoisted_10, [
                                         (0, _vue.createVNode)($setup["Lock"], {
                                             size: 20
                                         })
                                     ])
                                 ])
                             ]),
-                            (0, _vue.createElementVNode)("div", _hoisted_15, [
-                                _cache[8] || (_cache[8] = (0, _vue.createElementVNode)("label", {
+                            (0, _vue.createElementVNode)("div", _hoisted_11, [
+                                _cache[6] || (_cache[6] = (0, _vue.createElementVNode)("label", {
                                     for: "password-repeat",
                                     class: "label tracking-wide"
                                 }, "Repita la contrase\xf1a", -1 /* HOISTED */ )),
-                                (0, _vue.createElementVNode)("div", _hoisted_16, [
+                                (0, _vue.createElementVNode)("div", _hoisted_12, [
                                     (0, _vue.withDirectives)((0, _vue.createElementVNode)("input", {
                                         id: "password-repeat",
                                         name: "password",
@@ -37082,21 +37047,20 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                                             $setup.f.passwordrepeat
                                         ]
                                     ]),
-                                    (0, _vue.createElementVNode)("span", _hoisted_17, [
+                                    (0, _vue.createElementVNode)("span", _hoisted_13, [
                                         (0, _vue.createVNode)($setup["Lock"], {
                                             size: 20
                                         })
                                     ])
                                 ]),
-                                _cache[9] || (_cache[9] = (0, _vue.createElementVNode)("p", {
+                                _cache[7] || (_cache[7] = (0, _vue.createElementVNode)("p", {
                                     class: "help is-danger"
                                 }, "* La contrase\xf1a no coincide", -1 /* HOISTED */ ))
                             ]),
                             (0, _vue.createVNode)(_component_pp_button, {
                                 sending: $setup.f.sending,
                                 valid: $setup.isValid().success,
-                                text: "Crear",
-                                "text-sending": "Creando..."
+                                text: "Crear"
                             }, null, 8 /* PROPS */ , [
                                 "sending",
                                 "valid"
