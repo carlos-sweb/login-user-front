@@ -15,11 +15,9 @@
                         </span>
                      </div>
                    </div>                   
-                   <div class="field">                     
-                     <div class="control">
-                        <button :disabled="!isValid().success || f.sending" type="submit" class="button is-primary is-fullwidth tracking-wide" >Enviar</button>
-                     </div>
-                   </div>                   
+                    
+                    <pp-button :sending="f.sending" :valid="isValid().success" text="Enviar" />
+
                  </form>
                </div>               
                 <div class="column has-text-centered">                  

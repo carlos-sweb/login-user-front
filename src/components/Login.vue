@@ -24,11 +24,9 @@
                         </span>
                      </div>
                    </div>
-                   <div class="field">                     
-                     <div class="control">
-                        <button :disabled="!isValid().success || f.sending" type="submit" class="button is-primary is-fullwidth tracking-wide" >Enviar</button>
-                     </div>
-                   </div>
+                   
+                    <pp-button :sending="f.sending" :valid="isValid().success" text="Enviar" text-sending="Enviando..." />
+                    
                    <div class="field">
                      <div class="control has-text-centered">
                         <a @click="link" class="button is-ghost" href="/#/recuperar">¿ Olvide la contraseña ?</a>
@@ -51,6 +49,15 @@
  import { ref , reactive} from "vue"
  import { Mail , Lock } from 'lucide-vue-next';
 
+ const emit = defineEmits({
+    send:100
+ });
+
+ const test = ()=>{
+  console.log("Test..............");
+  return "   mmmm===>"
+ }
+
  const link = (event)=>{ f.sending  &&  event.preventDefault() }
 
  const f = reactive({
@@ -67,7 +74,8 @@
  const isValid = ()=> user.safeParse({ "email":f.email, "password":f.password })
  
 
- const onSubmit = ()=>{    
+ const onSubmit = ()=>{
+    emit('send');
     f.sending = true;
     setTimeout(()=>{
       f.sending = false;

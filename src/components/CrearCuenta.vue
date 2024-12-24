@@ -45,11 +45,7 @@
                      </div>
                      <p class="help is-danger">* La contraseña no coincide</p>
                    </div>
-                   <div class="field">                     
-                     <div class="control">
-                         <button :disabled="!isValid().success || f.sending" type="submit" class="button is-primary is-fullwidth tracking-wide" >Crear</button>
-                     </div>
-                   </div>                   
+                      <pp-button :sending="f.sending" :valid="isValid().success" text="Crear" text-sending="Creando..." />
                  </form>
                </div> 
               

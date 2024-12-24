@@ -23914,8 +23914,25 @@ img, video {
   }
 }
 
-.flex {
-  display: flex;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: 1s linear infinite spin;
+}
+
+@keyframes ping {
+  75%, 100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+.animate-ping {
+  animation: 1s cubic-bezier(0, 0, .2, 1) infinite ping;
 }
 
 .bg-gray-200 {
@@ -23930,6 +23947,14 @@ img, video {
 .text-blue-700 {
   --tw-text-opacity: 1;
   color: rgb(29 78 216 / var(--tw-text-opacity, 1));
+}
+
+.duration-1000 {
+  transition-duration: 1s;
+}
+
+.duration-75 {
+  transition-duration: 75ms;
 }
 
 html, body {
