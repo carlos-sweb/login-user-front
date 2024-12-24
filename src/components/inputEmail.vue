@@ -2,10 +2,10 @@
     <div class="field">	
 	<label for="email2" class="label tracking-wide" v-text="label"></label>  
 		<div class="control has-icons-left has-icons-right">
-			<input @focus="focus=true;" @blur="dirty=true;runValid(email)" v-model="email" id="email2" name="email2" class="input" :class="{'is-danger':noValid,'is-success':valid}" type="text" autocomplete="off" autocapitalize="off"  >
-            <span class="icon is-small is-left"><Mail :class="{'text-green-600':valid,'text-red-700':noValid}" :size="20" /></span>
+			<input :disabled="sending" @focus="focus=true;" @blur="dirty=true;runValid(email)" v-model="email" id="email2" name="email2" class="input" :class="{'is-danger':noValid,'is-success':valid}" type="text" autocomplete="off" autocapitalize="off"  >
+            <span class="icon is-small is-left"><Mail :class="{'text-green-600':valid && !sending,'text-red-700':noValid}" :size="20" /></span>
             <span class="icon is-small is-right">
-            	<Check v-if="valid" class="text-green-600" :size="20" />
+            	<Check v-if="valid" :class="{'text-green-600':!sending}" :size="20" />
             	<X v-else-if="noValid" class="text-red-700" :size="20" />
             </span>
 		</div>
@@ -45,6 +45,10 @@ const props = defineProps({
 	},
 	"label":{
 		"type":String,
+		"required":true
+	},
+	"sending":{
+		"type":Boolean ,
 		"required":true
 	}	
 });

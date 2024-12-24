@@ -649,7 +649,7 @@ app.component("pp-email", (0, _inputEmailVueDefault.default));
 app.use(router);
 app.mount("#app");
 
-},{"npm:normalize.css":"eLmrl","npm:@fontsource/ubuntu":"402y5","npm:bulma":"gEv81","./style.css":"bhJkM","vue/dist/vue.esm-bundler":"gs3Mk","vue-router":"c18b3","./components/Login.vue":"5fd2o","./components/App.vue":"9IQgA","./components/Recuperar.vue":"g4IV6","./components/ErrorLogin.vue":"g9U7G","./components/CrearCuenta.vue":"bw2J9","./components/AccesoError.vue":"8r306","./components/button.vue":"7Vm5H","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./components/inputEmail.vue":"70xBJ"}],"eLmrl":[function() {},{}],"402y5":[function() {},{}],"gEv81":[function() {},{}],"bhJkM":[function() {},{}],"gs3Mk":[function(require,module,exports,__globalThis) {
+},{"npm:normalize.css":"eLmrl","npm:@fontsource/ubuntu":"402y5","npm:bulma":"gEv81","./style.css":"bhJkM","vue/dist/vue.esm-bundler":"gs3Mk","vue-router":"c18b3","./components/Login.vue":"5fd2o","./components/App.vue":"9IQgA","./components/Recuperar.vue":"g4IV6","./components/ErrorLogin.vue":"g9U7G","./components/CrearCuenta.vue":"bw2J9","./components/AccesoError.vue":"8r306","./components/button.vue":"7Vm5H","./components/inputEmail.vue":"70xBJ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eLmrl":[function() {},{}],"402y5":[function() {},{}],"gEv81":[function() {},{}],"bhJkM":[function() {},{}],"gs3Mk":[function(require,module,exports,__globalThis) {
 /**
 * vue v3.5.13
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
@@ -36472,10 +36472,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                             ])
                         }, [
                             (0, _vue.createVNode)(_component_pp_email, {
+                                sending: $setup.f.sending,
                                 label: "Correo Electr\xf3nico",
                                 modelValue: $setup.f.email,
                                 "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event)=>$setup.f.email = $event)
                             }, null, 8 /* PROPS */ , [
+                                "sending",
                                 "modelValue"
                             ]),
                             (0, _vue.createElementVNode)("div", _hoisted_6, [
@@ -36509,8 +36511,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                             (0, _vue.createVNode)(_component_pp_button, {
                                 sending: $setup.f.sending,
                                 valid: $setup.isValid().success,
-                                text: "Enviar",
-                                "text-sending": "Enviando..."
+                                text: "Enviar"
                             }, null, 8 /* PROPS */ , [
                                 "sending",
                                 "valid"
@@ -37302,97 +37303,7 @@ if (module.hot) {
 }
 exports.default = script;
 
-},{"9ab9af1c9b0a012f":"hzH2r","fd3902e16814b31b":"10bCM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","f510ea1251ce7b1d":"ej859"}],"hzH2r":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "render", ()=>render);
-var _vue = require("vue");
-const _hoisted_1 = {
-    class: "field"
-};
-const _hoisted_2 = [
-    "textContent"
-];
-const _hoisted_3 = {
-    class: "control has-icons-left has-icons-right"
-};
-const _hoisted_4 = {
-    class: "icon is-small is-left"
-};
-const _hoisted_5 = {
-    class: "icon is-small is-right"
-};
-function render(_ctx, _cache, $props, $setup, $data, $options) {
-    return (0, _vue.openBlock)(), (0, _vue.createElementBlock)("div", _hoisted_1, [
-        (0, _vue.createElementVNode)("label", {
-            for: "email2",
-            class: "label tracking-wide",
-            textContent: (0, _vue.toDisplayString)($props.label)
-        }, null, 8 /* PROPS */ , _hoisted_2),
-        (0, _vue.createElementVNode)("div", _hoisted_3, [
-            (0, _vue.withDirectives)((0, _vue.createElementVNode)("input", {
-                onFocus: _cache[0] || (_cache[0] = ($event)=>{
-                    $setup.focus = true;
-                }),
-                onBlur: _cache[1] || (_cache[1] = ($event)=>{
-                    $setup.dirty = true;
-                    $setup.runValid($setup.email);
-                }),
-                "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event)=>$setup.email = $event),
-                id: "email2",
-                name: "email2",
-                class: (0, _vue.normalizeClass)([
-                    "input",
-                    {
-                        'is-danger': $setup.noValid,
-                        'is-success': $setup.valid
-                    }
-                ]),
-                type: "text",
-                autocomplete: "off",
-                autocapitalize: "off"
-            }, null, 34 /* CLASS, NEED_HYDRATION */ ), [
-                [
-                    (0, _vue.vModelText),
-                    $setup.email
-                ]
-            ]),
-            (0, _vue.createElementVNode)("span", _hoisted_4, [
-                (0, _vue.createVNode)($setup["Mail"], {
-                    class: (0, _vue.normalizeClass)({
-                        'text-green-600': $setup.valid,
-                        'text-red-700': $setup.noValid
-                    }),
-                    size: 20
-                }, null, 8 /* PROPS */ , [
-                    "class"
-                ])
-            ]),
-            (0, _vue.createElementVNode)("span", _hoisted_5, [
-                $setup.valid ? ((0, _vue.openBlock)(), (0, _vue.createBlock)($setup["Check"], {
-                    key: 0,
-                    class: "text-green-600",
-                    size: 20
-                })) : $setup.noValid ? ((0, _vue.openBlock)(), (0, _vue.createBlock)($setup["X"], {
-                    key: 1,
-                    class: "text-red-700",
-                    size: 20
-                })) : (0, _vue.createCommentVNode)("v-if", true)
-            ])
-        ])
-    ]);
-}
-if (module.hot) module.hot.accept(()=>{
-    __VUE_HMR_RUNTIME__.rerender('8aa212-hmr', render);
-});
-
-},{"vue":"gzxs9","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"10bCM":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-let NOOP = ()=>{};
-exports.default = (script)=>{};
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ej859":[function(require,module,exports,__globalThis) {
+},{"f510ea1251ce7b1d":"ej859","9ab9af1c9b0a012f":"hzH2r","fd3902e16814b31b":"10bCM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ej859":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _vue = require("vue");
@@ -37407,6 +37318,10 @@ exports.default = {
         },
         "label": {
             "type": String,
+            "required": true
+        },
+        "sending": {
+            "type": Boolean,
             "required": true
         }
     }, {
@@ -37483,6 +37398,104 @@ exports.default = {
     }
 };
 
-},{"lucide-vue-next":"23TMe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","vue":"gzxs9","zod":"aoXZ0"}]},["9w8YQ","bNKaB"], "bNKaB", "parcelRequire94c2")
+},{"vue":"gzxs9","zod":"aoXZ0","lucide-vue-next":"23TMe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hzH2r":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "render", ()=>render);
+var _vue = require("vue");
+const _hoisted_1 = {
+    class: "field"
+};
+const _hoisted_2 = [
+    "textContent"
+];
+const _hoisted_3 = {
+    class: "control has-icons-left has-icons-right"
+};
+const _hoisted_4 = [
+    "disabled"
+];
+const _hoisted_5 = {
+    class: "icon is-small is-left"
+};
+const _hoisted_6 = {
+    class: "icon is-small is-right"
+};
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+    return (0, _vue.openBlock)(), (0, _vue.createElementBlock)("div", _hoisted_1, [
+        (0, _vue.createElementVNode)("label", {
+            for: "email2",
+            class: "label tracking-wide",
+            textContent: (0, _vue.toDisplayString)($props.label)
+        }, null, 8 /* PROPS */ , _hoisted_2),
+        (0, _vue.createElementVNode)("div", _hoisted_3, [
+            (0, _vue.withDirectives)((0, _vue.createElementVNode)("input", {
+                disabled: $props.sending,
+                onFocus: _cache[0] || (_cache[0] = ($event)=>{
+                    $setup.focus = true;
+                }),
+                onBlur: _cache[1] || (_cache[1] = ($event)=>{
+                    $setup.dirty = true;
+                    $setup.runValid($setup.email);
+                }),
+                "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event)=>$setup.email = $event),
+                id: "email2",
+                name: "email2",
+                class: (0, _vue.normalizeClass)([
+                    "input",
+                    {
+                        'is-danger': $setup.noValid,
+                        'is-success': $setup.valid
+                    }
+                ]),
+                type: "text",
+                autocomplete: "off",
+                autocapitalize: "off"
+            }, null, 42 /* CLASS, PROPS, NEED_HYDRATION */ , _hoisted_4), [
+                [
+                    (0, _vue.vModelText),
+                    $setup.email
+                ]
+            ]),
+            (0, _vue.createElementVNode)("span", _hoisted_5, [
+                (0, _vue.createVNode)($setup["Mail"], {
+                    class: (0, _vue.normalizeClass)({
+                        'text-green-600': $setup.valid && !$props.sending,
+                        'text-red-700': $setup.noValid
+                    }),
+                    size: 20
+                }, null, 8 /* PROPS */ , [
+                    "class"
+                ])
+            ]),
+            (0, _vue.createElementVNode)("span", _hoisted_6, [
+                $setup.valid ? ((0, _vue.openBlock)(), (0, _vue.createBlock)($setup["Check"], {
+                    key: 0,
+                    class: (0, _vue.normalizeClass)({
+                        'text-green-600': !$props.sending
+                    }),
+                    size: 20
+                }, null, 8 /* PROPS */ , [
+                    "class"
+                ])) : $setup.noValid ? ((0, _vue.openBlock)(), (0, _vue.createBlock)($setup["X"], {
+                    key: 1,
+                    class: "text-red-700",
+                    size: 20
+                })) : (0, _vue.createCommentVNode)("v-if", true)
+            ])
+        ])
+    ]);
+}
+if (module.hot) module.hot.accept(()=>{
+    __VUE_HMR_RUNTIME__.rerender('8aa212-hmr', render);
+});
+
+},{"vue":"gzxs9","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"10bCM":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+let NOOP = ()=>{};
+exports.default = (script)=>{};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["9w8YQ","bNKaB"], "bNKaB", "parcelRequire94c2")
 
 //# sourceMappingURL=index.0641b553.js.map

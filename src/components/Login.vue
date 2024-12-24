@@ -6,7 +6,7 @@
                <div class="box">
                  <h1 class="title tracking-wide text-blue-700">Acceso</h1>                 
                  <form  @submit.prevent="onSubmit" >      
-                  <pp-email label="Correo Electrónico" v-model="f.email" />                   
+                  <pp-email :sending="f.sending" label="Correo Electrónico" v-model="f.email" />                   
                    <div class="field">
                      <label for="password" class="label tracking-wide">Contraseña</label>  
                      <div class="control has-icons-left">
@@ -17,7 +17,7 @@
                      </div>
                    </div>
                    
-                    <pp-button :sending="f.sending" :valid="isValid().success" text="Enviar" text-sending="Enviando..." />
+                    <pp-button :sending="f.sending" :valid="isValid().success" text="Enviar" />
 
                    <div class="field">
                      <div class="control has-text-centered">
