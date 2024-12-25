@@ -5,12 +5,13 @@ import './style.css'
 // import { createApp } from "vue/dist/vue.esm-bundler"
 import { createApp } from "vue/dist/vue.esm-bundler"
 import { createWebHashHistory, createRouter } from 'vue-router'
-import Login from "./components/Login.vue"
-import App from "./components/App.vue"
-import Recuperar from "./components/Recuperar.vue"
-import ErrorLogin from "./components/ErrorLogin.vue"
-import CrearCuenta from "./components/CrearCuenta.vue"
-import AccesoError from "./components/AccesoError.vue"
+
+import Login from "./pages/Login.vue"
+import App from "./pages/App.vue"
+import Recuperar from "./pages/Recuperar.vue"
+import ErrorLogin from "./pages/ErrorLogin.vue"
+import CrearCuenta from "./pages/CrearCuenta.vue"
+import AccesoError from "./pages/AccesoError.vue"
 
 // Singles components
 

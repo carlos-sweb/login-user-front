@@ -61,8 +61,7 @@ const runValid = ( newVl , oldVl )=>{
 
 watch( email , runValid );
 
-if( email.value !== "" ){
-	console.log("hola", email.value);
+if( email.value !== "" ){	
 	focus.value= true;
 	dirty.value = true;
 	runValid( email.value )

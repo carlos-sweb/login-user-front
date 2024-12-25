@@ -3,8 +3,8 @@
 
 		<div class="is-flex is-flex-column">
 		  <label for="password" class="label tracking-wide is-flex-grow-1" v-text="label"></label>  
-		  <EyeOff v-if="showPass" @click="triggerShowPass(sending)" :size="24"/>  
-		  <Eye  v-if="!showPass" @click="triggerShowPass(sending)" :size="24"/>  
+		  <EyeOff v-if="showPass" @click="changeShowPass(sending)" :size="24"/>  
+		  <Eye :class="{'text-gray-200':sending}"  v-else @click="changeShowPass(sending)"  :size="24"/>  
 		</div> 
 	
 		<div class="control has-icons-left has-icons-right">
@@ -30,9 +30,8 @@ const focus = ref(false)
 const showPass = ref(false)
 const passwordSchema = z.string().min(4).max(20)
 
-
-const triggerShowPass = ( _sending )=>{	
-	showPass.value = _sending ? false : !showPass.value ; 	
+const changeShowPass = (_s)=>{ 
+	if( _s==false){ showPass.value=!showPass.value }	
 }
 
 const isValid = ( vl ) => {	
@@ -76,7 +75,11 @@ const runValid = ( newVl , oldVl )=>{
 }
 
 watch( password , runValid );
-watch( ()=> props.sending ,triggerShowPass )
+watch( ()=> props.sending ,(newSend)=>{
+	if( showPass.value == true && newSend == true ){
+		showPass.value = false;
+	}		
+} )
 
 
 if( password.value !== "" ){	
