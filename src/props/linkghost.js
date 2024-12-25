@@ -1,4 +1,4 @@
-export default dataProps = {	
+export default const dataProps = {	
 	"text":{
 		"type":String,
 		"default":"Link to"
