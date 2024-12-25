@@ -9,12 +9,10 @@
                                    
                     <pp-email :sending="f.sending" label="Correo Electrónico" v-model="f.email" />
                     <pp-button :sending="f.sending" :valid="isValid().success" text="Enviar" />
-
+                    <pp-link linkto="/#/" :sending="f.sending" text="Tengo cuenta" />
                  </form>
                </div>               
-                <div class="column has-text-centered">                  
-                  <a @click="link" class="button is-ghost" href="/#/crear-cuenta" >Crear cuenta</a>
-               </div>
+                <pp-link linkto="/#/crear-cuenta" :sending="f.sending" text="Crear cuenta" />
            </div>           
          </div>
       </div>      
@@ -29,17 +27,16 @@
  const link = (event)=>{ f.sending  &&  event.preventDefault() }
 
  const f = reactive({
-  email:"admin@gmail.com",  
+  email:"",  
   sending:false
  });
 
  var user = z.object({
-    email:z.string().email().min(5)    
+    email:z.string().email().min(5).max(20)
  });
 
  const isValid = ()=> user.safeParse({ "email":f.email })
  
-
  const onSubmit = ()=>{    
     f.sending = true;
     setTimeout(()=>{

@@ -8,7 +8,7 @@
 		</div> 
 	
 		<div class="control has-icons-left has-icons-right">
-			<input :disabled="sending" @focus="focus=true;" @blur="dirty=true;runValid(password)" v-model="password" id="password" name="password" class="input duration-300 transition-all ease-in" :class="{'is-danger':noValid,'is-success':valid}" :type="showPass ? 'text' : 'password' " autocomplete="off" autocapitalize="off" minlength="4" maxlength="20"  >
+			<input :disabled="sending" @focus="focus=true;" @blur="dirty=true;runValid(password)" v-model="password" id="password" name="password" class="input duration-200 transition-all ease-in" :class="{'is-danger':noValid,'is-success':valid}" :type="showPass ? 'text' : 'password' " autocomplete="off" autocapitalize="off" minlength="4" maxlength="20"  >
             <span class="icon is-small is-left"><Asterisk :class="{'text-green-600':valid && !sending,'text-red-700':noValid}" :size="20" /></span>
             <span class="icon is-small is-right">
             	<Check v-if="valid" :class="{'text-green-600':!sending}" :size="20" />

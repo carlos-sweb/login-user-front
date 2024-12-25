@@ -655,7 +655,7 @@ app.component("pp-link", (0, _linkghostVueDefault.default));
 app.use(router);
 app.mount("#app");
 
-},{"npm:normalize.css":"eLmrl","npm:@fontsource/ubuntu":"402y5","npm:bulma":"gEv81","./style.css":"bhJkM","vue/dist/vue.esm-bundler":"gs3Mk","vue-router":"c18b3","./pages/Login.vue":"isy74","./pages/App.vue":"3Q92Q","./pages/Recuperar.vue":"bh2Ne","./pages/ErrorLogin.vue":"dHNpl","./pages/CrearCuenta.vue":"79V8e","./pages/AccesoError.vue":"8FMGy","./components/button.vue":"7Vm5H","./components/inputEmail.vue":"70xBJ","./components/inputPassword.vue":"9Ru0E","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./components/linkghost.vue":"1O8xC"}],"eLmrl":[function() {},{}],"402y5":[function() {},{}],"gEv81":[function() {},{}],"bhJkM":[function() {},{}],"gs3Mk":[function(require,module,exports,__globalThis) {
+},{"npm:normalize.css":"eLmrl","npm:@fontsource/ubuntu":"402y5","npm:bulma":"gEv81","./style.css":"bhJkM","vue/dist/vue.esm-bundler":"gs3Mk","vue-router":"c18b3","./pages/Login.vue":"isy74","./pages/App.vue":"3Q92Q","./pages/Recuperar.vue":"bh2Ne","./pages/ErrorLogin.vue":"dHNpl","./pages/CrearCuenta.vue":"79V8e","./pages/AccesoError.vue":"8FMGy","./components/button.vue":"7Vm5H","./components/inputEmail.vue":"70xBJ","./components/inputPassword.vue":"9Ru0E","./components/linkghost.vue":"1O8xC","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eLmrl":[function() {},{}],"402y5":[function() {},{}],"gEv81":[function() {},{}],"bhJkM":[function() {},{}],"gs3Mk":[function(require,module,exports,__globalThis) {
 /**
 * vue v3.5.13
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
@@ -36630,11 +36630,11 @@ exports.default = {
             f.sending && event.preventDefault();
         };
         const f = (0, _vue.reactive)({
-            email: "admin@gmail.com",
+            email: "",
             sending: false
         });
         var user = (0, _zod.z).object({
-            email: (0, _zod.z).string().email().min(5)
+            email: (0, _zod.z).string().email().min(5).max(20)
         });
         const isValid = ()=>user.safeParse({
                 "email": f.email
@@ -36700,6 +36700,7 @@ const _hoisted_5 = {
 function render(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_pp_email = (0, _vue.resolveComponent)("pp-email");
     const _component_pp_button = (0, _vue.resolveComponent)("pp-button");
+    const _component_pp_link = (0, _vue.resolveComponent)("pp-link");
     return (0, _vue.openBlock)(), (0, _vue.createElementBlock)("section", _hoisted_1, [
         (0, _vue.createElementVNode)("div", _hoisted_2, [
             (0, _vue.createElementVNode)("div", _hoisted_3, [
@@ -36729,17 +36730,22 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                             }, null, 8 /* PROPS */ , [
                                 "sending",
                                 "valid"
+                            ]),
+                            (0, _vue.createVNode)(_component_pp_link, {
+                                linkto: "/#/",
+                                sending: $setup.f.sending,
+                                text: "Tengo cuenta"
+                            }, null, 8 /* PROPS */ , [
+                                "sending"
                             ])
                         ], 32 /* NEED_HYDRATION */ )
                     ]),
-                    (0, _vue.createElementVNode)("div", {
-                        class: "column has-text-centered"
-                    }, [
-                        (0, _vue.createElementVNode)("a", {
-                            onClick: $setup.link,
-                            class: "button is-ghost",
-                            href: "/#/crear-cuenta"
-                        }, "Crear cuenta")
+                    (0, _vue.createVNode)(_component_pp_link, {
+                        linkto: "/#/crear-cuenta",
+                        sending: $setup.f.sending,
+                        text: "Crear cuenta"
+                    }, null, 8 /* PROPS */ , [
+                        "sending"
                     ])
                 ])
             ])
@@ -37386,7 +37392,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             (0, _vue.createElementVNode)("button", {
                 type: "submit",
                 disabled: $props.sending || !$props.valid,
-                class: "button is-primary is-fullwidth tracking-wide duration-300 transition-all ease-in"
+                class: "button is-primary is-fullwidth tracking-wide duration-300 transition-colors transition-opacity ease-in"
             }, [
                 (0, _vue.createTextVNode)((0, _vue.toDisplayString)($props.sending ? _ctx.textSending : $props.text), 1 /* TEXT */ ),
                 (0, _vue.withDirectives)((0, _vue.createVNode)($setup["Loader"], {
@@ -37574,7 +37580,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 id: "email",
                 name: "email",
                 class: (0, _vue.normalizeClass)([
-                    "input",
+                    "input duration-200 transition-all ease-in",
                     {
                         'is-danger': $setup.noValid,
                         'is-success': $setup.valid
@@ -37826,7 +37832,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 id: "password",
                 name: "password",
                 class: (0, _vue.normalizeClass)([
-                    "input duration-300 transition-all ease-in",
+                    "input duration-200 transition-all ease-in",
                     {
                         'is-danger': $setup.noValid,
                         'is-success': $setup.valid
