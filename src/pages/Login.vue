@@ -9,23 +9,18 @@
                   <pp-email :sending="f.sending" label="Correo Electrónico" v-model="f.email" />
                   <pp-password :sending="f.sending" label="Contraseña" v-model="f.password" />                   
                    <pp-button :sending="f.sending" :valid="isValid().success" text="Enviar" />
-
-                   <div class="field">
-                     <div class="control has-text-centered">
-                        <a @click="link" class="button is-ghost" href="/#/recuperar">¿ Olvide la contraseña ?</a>
-                     </div>
-                   </div>
+                   
+                   <pp-link linkto="/#/recuperar-cuenta" :sending="f.sending" text="¿ Olvide la contraseña ?" />                   
                  </form>
                </div>               
-               <div class="column has-text-centered">                  
-                  <a @click="link" class="button is-ghost" href="/#/crear-cuenta" >Crear cuenta</a>
-               </div>
+                              
+               <pp-link linkto="/#/crear-cuenta" :sending="f.sending" text="Crear cuenta" />
+
            </div>
          </div>
       </div>      
     </section>
 </template>
-
 <script setup >
  import { z } from "zod" 
  import axios from "axios" 
