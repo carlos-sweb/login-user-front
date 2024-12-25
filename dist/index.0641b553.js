@@ -37588,7 +37588,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 ]),
                 type: "text",
                 autocomplete: "off",
-                autocapitalize: "off"
+                autocapitalize: "off",
+                autofocus: ""
             }, null, 42 /* CLASS, PROPS, NEED_HYDRATION */ , _hoisted_4), [
                 [
                     (0, _vue.vModelText),
