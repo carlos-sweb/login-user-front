@@ -1,8 +1,8 @@
-<template>
+<template>			
     <div class="field">	
 	<label for="email" class="label tracking-wide" v-text="label"></label>  
 		<div class="control has-icons-left has-icons-right">
-			<input :disabled="sending" @focus="focus=true;" @blur="dirty=true;runValid(email)" v-model="email" id="email" name="email" class="input duration-200 transition-all ease-in" :class="{'is-danger':noValid,'is-success':valid}" type="text" autocomplete="off" autocapitalize="off" autofocus >
+			<input ref="input-email" :disabled="sending" @focus="focus=true;" @blur="dirty=true;runValid(email)" v-model="email" id="email" name="email" class="input duration-200 transition-all ease-in" :class="{'is-danger':noValid,'is-success':valid}" type="text" autocomplete="off" autocapitalize="off">
             <span class="icon is-small is-left"><Mail :class="{'text-green-600':valid && !sending,'text-red-700':noValid}" :size="20" /></span>
             <span class="icon is-small is-right">
             	<Check v-if="valid" :class="{'text-green-600':!sending}" :size="20" />
@@ -13,10 +13,14 @@
 </template>
 
 <script setup>	
-import { ref , watch } from "vue"	
-import { z } from "zod" 
+import { ref , watch , useTemplateRef , onMounted, inject } from 'vue'	
+import { z } from 'zod' 
 import { Mail , Check , X } from 'lucide-vue-next'
 
+
+const sending = inject("sending");
+
+const inputEmail = useTemplateRef('input-email')
 const email = defineModel()
 const valid = ref(false)
 const noValid = ref(false);
@@ -48,10 +52,16 @@ const props = defineProps({
 		"type":String,
 		"required":true
 	},
-	"sending":{
-		"type":Boolean ,
-		"required":true
+	"focus":{
+		"type":Boolean,
+		"default":false
 	}	
+});
+
+onMounted(()=>{
+	setTimeout(()=>{
+		if( props.focus ){ inputEmail.value.focus() } 
+	}); 	
 });
 
 const runValid = ( newVl , oldVl )=>{	

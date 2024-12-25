@@ -8,7 +8,7 @@
 		</div> 
 	
 		<div class="control has-icons-left has-icons-right">
-			<input :disabled="sending" @focus="focus=true;" @blur="dirty=true;runValid(password)" v-model="password" id="password" name="password" class="input duration-200 transition-all ease-in" :class="{'is-danger':noValid,'is-success':valid}" :type="showPass ? 'text' : 'password' " autocomplete="off" autocapitalize="off" minlength="4" maxlength="20"  >
+			<input ref="input-password" :disabled="sending" @focus="focus=true;" @blur="dirty=true;runValid(password)" v-model="password" id="password" name="password" class="input duration-200 transition-all ease-in" :class="{'is-danger':noValid,'is-success':valid}" :type="showPass ? 'text' : 'password' " autocomplete="off" autocapitalize="off" minlength="4" maxlength="20"  >
             <span class="icon is-small is-left"><Asterisk :class="{'text-green-600':valid && !sending,'text-red-700':noValid}" :size="20" /></span>
             <span class="icon is-small is-right">
             	<Check v-if="valid" :class="{'text-green-600':!sending}" :size="20" />
@@ -18,10 +18,11 @@
 	</div>
 </template>
 <script setup>	
-import { ref , watch } from "vue"	
-import { z } from "zod" 
+import { ref , watch , useTemplateRef , onMounted , inject } from 'vue'
+import { z } from 'zod'
 import { Asterisk , Check , X , EyeOff , Eye } from 'lucide-vue-next'
 
+const inputPassword = useTemplateRef('input-password')
 const password = defineModel()
 const valid = ref(false)
 const noValid = ref(false)
@@ -29,6 +30,8 @@ const dirty = ref(false)
 const focus = ref(false)
 const showPass = ref(false)
 const passwordSchema = z.string().min(4).max(20)
+
+const sending = inject("sending");
 
 const changeShowPass = (_s)=>{ 
 	if( _s==false){ showPass.value=!showPass.value }	
@@ -59,13 +62,17 @@ const props = defineProps({
 		"type":String,
 		"required":true
 	},
-	"sending":{
+	"focus":{
 		"type":Boolean ,
-		"required":true , 
-		"default":false,
+		"default":false
 	}	
 });
 
+onMounted(()=>{
+	setTimeout(()=>{
+		if( props.focus ){ inputPassword.value.focus() } 
+	}); 	
+});
 
 
 const runValid = ( newVl , oldVl )=>{	

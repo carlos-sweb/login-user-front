@@ -7,12 +7,12 @@
                  <h1 class="title tracking-wide text-blue-700">Recuperar</h1>                 
                  <form  @submit.prevent="onSubmit" >
                                    
-                    <pp-email :sending="f.sending" label="Correo Electrónico" v-model="f.email" />
-                    <pp-button :sending="f.sending" :valid="isValid().success" text="Enviar" />
-                    <pp-link linkto="/#/" :sending="f.sending" text="Tengo cuenta" />
+                    <pp-email label="Correo Electrónico" v-model="f.email" />
+                    <pp-button  :valid="isValid().success" text="Enviar" />
+                    <pp-link @click="setEmail()" linkto="/#/"  text="Tengo cuenta" />
                  </form>
                </div>               
-                <pp-link linkto="/#/crear-cuenta" :sending="f.sending" text="Crear cuenta" />
+                <pp-link @click="setEmail()" linkto="/#/crear-cuenta"  text="Crear cuenta" />
            </div>           
          </div>
       </div>      
@@ -21,14 +21,17 @@
 <script setup >
  import { z } from "zod" 
  import axios from "axios" 
- import { ref , reactive} from "vue"
+ import { ref , reactive , provide } from "vue"
  import { Mail } from 'lucide-vue-next';
+ import { useStoreGeneral } from './../store/general.js'
 
- const link = (event)=>{ f.sending  &&  event.preventDefault() }
+  const  sending = ref(false);
+  provide("sending",sending)
+
+  const store = useStoreGeneral();
 
  const f = reactive({
-  email:"",  
-  sending:false
+  email: store.email   
  });
 
  var user = z.object({
@@ -38,10 +41,14 @@
  const isValid = ()=> user.safeParse({ "email":f.email })
  
  const onSubmit = ()=>{    
-    f.sending = true;
+    sending.value = true;
     setTimeout(()=>{
-      f.sending = false;
+      sending.value = false;
     },3000);      
     //axios({ "method":"post", "url":"https://csweb.sistematizate.cl/login" }).then(( response)=>{ console.log( response ); });
+ }
+ 
+ const setEmail = ()=>{
+    store.setEmail(email.value);
  }
 </script>

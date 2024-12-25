@@ -5,16 +5,29 @@
            <div class="column is-4">
                <div class="box">
                  <h1 class="title tracking-wide text-blue-700">Acceso</h1>                 
-                 <form  @submit.prevent="onSubmit" >      
-                  <pp-email :sending="f.sending" label="Correo Electrónico" v-model="f.email" />
-                  <pp-password :sending="f.sending" label="Contraseña" v-model="f.password" />                   
-                   <pp-button :sending="f.sending" :valid="isValid().success" text="Enviar" />
+                 <form  @submit.prevent="onSubmit" >
+
+                  <pp-email :focus="false" label="Correo Electrónico" v-model="email" />
+
+                  <pp-password :focus="true" label="Contraseña" v-model="password" />                   
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox" for="remember">
+                            
+                    <input v-model="remember" name="remember" id="remember" :disabled="sending" type="checkbox" />&nbsp;&nbsp;Recuerdame</label>
+                    </div>
+                   </div>
+
+
+
+                   <pp-button :valid="isValid().success" text="Enviar" />
                    
-                   <pp-link linkto="/#/recuperar-cuenta" :sending="f.sending" text="¿ Olvide la contraseña ?" />                   
+                   
+                   <pp-link @click="setEmail()" linkto="/#/recuperar-cuenta" :sending="sending" text="¿ Olvide la contraseña ?" />                   
                  </form>
                </div>               
                               
-               <pp-link linkto="/#/crear-cuenta" :sending="f.sending" text="Crear cuenta" />
+               <pp-link @click="setEmail()" linkto="/#/crear-cuenta" :sending="sending" text="Crear cuenta" />
 
            </div>
          </div>
@@ -22,31 +35,56 @@
     </section>
 </template>
 <script setup >
- import { z } from "zod" 
- import axios from "axios" 
- import { ref , reactive} from "vue"
+
+ import { z } from 'zod'
+ import axios from 'axios'
+ import { 
+    ref ,     
+    watch , 
+    useTemplateRef ,     
+    provide
+} from 'vue'    
+
  import { Mail , Asterisk } from 'lucide-vue-next';
-
- const link = (event)=>{ f.sending  &&  event.preventDefault() }
-
- const f = reactive({
-  email:"",
-  password:"",
-  sending:false
- });
-
- var user = z.object({
-    email:z.string().email().min(4).max(20),
-    password:z.string().min(4).max(20)
- });
-
- const isValid = ()=> user.safeParse({ "email":f.email, "password":f.password })
+ import { useStoreGeneral } from './../store/general.js'
+ import { valid } from './../zod/validation.js'
  
+ const store    = useStoreGeneral();
+ const remember = ref( store.saveLocalStorage );
+ const email    = ref(store.email);
+ const password = ref("");
+
+ const  sending = ref(false);
+ 
+ provide("sending",sending)
+ 
+ const isValid = ()=>valid( email.value , password.value );
+
  const onSubmit = ()=>{    
-    f.sending = true;
+    sending.value = true;
     setTimeout(()=>{
-      f.sending = false;
+      sending.value = false;
     },3000);      
     //axios({ "method":"post", "url":"https://csweb.sistematizate.cl/login" }).then(( response)=>{ console.log( response ); });
  }
+
+const setEmail = ()=>{
+    store.setEmail(email.value);
+}
+
+watch( email , ( newVl) => {        
+    if( remember.value ){
+        store.setEmail(email.value)
+        store.saveEmail(email.value)
+    }
+})
+
+watch( remember ,( newVl )=>{    
+    store.saveLocalStorage = newVl;
+    if( newVl == true ){      
+      store.saveEmail( email.value )
+    }else{      
+      store.removeEmail();  
+    }
+})
 </script>

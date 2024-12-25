@@ -2,9 +2,12 @@ import 'npm:normalize.css'
 import 'npm:@fontsource/ubuntu'
 import 'npm:bulma'
 import './style.css'
-// import { createApp } from "vue/dist/vue.esm-bundler"
+
+
 import { createApp } from "vue/dist/vue.esm-bundler"
 import { createWebHashHistory, createRouter } from 'vue-router'
+import { createPinia , defineStore } from 'pinia'
+const pinia = createPinia()
 
 import Login from "./pages/Login.vue"
 import App from "./pages/App.vue"
@@ -37,4 +40,5 @@ app.component("pp-email", inputEmail)
 app.component("pp-password",inputPassword)
 app.component("pp-link",linkghost)
 app.use(router)
+app.use(pinia)
 app.mount("#app");

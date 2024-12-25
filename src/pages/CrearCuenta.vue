@@ -64,11 +64,13 @@
  import axios from "axios" 
  import { ref , reactive} from "vue"
  import { Mail , Lock , Eye , Check , X , EyeOff } from 'lucide-vue-next';
-
+ 
+ import { useStoreGeneral } from './../store/general.js'
+ const store = useStoreGeneral();
  
 
  const f = reactive({
-  email:"admin@gmail.com",
+  email: store.email , 
   password:"12345554",
   passwordrepeat:"elpdlepedlpeldplepl",
   sending:false
