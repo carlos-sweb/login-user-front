@@ -24,16 +24,17 @@ import inputPassword from "./components/inputPassword.vue";
 import linkghost from "./components/linkghost.vue"
 
 const routes = [
-  { path: '/', component: Login }, 
-  { path: '/recuperar-cuenta', component: Recuperar } ,
-  { path: '/crear-cuenta' , component : CrearCuenta },
-  { path: '/acceso-error' , component : AccesoError }, 
+  { path: '/', component: Login , meta : { title :"Login" }}, 
+  { path: '/recuperar-cuenta', component: Recuperar , meta :{ title : "Recuperar contraseña" } } ,
+  { path: '/crear-cuenta' , component : CrearCuenta , meta :{ title : "Crear Cuenta" }  },
+  { path: '/acceso-error' , component : AccesoError , meta : { title :"Error" }}, 
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
 })
+router.beforeEach((to,from)=>{ document.title = to.meta.title })
 const app = createApp(App);
 app.component("pp-button",button);
 app.component("pp-email", inputEmail)

@@ -12,17 +12,17 @@
             <span class="icon is-small is-left"><Asterisk :class="{'text-green-600':valid && !sending,'text-red-700':noValid}" :size="20" /></span>
             <span class="icon is-small is-right">
             	<Check v-if="valid" :class="{'text-green-600':!sending}" :size="20" />
-            	<X v-else-if="noValid" class="text-red-700" :size="20" />
+            	<!--<X v-else-if="noValid" class="text-red-700" :size="20" />-->
             </span>
 		</div>
 	</div>
 </template>
 <script setup>	
-import { ref , watch , useTemplateRef , onMounted , inject } from 'vue'
+import { ref , watch   , inject } from 'vue'
 import { z } from 'zod'
 import { Asterisk , Check , X , EyeOff , Eye } from 'lucide-vue-next'
+import dataProps from './../props/inputPassword.js'
 
-const inputPassword = useTemplateRef('input-password')
 const password = defineModel()
 const valid = ref(false)
 const noValid = ref(false)
@@ -31,7 +31,7 @@ const focus = ref(false)
 const showPass = ref(false)
 const passwordSchema = z.string().min(4).max(20)
 
-const sending = inject("sending");
+const sending = inject('sending');
 
 const changeShowPass = (_s)=>{ 
 	if( _s==false){ showPass.value=!showPass.value }	
@@ -39,41 +39,12 @@ const changeShowPass = (_s)=>{
 
 const isValid = ( vl ) => {	
 	let passwordValidation = passwordSchema.safeParse( vl ).success;
-	if( passwordValidation && !dirty.value  ){ dirty.value = true; }
-	/*
-	console.log("----------------------------------------------------------");
-	console.log("Focus is : " , focus.value);
-	console.log("Dirty is : " , dirty.value);
-	console.log("Email Schmea is : " ,passwordSchema.safeParse( vl ).success);
-	console.log("----------------------------------------------------------");
-	*/
-	const result = ( focus.value &&  passwordValidation );
-	// console.log( result );
-	return result;
+	if( passwordValidation && !dirty.value  ){ dirty.value = true; }	
+	return focus.value &&  passwordValidation;	
 }
 
 
-const props = defineProps({
-	"value":{
-		"type":String,
-		"default":""
-	},
-	"label":{
-		"type":String,
-		"required":true
-	},
-	"focus":{
-		"type":Boolean ,
-		"default":false
-	}	
-});
-
-onMounted(()=>{
-	setTimeout(()=>{
-		if( props.focus ){ inputPassword.value.focus() } 
-	}); 	
-});
-
+const props = defineProps(dataProps);
 
 const runValid = ( newVl , oldVl )=>{	
 	const validTemp = isValid( newVl );
@@ -82,14 +53,13 @@ const runValid = ( newVl , oldVl )=>{
 }
 
 watch( password , runValid );
-watch( ()=> props.sending ,(newSend)=>{
+watch( sending ,(newSend)=>{
 	if( showPass.value == true && newSend == true ){
 		showPass.value = false;
 	}		
 } )
 
-
-if( password.value !== "" ){	
+if( password.value !== '' ){	
 	focus.value= true;
 	dirty.value = true;
 	runValid( password.value )

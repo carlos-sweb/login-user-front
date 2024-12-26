@@ -7,9 +7,9 @@
                  <h1 class="title tracking-wide text-blue-700">Acceso</h1>                 
                  <form  @submit.prevent="onSubmit" >
 
-                  <pp-email :focus="false" label="Correo Electrónico" v-model="email" />
+                  <pp-email ref="input-email" :focus="false" label="Correo Electrónico" v-model="email" />
 
-                  <pp-password :focus="true" label="Contraseña" v-model="password" />                   
+                  <pp-password ref="input-password" :focus="false" label="Contraseña" v-model="password" />                   
                 <div class="field">
                     <div class="control">
                         <label class="checkbox" for="remember">
@@ -35,31 +35,36 @@
     </section>
 </template>
 <script setup >
-
- import { z } from 'zod'
- import axios from 'axios'
  import { 
     ref ,     
-    watch , 
-    useTemplateRef ,     
-    provide
+    watch ,     
+    provide,
+    useTemplateRef,
+    onMounted
 } from 'vue'    
 
  import { Mail , Asterisk } from 'lucide-vue-next';
  import { useStoreGeneral } from './../store/general.js'
- import { valid } from './../zod/validation.js'
- 
+ import { valid , email as v_email } from './../zod/validation.js'
+
+ const inputEmail = useTemplateRef('input-email') 
+ const inputPassword = useTemplateRef('input-password') 
+
  const store    = useStoreGeneral();
  const remember = ref( store.saveLocalStorage );
  const email    = ref(store.email);
+
+ // Codigo duplicado
+ if( remember.value ){
+    store.setEmail(email.value)
+    store.saveEmail(email.value)
+ }
+
  const password = ref("");
-
- const  sending = ref(false);
- 
+ const  sending = ref(false); 
  provide("sending",sending)
- 
  const isValid = ()=>valid( email.value , password.value );
-
+ 
  const onSubmit = ()=>{    
     sending.value = true;
     setTimeout(()=>{
@@ -87,4 +92,22 @@ watch( remember ,( newVl )=>{
       store.removeEmail();  
     }
 })
+
+
+onMounted(()=>{    
+    if( v_email.safeParse(email.value).success ){        
+        setTimeout(()=>{            
+            inputPassword.value.$el.querySelector("input").focus()
+            inputPassword.value.$el.querySelector("input").click()
+        })        
+    }else{
+        setTimeout(()=>{
+            inputEmail.value.$el.querySelector("input").focus()
+            inputEmail.value.$el.querySelector("input").click()
+        })
+    }
+})
+
+
+
 </script>

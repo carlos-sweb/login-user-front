@@ -5,6 +5,7 @@ import { defineStore } from 'pinia'
 const get_userEmail = localStorage.getItem("user_email");
 const saveLocalStorage = get_userEmail !== null && get_userEmail !== "" ;
 
+
 export const useStoreGeneral = defineStore('email', {
   state: () => {
     return { 
@@ -20,13 +21,14 @@ export const useStoreGeneral = defineStore('email', {
     saveEmail( nEmail){
       if( nEmail !== "" ){
         localStorage.setItem( 'user_email' , nEmail );
+      }else{        
+        this.removeEmail()
+        // No Estoy seguro
+        //this.saveLocalStorage = false
       }
     },
     setEmail( nEmail ){
       this.email = nEmail; 
-    },
-    increment() {
-      this.count++
-    },
+    }
   },
 })

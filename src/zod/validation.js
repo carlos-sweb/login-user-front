@@ -1,5 +1,5 @@
 import z from 'zod'
-export const email  = z.string().email().min(4).max(20);
+export const email  = z.string().email().min(4).max(60);
 export const password = z.string().min(4).max(20);
 export const user = z.object({
 	'email': email ,

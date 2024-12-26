@@ -8,6 +8,6 @@
 <script setup >
 import { inject } from 'vue'	
 import dataProps  from './../props/linkghost.js'	
-const sending = inject("sending");
-const props = defineProps(dataProps);
+const sending = inject("sending")
+const props   = defineProps(dataProps)
 </script>
